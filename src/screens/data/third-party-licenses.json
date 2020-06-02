@@ -1,0 +1,170 @@
+{
+    "brouter-web@0.11.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/nrenner/brouter-web",
+        "licenseUrl": "https://github.com/nrenner/brouter-web/blob/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "@react-native-community/masked-view@0.1.6": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-masked-view",
+        "licenseUrl": "https://github.com/react-native-community/react-native-masked-view",
+        "parents": "fahrplanapp"
+    },
+    "@react-navigation/native@5.1.4": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-navigation/react-navigation/tree/master/packages/native",
+        "licenseUrl": "https://github.com/react-navigation/react-navigation/tree/master/packages/native/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "@react-navigation/stack@5.2.9": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-navigation/react-navigation/tree/master/packages/stack",
+        "licenseUrl": "https://github.com/react-navigation/react-navigation/tree/master/packages/stack/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "hafas-client@5.3.1": {
+        "licenses": "ISC",
+        "repository": "https://github.com/public-transport/hafas-client",
+        "licenseUrl": "https://github.com/public-transport/hafas-client/raw/master/license.md",
+        "parents": "fahrplanapp"
+    },
+    "i18next@19.3.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/i18next/i18next",
+        "licenseUrl": "https://github.com/i18next/i18next/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "intl@1.2.5": {
+        "licenses": "MIT",
+        "repository": "https://github.com/andyearnshaw/Intl.js",
+        "licenseUrl": "https://github.com/andyearnshaw/Intl.js/raw/master/LICENSE.txt",
+        "parents": "fahrplanapp"
+    },
+    "jsc-android@241213.1.0": {
+        "licenses": "BSD-2-Clause",
+        "repository": "https://github.com/react-community/jsc-android-buildscripts",
+        "licenseUrl": "https://github.com/react-community/jsc-android-buildscripts/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "moment-timezone@0.5.28": {
+        "licenses": "MIT",
+        "repository": "https://github.com/moment/moment-timezone",
+        "licenseUrl": "https://github.com/moment/moment-timezone/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "moment@2.24.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/moment/moment",
+        "licenseUrl": "https://github.com/moment/moment/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "native-base@2.13.8": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/GeekyAnts/NativeBase",
+        "licenseUrl": "https://github.com/GeekyAnts/NativeBase/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "node-libs-react-native@1.0.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/parshap/node-libs-react-native",
+        "licenseUrl": "https://github.com/parshap/node-libs-react-native/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-i18next@11.3.4": {
+        "licenses": "MIT",
+        "repository": "https://github.com/i18next/react-i18next",
+        "licenseUrl": "https://github.com/i18next/react-i18next/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-autocomplete-input@4.2.0-rc.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/mrlaessig/react-native-autocomplete-input",
+        "licenseUrl": "https://github.com/mrlaessig/react-native-autocomplete-input/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-date-picker@2.7.6": {
+        "licenses": "MIT",
+        "repository": "https://github.com/henninghall/react-native-date-picker",
+        "licenseUrl": "https://github.com/henninghall/react-native-date-picker/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-device-info@5.5.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-device-info",
+        "licenseUrl": "https://github.com/react-native-community/react-native-device-info/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-elements@1.2.7": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-elements/react-native-elements",
+        "licenseUrl": "https://github.com/react-native-elements/react-native-elements/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-gesture-handler@1.6.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/software-mansion/react-native-gesture-handler",
+        "licenseUrl": "https://github.com/software-mansion/react-native-gesture-handler/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-randombytes@3.5.3": {
+        "licenses": "ISC",
+        "repository": "https://github.com/mvayngrib/react-native-randombytes",
+        "licenseUrl": "https://github.com/mvayngrib/react-native-randombytes/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-safe-area-context@0.6.4": {
+        "licenses": "MIT",
+        "repository": "https://github.com/th3rdwave/react-native-safe-area-context",
+        "licenseUrl": "https://github.com/th3rdwave/react-native-safe-area-context/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-screens@2.0.0-beta.11": {
+        "licenses": "MIT",
+        "repository": "https://github.com/kmagiera/react-native-screens",
+        "licenseUrl": "https://github.com/kmagiera/react-native-screens/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-simple-radio-button@2.7.4": {
+        "licenses": "MIT",
+        "repository": "https://github.com/moschan/react-native-simple-radio-button",
+        "licenseUrl": "https://github.com/moschan/react-native-simple-radio-button/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-vector-icons@6.6.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/oblador/react-native-vector-icons",
+        "licenseUrl": "https://github.com/oblador/react-native-vector-icons/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native-webview@8.0.6": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-native-community/react-native-webview",
+        "licenseUrl": "https://github.com/react-native-community/react-native-webview/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react-native@0.61.5": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react-native",
+        "licenseUrl": "https://github.com/facebook/react-native/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "react@16.9.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "tz-lookup@6.1.25": {
+        "licenses": "CC0-1.0",
+        "repository": "https://github.com/darkskyapp/tz-lookup",
+        "licenseUrl": "https://github.com/darkskyapp/tz-lookup/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    },
+    "vm-browserify@1.1.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/substack/vm-browserify",
+        "licenseUrl": "https://github.com/substack/vm-browserify/raw/master/LICENSE",
+        "parents": "fahrplanapp"
+    }
+}

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+SNCBDIR="./node_modules/hafas-client/p/sncb/"
+
+if [ ! -f ${SNCBDIR}cert.js ]; then
+    echo "generate file cert.js"
+    cat << EOM | node 
+const { readFileSync, writeFileSync } = require('fs')
+const path = '${SNCBDIR}';
+const ca = readFileSync(path + 'digicert-sha2-secure-server-ca.crt.pem')
+const ar = Array.apply([], ca).join(",")
+writeFileSync(path + 'cert.js', 'exports.array =  [' + ar + ']');
+EOM
+
+fi
+
+# remove
+# const {readFileSync} = require('fs')
+# change
+# const ca = readFileSync(join(__dirname, 'digicert-sha2-secure-server-ca.crt.pem'))
+# with
+# const ca = Buffer.from(require('./cert.js').array)

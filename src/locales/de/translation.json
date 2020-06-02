@@ -1,0 +1,74 @@
+{
+    "HomeScreen": {
+        "Header": "Reiseauskunft",
+        "Options": "Optionen",
+        "From": "von",
+        "To": "nach",
+        
+        "ShortDate": "{{date, DD.MM.YY}}",
+        "Time": "{{date, HH:mm}}",
+        "SearchConnections": "Verbindungen suchen",
+        "WhereIs": "Wo liegt {{station}}",
+        "Departures": "Abfahrtsmonitor {{station}}"
+    },
+    "OptionsScreen": {
+        "Title": "Optionen",
+        "InformationSystem": "Auskunftsystem",
+        "Update": "Übernehmen",
+        "allStations": "alle Haltestellen",
+        "onlyTransfers": "nur Umstiege",
+        "Language": "Sprache",
+        "German": "deutsch",
+        "English": "englisch"
+    },
+    "ConnectionsScreen": {
+        "Title": "Verbindungen",
+        "Earlier": "früher",
+        "Later": "später",
+        "Date": "Datum: {{date, dd}}. {{date, DD.MM.YY}}, {{date, HH:mm}}",
+        "DirectionTo": "nach",
+        "TimeFrom": "ab: {{date, HH:mm}}",
+        "TimeTo": "an: {{date, HH:mm}}",
+        "DaysDifference": "(+{{count}} Tag)",
+        "DaysDifference_plural": "(+{{count}} Tage)",
+        "Duration": "Dauer: {{duration, HH:mm}}",
+        "Changes": "Umstiege",
+        "ConnectionNotAccessible": "Anschluss vsl. nicht erreichbar",
+        "TripCancled": "Fahrt fällt aus"
+    },
+    "JourneyplanScreen": {
+        "Title": "Reiseplan",
+        "ShowRoute": "Route anzeigen",
+        "DirectionTo": "nach",
+        "Duration": "Dauer: {{duration, HH:mm}}",
+        "Time": "{{date, HH:mm}}",
+        "ConnectionNotAccessible": "Anschluss vsl. nicht erreichbar",
+        "TripCancled": "Fahrt fällt aus",
+        "LoadFactor": "Auslastung",
+        "low-to-medium": "gering bis mittel",
+        "high": "hoch",
+        "very-high": "sehr hoch",
+        "exceptionally-high": "außergewöhnlich hoch",
+        "Departure": "Abfahrt {{date, DD.MM.YY HH:mm}}",
+        "Arrival": "Ankunft {{date, DD.MM.YY HH:mm}}",
+        "Timezone": "({{date, Z z}})"
+    },
+    "DepartureScreen": {
+        "Title": "Abfahrtsmonitor",
+        "When": "Abfahrt {{date, HH:mm}}"
+    },
+    "TripScreen": {
+        "Title": "Fahrtverlauf",
+        "ShowRoute": "Route anzeigen",
+        "Time": "{{date, HH:mm}}",
+        "Timezone": "({{date, Z z}})",
+        "Duration": "Dauer: {{duration, HH:mm}}"
+    },
+    "BRouterScreen": {
+        "Route": "Route {{locations}} Punkte, {{distance}} km"
+    },
+    "DateTimeScreen": {
+        "Title": "Datum/Zeit",
+        "Update": "Übernehmen"
+    }
+}

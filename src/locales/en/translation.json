@@ -1,0 +1,66 @@
+{
+    "HomeScreen": {
+        "Header": "Travel Information",
+        "Options": "Options",
+        "From": "from",
+        "To": "to",
+        "ShortDate": "{{date, ddd DD MMM}}",
+        "Time": "{{date, HH:mm}}",
+        "SearchConnections": "Search Connections",
+        "WhereIs": "Where is {{station}}"
+    },
+    "OptionsScreen": {
+        "Title": "Options",
+        "InformationSystem": "Information System",
+        "Update": "Update",
+        "allStations": "all Stations",
+        "onlyTransfers": "only Transfers",
+        "Language": "Language",
+        "German": "german",
+        "English": "english"
+    },
+    "ConnectionsScreen": {
+        "Title": "Connections",
+        "Earlier": "earlier",
+        "Later": "later",
+        "Date": "Date: {{date, ddd DD MMM}}, {{date, HH:mm}}",
+        "DirectionTo": "to",
+        "TimeFrom": "Dep. {{date, HH:mm}}",
+        "TimeTo": "Arr. {{date, HH:mm}}",
+        "DaysDifference": "(+{{count}} day)",
+        "DaysDifference_plural": "(+{{count}} days)",
+        "Duration": "Dur. {{duration, HH:mm}}",
+        "Changes": "Changes",
+        "ConnectionNotAccessible": "Connection may not be accessible",
+        "TripCancled": "Trip cancled"
+    },
+    "JourneyplanScreen": {
+        "Title": "Journeyplan",
+        "ShowRoute": "Show Route",
+        "DirectionTo": "to",
+        "Duration": "Duration: {{duration, HH:mm}}",
+        "Time": "{{date, HH:mm}}",
+        "ConnectionNotAccessible": "Connection may not be accessible",
+        "TripCancled": "Trip cancled",
+        "LoadFactor": "Load Factor",
+        "low-to-medium": "low to medium",
+        "high": "high",
+        "very-high": "very high",
+        "exceptionally-high": "exceptionally high",
+        "Departure": "Departure {{date, ddd DD MMM HH:mm}}",
+        "Arrival": "Arrival {{date, ddd DD MMM HH:mm}}",
+        "Timezone": "({{date, Z z}})"
+    },
+    "TripScreen": {
+        "Title": "Course of the journey",
+        "ShowRoute": "Show Route",
+        "Time": "{{date, HH:mm}}"
+    },
+    "BRouterScreen": {
+        "Route": "Route {{locations}} waypoints, {{distance}} km"
+    },
+    "DateTimeScreen": {
+        "Title": "Date/Time",
+        "Update": "Update"
+    }
+}
