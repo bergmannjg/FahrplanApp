@@ -7,7 +7,8 @@
         "ShortDate": "{{date, ddd DD MMM}}",
         "Time": "{{date, HH:mm}}",
         "SearchConnections": "Search Connections",
-        "WhereIs": "Where is {{station}}"
+        "WhereIs": "Where is {{station}}",
+        "Departures": "Departure schedule {{station}}"
     },
     "OptionsScreen": {
         "Title": "Options",
@@ -50,6 +51,10 @@
         "Departure": "Departure {{date, ddd DD MMM HH:mm}}",
         "Arrival": "Arrival {{date, ddd DD MMM HH:mm}}",
         "Timezone": "({{date, Z z}})"
+    },
+    "DepartureScreen": {
+        "Title": "Departure schedule",
+        "When": "Departure {{date, HH:mm}}"
     },
     "TripScreen": {
         "Title": "Course of the journey",

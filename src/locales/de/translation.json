@@ -9,7 +9,7 @@
         "Time": "{{date, HH:mm}}",
         "SearchConnections": "Verbindungen suchen",
         "WhereIs": "Wo liegt {{station}}",
-        "Departures": "Abfahrtsmonitor {{station}}"
+        "Departures": "Abfahrtsplan {{station}}"
     },
     "OptionsScreen": {
         "Title": "Optionen",
@@ -54,7 +54,7 @@
         "Timezone": "({{date, Z z}})"
     },
     "DepartureScreen": {
-        "Title": "Abfahrtsmonitor",
+        "Title": "Abfahrtsplan",
         "When": "Abfahrt {{date, HH:mm}}"
     },
     "TripScreen": {

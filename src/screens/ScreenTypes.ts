@@ -42,12 +42,14 @@ export interface BRouterScreenParams {
 }
 
 export interface DepartureScreenParams {
+    station: string,
     alternatives: ReadonlyArray<Alternative>,
     client: Hafas
 }
 
 export interface TripScreenParams {
-    trip: Trip
+    trip: Trip,
+    client: Hafas
 }
 
 export interface OpenStreetMapParams {

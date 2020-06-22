@@ -35,7 +35,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="Departures"
         component={DepartureScreen}
-        options={{ title: t('DepartureScreen.Title') }}
+        options={({ route }) => ({ title: t('DepartureScreen.Title') + ' ' +  route.params.station })}
       />
       <MainStack.Screen
         name="Journeyplan"

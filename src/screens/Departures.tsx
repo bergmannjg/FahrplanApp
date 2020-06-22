@@ -69,7 +69,7 @@ export default function DepartureScreen({ route, navigation }: Props) {
         if (item.tripId) {
             client.trip(item.tripId)
                 .then(trip => {
-                    navigation.navigate('Trip', { trip })
+                    navigation.navigate('Trip', { trip, client })
                 })
                 .catch((error) => {
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error.message);

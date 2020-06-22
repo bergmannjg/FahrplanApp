@@ -6,7 +6,8 @@ import { RouteProp } from '@react-navigation/native';
 import { Colors, } from 'react-native/Libraries/NewAppScreen';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { Location, Trip, StopOver } from 'hafas-client';
+import { Location, Trip, StopOver, Alternative } from 'hafas-client';
+import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams } from './ScreenTypes';
 import moment from 'moment-timezone';
 
@@ -22,6 +23,7 @@ export default function TripScreen({ route, navigation }: Props) {
 
     const { params }: { params: TripScreenParams } = route;
     const trip: Trip = params.trip;
+    const client: Hafas = params.client;
     console.log('trip', trip);
 
     const data = trip.stopovers
@@ -38,6 +40,28 @@ export default function TripScreen({ route, navigation }: Props) {
         });
         console.log('locations: ', locations.length);
         navigation.navigate('BRouter', { isLongPress, locations });
+    }
+
+    const asyncFindDepartures = (query: string, date: Date, callback: (arr: ReadonlyArray<Alternative>) => void) => {
+        if (query.length > 0) {
+            const onlyLocalProducts = false;
+            client.departures(query, ['train', 'watercraft'], date, onlyLocalProducts)
+                .then(alternatives => callback(alternatives))
+                .catch((error) => {
+                    console.log('There has been a problem with your locations operation: ' + error);
+                    callback([]);
+                });
+        }
+    }
+
+    const showDepartures = (query: string, date: string) => {
+        asyncFindDepartures(query, new Date(Date.parse(date)), (alternatives: ReadonlyArray<Alternative>) => {
+            if (alternatives.length > 0) {
+                navigation.navigate('Departures', { station: query, alternatives, client })
+            } else {
+                console.log('no departures from ', query)
+            }
+        });
     }
 
     const renderSeparator = () => {
@@ -90,9 +114,11 @@ export default function TripScreen({ route, navigation }: Props) {
         if (item.plannedArrival && item.plannedDeparture)
             return (
                 <View>
-                    <Text style={styles.itemDetailsText}>
-                        {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop.name}`}
-                    </Text>
+                    <TouchableOpacity onPress={() => showDepartures(item.stop.name, item.plannedArrival ?? '')}>
+                        <Text style={styles.itemDetailsText}>
+                            {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop.name}`}
+                        </Text>
+                    </TouchableOpacity>
                     <OptionalItemDelay item={item} />
                 </View>
             )

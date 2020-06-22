@@ -113,7 +113,7 @@ export default function HomeScreen({ route, navigation }: Props) {
   const showDeparturesQuery = (query: string) => {
     asyncFindDepartures(query, (alternatives: ReadonlyArray<Alternative>) => {
       if (alternatives.length > 0) {
-        navigation.navigate('Departures', { alternatives, client })
+        navigation.navigate('Departures', { station: query, alternatives, client })
       } else {
         console.log('no departures from ', query)
       }

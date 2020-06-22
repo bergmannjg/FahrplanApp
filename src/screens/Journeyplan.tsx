@@ -83,7 +83,7 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
         if (leg?.line && leg?.tripId) {
             client.trip(leg.tripId)
                 .then(trip => {
-                    navigation.navigate('Trip', { trip })
+                    navigation.navigate('Trip', { trip, client })
                 })
                 .catch((error) => {
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error.message);
