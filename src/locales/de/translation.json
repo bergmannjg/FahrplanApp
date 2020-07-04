@@ -39,6 +39,7 @@
     "JourneyplanScreen": {
         "Title": "Reiseplan",
         "ShowRoute": "Route anzeigen",
+        "ShowRailwayRoutes": "Strecken anzeigen",
         "DirectionTo": "nach",
         "Duration": "Dauer: {{duration, HH:mm}}",
         "Time": "{{date, HH:mm}}",
@@ -63,6 +64,13 @@
         "Time": "{{date, HH:mm}}",
         "Timezone": "({{date, Z z}})",
         "Duration": "Dauer: {{duration, HH:mm}}"
+    },
+    "RailwayRoutesOfTripScreen": {
+        "Title": "Strecken",
+        "RailwayRoute": "Strecke"
+    },
+    "RailwayRouteScreen": {
+        "Title": "Strecke"
     },
     "BRouterScreen": {
         "Route": "Route {{locations}} Punkte, {{distance}} km"

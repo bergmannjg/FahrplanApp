@@ -1,5 +1,5 @@
 import { Hafas, JourneyInfo } from '../lib/hafas';
-import { Location, Trip, Alternative } from 'hafas-client';
+import { Location, Trip, Alternative, Stop } from 'hafas-client';
 
 export interface HomeScreenParams {
     profile?: string,
@@ -25,6 +25,14 @@ export interface JourneyplanScreenParams {
     journey: JourneyInfo,
     tripDetails: boolean,
     client: Hafas
+}
+
+export interface RailwayRoutesOfTripScreenParams {
+    stops: Stop[]
+}
+
+export interface RailwayRouteScreenParams {
+    railwayRouteNr: number
 }
 
 export interface ConnectionsScreenParams {
@@ -61,6 +69,8 @@ export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
     Journeyplan: JourneyplanScreenParams;
+    RailwayRoutesOfTrip: RailwayRoutesOfTripScreenParams;
+    RailwayRoute: RailwayRouteScreenParams;
     BRouter: BRouterScreenParams;
     Departures: DepartureScreenParams;
     Trip: TripScreenParams;

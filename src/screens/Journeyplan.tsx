@@ -50,6 +50,14 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
     console.log('legs.length: ', legs.length);
     console.log('legs: ', legs);
 
+    const showRailwayRoutes = async () => {
+        console.log('showRailwayRoutes');
+        const stops = await client.stopssOfJourney(journeyInfo, ['train', 'watercraft']);
+        if (stops.length > 0) {
+            navigation.navigate('RailwayRoutesOfTrip', { stops });
+        }
+    }
+
     const showRoute = async (isLongPress: boolean) => {
         console.log('showRoute.tripDetails: ', tripDetails);
 
@@ -176,17 +184,17 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
                             (item?.loadFactor) &&
                             <Text style={styles.itemDetailsText}>{`${t('JourneyplanScreen.LoadFactor')}: ${loadFactor2Text(item.loadFactor)}`}</Text>
                         }
-                        <Text> </Text>
 
                         <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival) })} ${item.destination.name} ${platform(item.arrivalPlatform)}`}</Text>
-
                         {
                             (item.arrival && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0)) ?
-                                <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.arrival) })}`}</Text>
+                                <View>
+                                    <Text> </Text>
+                                    <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.arrival) })}`}</Text>
+                                </View>
                                 :
-                                <Text> </Text>
+                                <View />
                         }
-
                     </View>
                 }
             </View >
@@ -202,6 +210,11 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
                 <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => showRailwayRoutes()}>
+                    <Text style={styles.itemButtonText}>
+                        {t('JourneyplanScreen.ShowRailwayRoutes')}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -237,9 +250,10 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
     subtitleView: {
         flexDirection: 'column',
-        paddingLeft: 10,
-        paddingTop: 5,
-        margin: 10
+        paddingLeft: 20,
+        paddingTop: 0,
+        paddingBottom: 0,
+        margin: 0
     },
     container: {
         flex: 1,

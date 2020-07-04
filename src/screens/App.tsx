@@ -8,6 +8,8 @@ import HomeScreen from './Home';
 import DepartureScreen from './Departures';
 import ConnectionsScreen from './Connections';
 import JourneyplanScreen from './Journeyplan';
+import RailwayRoutesOfTripScreen from './RailwayRoutesOfTrip';
+import RailwayRoute from './RailwayRoute';
 import OpenStreetMapScreen from './OpenStreetMap';
 import OptionsScreen from './Options';
 import BRouterScreen from './BRouter';
@@ -35,12 +37,22 @@ function MainStackScreen() {
       <MainStack.Screen
         name="Departures"
         component={DepartureScreen}
-        options={({ route }) => ({ title: t('DepartureScreen.Title') + ' ' +  route.params.station })}
+        options={({ route }) => ({ title: t('DepartureScreen.Title') + ' ' + route.params.station })}
       />
       <MainStack.Screen
         name="Journeyplan"
         component={JourneyplanScreen}
         options={{ title: t('JourneyplanScreen.Title') }}
+      />
+      <MainStack.Screen
+        name="RailwayRoutesOfTrip"
+        component={RailwayRoutesOfTripScreen}
+        options={{ title: t('RailwayRoutesOfTripScreen.Title') }}
+      />
+      <MainStack.Screen
+        name="RailwayRoute"
+        component={RailwayRoute}
+        options={({ route }) => ({ title: t('RailwayRouteScreen.Title') + ' ' + route.params.railwayRouteNr })}
       />
       <MainStack.Screen
         name="Trip"
