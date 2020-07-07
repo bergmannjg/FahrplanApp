@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -26,7 +26,7 @@ import { ListItem, SearchBar, Icon } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { RailwayRouteOfTrip, findRailwayRoutesOfTrip, findRailwayRouteText } from '../lib/db-data';
+import { RailwayRouteOfTrip, findRailwayRoutesOfTrip, findRailwayRouteText, computeDistance } from '../lib/db-data';
 import { Stop } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -47,10 +47,23 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
     console.log('stops.length: ', stops.length);
 
     const findRailwayRoutes = (stops: Stop[]) => {
-        return findRailwayRoutesOfTrip(stops.map(s => parseInt(s.id)));
+        return findRailwayRoutesOfTrip(stops.map(s => parseInt(s.id)), true);
     }
 
-    const data: RailwayRouteOfTrip[] = findRailwayRoutes(params.stops);
+    // const data: RailwayRouteOfTrip[] = findRailwayRoutes(params.stops);
+    const emptyData: RailwayRouteOfTrip[] = []
+    const [data, setData] = useState(emptyData);
+    const [loading, setLoading] = useState(true);
+    const [distance, setDistance] = useState(0);
+
+    useEffect(() => {
+        if (data.length == 0) {
+            const routes = findRailwayRoutes(params.stops)
+            setLoading(false);
+            setDistance(computeDistance(routes));
+            setData(routes);
+        }
+    });
 
     const showRailwayRoute = async (railwayRouteNr: number) => {
         console.log('showRailwayRoute');
@@ -71,24 +84,50 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
         );
     };
 
+    const renderFooter = () => {
+        if (!loading) return null;
+
+        return (
+            <View
+                style={{
+                    paddingVertical: 20,
+                    borderTopWidth: 1,
+                    borderColor: "#CED0CE"
+                }}
+            >
+                <ActivityIndicator animating size="large" />
+            </View>
+        );
+    };
+
     interface ItemProps {
         item: RailwayRouteOfTrip
+    }
+
+    const normalizeString = (s: string) => {
+        const re = /  /gi;
+        return s.replace(re, '');
     }
 
     const Item = ({ item }: ItemProps) => {
         return (
             <View style={styles.subtitleView}>
-                <Text style={styles.itemStationText}>{`${item.from?.name} km: ${item.from?.railwayRoutePosition?.KM_L}`}</Text>
+                <Text style={styles.itemStationText}>{`${normalizeString(item.from?.name ?? '')} km: ${item.from?.railwayRoutePosition?.KM_L}`}</Text>
                 <TouchableOpacity style={styles.button} onPress={() => showRailwayRoute(item.railwayRouteNr ?? 0)}>
                     <Text style={styles.itemButtonText}>{`${t('RailwayRoutesOfTripScreen.RailwayRoute')} ${item.railwayRouteNr} ${findRailwayRouteText(item.railwayRouteNr ?? 0)} `}</Text>
                 </TouchableOpacity>
-                <Text style={styles.itemStationText}>{`${item.to?.name} km: ${item.to?.railwayRoutePosition?.KM_L}`}</Text>
+                <Text style={styles.itemStationText}>{`${normalizeString(item.to?.name ?? '')} km: ${item.to?.railwayRoutePosition?.KM_L}`}</Text>
             </View >
         );
     }
 
     return (
         <View style={styles.container}>
+            <View >
+                <Text style={styles.itemHeaderText}>
+                    km: {distance.toFixed(2)}
+                </Text>
+            </View>
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
@@ -99,6 +138,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
                 )}
                 keyExtractor={item => item.railwayRouteNr ? item.railwayRouteNr.toString() : ''}
                 ItemSeparatorComponent={renderSeparator}
+                ListFooterComponent={renderFooter}
                 onEndReachedThreshold={50}
             />
         </View>

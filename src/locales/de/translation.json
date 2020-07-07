@@ -4,7 +4,6 @@
         "Options": "Optionen",
         "From": "von",
         "To": "nach",
-        
         "ShortDate": "{{date, DD.MM.YY}}",
         "Time": "{{date, HH:mm}}",
         "SearchConnections": "Verbindungen suchen",

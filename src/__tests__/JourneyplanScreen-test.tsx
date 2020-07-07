@@ -88,9 +88,9 @@ it('renders JourneyplanScreen correctly', async () => {
         expect(tree).toMatchSnapshot();
         const instance = testRenderer.root;
         const texts = instance.findAllByType("Text");
-        expect(texts.length).toBe(4);
-        expect(texts[1].children).toEqual(['Hannover Hbf', ' ', 'nach', ' ', 'Bielefeld Hbf']);
-        expect(texts[2].children).toEqual(['Abfahrt 30.03.20 11:38', '']);
-        expect(texts[3].children).toEqual(['Ankunft 30.03.20 11:52', '']);
+        expect(texts.length).toBe(5);
+        expect(texts[2].children).toEqual(['Hannover Hbf', ' ', 'nach', ' ', 'Bielefeld Hbf']);
+        expect(texts[3].children).toEqual(['Abfahrt 30.03.20 11:38', '']);
+        expect(texts[4].children).toEqual(['Ankunft 30.03.20 11:52', '']);
     }
 });
