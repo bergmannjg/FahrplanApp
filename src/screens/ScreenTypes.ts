@@ -4,13 +4,15 @@ import { Location, Trip, Alternative, Stop } from 'hafas-client';
 export interface HomeScreenParams {
     profile?: string,
     tripDetails?: boolean,
-    date?: Date
+    date?: Date,
+    routeSearch?: string
 }
 
 export interface OptionScreenParams {
     navigationParams: {
         profile: string,
         tripDetails: boolean,
+        routeSearch: string
     }
 }
 
@@ -24,11 +26,13 @@ export interface DateTimeScreenParams {
 export interface JourneyplanScreenParams {
     journey: JourneyInfo,
     tripDetails: boolean,
+    routeSearch: string,
     client: Hafas
 }
 
 export interface RailwayRoutesOfTripScreenParams {
-    stops: Stop[]
+    stops: Stop[],
+    routeSearch: string
 }
 
 export interface RailwayRouteScreenParams {
@@ -41,6 +45,7 @@ export interface ConnectionsScreenParams {
     station2: string,
     via: string,
     tripDetails: boolean,
+    routeSearch: string,
     client: Hafas
 }
 

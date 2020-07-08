@@ -53,7 +53,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     const showRoute = async (isLongPress: boolean) => {
         if (data.length > 0) {
             const locations: Location[] = data.filter(s => s.GEOGR_LAENGE > 0 && s.GEOGR_LAENGE > 0).map(s => { return { type: 'location', longitude: s.GEOGR_LAENGE, latitude: s.GEOGR_BREITE } })
-            navigation.navigate('BRouter', { locations } as BRouterScreenParams);
+            navigation.navigate('BRouter', { isLongPress: false, locations });
         }
     }
 
@@ -96,7 +96,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
                     {STRNAME}
                 </Text>
                 <Text style={styles.itemLinkText}
-                    onPress={() => Linking.openURL('https://www.google.de/search?q=Bahnstrecke+'+railwayRouteNr)}>
+                    onPress={() => Linking.openURL('https://www.google.de/search?q=Bahnstrecke+' + railwayRouteNr)}>
                     Suche nach 'Bahnstrecke {railwayRouteNr}'
                 </Text>
             </View>

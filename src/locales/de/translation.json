@@ -18,7 +18,10 @@
         "onlyTransfers": "nur Umstiege",
         "Language": "Sprache",
         "German": "deutsch",
-        "English": "englisch"
+        "English": "englisch",
+        "Search": "Streckensuche",
+        "SingleStage": "einstufig",
+        "DoubleStage": "zweistufig"
     },
     "ConnectionsScreen": {
         "Title": "Verbindungen",

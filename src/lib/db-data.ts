@@ -1,22 +1,9 @@
-/*
-haltestellen, enthält Betriebsstelle(DS100) und UIC-Kennung der Haltestelle, Datei D_Bahnhof_2020_alle.csv
-source: https://data.deutschebahn.com/dataset/data-haltestellen
 
-betriebsstellen, enthält Betriebsstelle(DS100), Datei DBNetz-Betriebsstellenverzeichnis-Stand2018-04.csv
-source: https://data.deutschebahn.com/dataset/data-betriebsstellen
-
-strecken, enthält Streckennummer und Streckenname, Datei strecken.csv
-source: https://data.deutschebahn.com/dataset/geo-strecke
-
-betriebsstelleMitPositionAnStrecke, Zuordung Betriebsstelle(DS100) zu Streckennummer, Datei betriebsstellen_streckennummer.csv
-erweitert um fehlende Betriebsstellen an den Endpunkten der Strecken (findRailwayRouteDS100Endpoint, createMissingTripPositions)
-source: https://data.deutschebahn.com/dataset/geo-betriebsstelle
-*/
-export const haltestellen = require('./db-data/D_Bahnhof_2020_alle.json') as Array<Haltestelle>;
-export const betriebsstellen = require('./db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>;
-export const strecken = require('./db-data/strecken.json') as Array<Strecke>;
-export const betriebsstelleMitPositionAnStrecke = require('./db-data/betriebsstellen_streckennummer.json') as Array<BetriebsstelleMitPositionAnStrecke>;
-export const railwayRouteCache = require('./db-data/RailwayRouteCache.json') as Array<RailwayRouteCache>;
+export const haltestellen = require('../../db-data/D_Bahnhof_2020_alle.json') as Array<Haltestelle>;
+export const betriebsstellen = require('../../db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>;
+export const strecken = require('../../db-data/strecken.json') as Array<Strecke>;
+export const betriebsstelleMitPositionAnStrecke = require('../../db-data/betriebsstellen_streckennummer.json') as Array<BetriebsstelleMitPositionAnStrecke>;
+export const railwayRouteCache = require('../../db-data/RailwayRouteCache.json') as Array<RailwayRouteCache>;
 
 export interface Haltestelle {
     "EVA_NR": number;
@@ -101,23 +88,6 @@ export interface RailwayRouteCache {
     uicTo: number;
     railwayRoutes: Array<RailwayRouteOfTrip>;
 }
-
-// missing from dataset/geo-betriebsstelle, work in progress
-export const missing = JSON.parse(`[
-        {
-            "STRECKE_NR": 6107,
-            "RICHTUNG": 0,
-            "KM_I": 101270080,
-            "KM_L": "12,7 + 80",
-            "BEZEICHNUNG": "Berlin-Spandau",
-            "STELLE_ART": "Bf",
-            "KUERZEL": "BSPD",
-            "GK_R_DGN": 3784891.889,
-            "GK_H_DGN": 5830637.917,
-            "GEOGR_BREITE": 52.53424057,
-            "GEOGR_LAENGE": 13.19826406
-        }
-    ]`) as Array<BetriebsstelleMitPositionAnStrecke>;
 
 /*
  * examples for ds100 in haltestellen 'EBIL', 'EBIL,EBILP', 'KDN,KDN P', 'EHE P' 
@@ -445,34 +415,25 @@ function addDoubleCrossingToRoute(state: State, c: DoubleCrossing, hs_pos_von: S
     return state;
 }
 
-function findRailwayRoutesFromCrossings(state: State, hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions): State {
+function findRailwayRoutesFromCrossings(state: State, hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions, routeSearchType: 'single' | 'double'): State {
     const verbose = false;
-
     const singleCrossings = findRailwayRoutesWithSingleCrossing(hs_pos_von.streckenpositionen, hs_pos_bis.streckenpositionen)
         .sort((a, b) =>
             computeDistanceOfSingleCrossing(a, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref) - computeDistanceOfSingleCrossing(b, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref)
         );
-    console.log('singleCrossings: ', hs_pos_von.ds100_ref, '-', hs_pos_bis.ds100_ref, ', length: ', singleCrossings.length);
     if (verbose) {
-        singleCrossings.forEach(c => {
-            if (c.bsPosOfA.KUERZEL != c.bsPosOfB.KUERZEL) {
-                console.error('expected equal: ', c.bsPosOfA.KUERZEL, ', ', c.bsPosOfB.KUERZEL);
-            }
-            const distA = computeDistanceOfBetriebsstellen(c.streckennummerA, hs_pos_von.ds100_ref, c.ds100_crossing_point).toFixed(1);
-            const distB = computeDistanceOfBetriebsstellen(c.streckennummerB, c.ds100_crossing_point, hs_pos_bis.ds100_ref).toFixed(1);
-            console.log('von ', hs_pos_von.name, ', Strecke ', c.streckennummerA, 'km ', distA, ', über ', c.bsPosOfA.BEZEICHNUNG, ', Strecke ', c.streckennummerB, 'km ', distB, ', nach ', hs_pos_bis.name)
-        })
+        console.log('singleCrossings: ', hs_pos_von.ds100_ref, '-', hs_pos_bis.ds100_ref, ', length: ', singleCrossings.length);
+        dumpSingleCrossings(singleCrossings, hs_pos_von, hs_pos_bis);
     }
 
-    const doubleCrossings = findRailwayRoutesWithDoubleCrossing(hs_pos_von.ds100_ref, hs_pos_von.streckenpositionen, hs_pos_bis.ds100_ref, hs_pos_bis.streckenpositionen)
-        .sort((a, b) => computeDistanceOfDoubleCrossing(a, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref)
-            - computeDistanceOfDoubleCrossing(b, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref));
-    console.log('doubleCrossings: ', hs_pos_von.ds100_ref, '-', hs_pos_bis.ds100_ref, ', length: ', doubleCrossings.length);
+    const doubleCrossings = routeSearchType == "double"
+        ? findRailwayRoutesWithDoubleCrossing(hs_pos_von.ds100_ref, hs_pos_von.streckenpositionen, hs_pos_bis.ds100_ref, hs_pos_bis.streckenpositionen)
+            .sort((a, b) => computeDistanceOfDoubleCrossing(a, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref)
+                - computeDistanceOfDoubleCrossing(b, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref))
+        : [];
     if (verbose) {
-        doubleCrossings.forEach(c => {
-            console.log(hs_pos_von.ds100_ref, '-', c.streckennummerA, '-', c.ds100_crossing_point_A, '-', c.streckennummerAB, '-', c.ds100_crossing_point_B, '-', c.streckennummerB, '-', hs_pos_bis.ds100_ref, ',km:',
-                computeDistanceOfDoubleCrossing(c, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref));
-        })
+        console.log('doubleCrossings: ', hs_pos_von.ds100_ref, '-', hs_pos_bis.ds100_ref, ', length: ', doubleCrossings.length);
+        dumpDoubleCrossings(doubleCrossings, hs_pos_von, hs_pos_bis);
     }
 
     if (singleCrossings.length > 0 && doubleCrossings.length > 0) {
@@ -501,56 +462,22 @@ function findRailwayRoutesFromCrossings(state: State, hs_pos_von: StopWithRailwa
     return state;
 }
 
-function buildUndefRailwayRoute(state: State, hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions) {
-    if (state.actualRailwayRoute === undefined) {
-        state.actualRailwayRoute = { // empty entry
-            railwayRouteNr: undefined,
-            from: { ds100_ref: getFirstPartOfDS100(hs_pos_von.ds100_ref), name: hs_pos_von.name, railwayRoutePosition: undefined },
-            to: { ds100_ref: getFirstPartOfDS100(hs_pos_von.ds100_ref), name: hs_pos_von.name, railwayRoutePosition: undefined }
-        }
-    }
-    state.railwayRoutes.push(state.actualRailwayRoute);
-    if (hs_pos_bis.streckenpositionen.length > 0) {
-        // adhoc: keine gemeinsame strecke 'von' nach 'bis' gefunden, also 'bis' streckennummer nehmen
-        state.actualRailwayRoute = {
-            railwayRouteNr: hs_pos_bis.streckenpositionen[0].STRECKE_NR,
-            from: buildStopWithRailwayRoutePosition(hs_pos_bis.streckenpositionen[0].STRECKE_NR, hs_pos_von),
-            to: buildStopWithRailwayRoutePosition(hs_pos_bis.streckenpositionen[0].STRECKE_NR, hs_pos_bis)
-        };
-    } else {
-        state.actualRailwayRoute = undefined;
-    }
+function dumpDoubleCrossings(doubleCrossings: DoubleCrossing[], hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions) {
+    doubleCrossings.forEach(c => {
+        console.log(hs_pos_von.ds100_ref, '-', c.streckennummerA, '-', c.ds100_crossing_point_A, '-', c.streckennummerAB, '-', c.ds100_crossing_point_B, '-', c.streckennummerB, '-', hs_pos_bis.ds100_ref, ',km:',
+            computeDistanceOfDoubleCrossing(c, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref));
+    });
 }
 
-export function findRailwayRoutesOfTrip(uic_refs: number[], useCache: boolean) {
-    const hs_pos_list = findStopWithRailwayRoutePositions(removeDuplicates(uic_refs));
-    let state: State = { railwayRoutes: [], actualRailwayRoute: undefined, success: false }
-    for (var n = 0; n < hs_pos_list.length - 1; n++) {
-        const hs_pos_von = hs_pos_list[n];
-        const hs_pos_bis = hs_pos_list[n + 1];
-        state.success = false;
-        if (!state.success && useCache) {
-            state = findRailwayRoutesFromCache(state, hs_pos_von, hs_pos_bis);
+function dumpSingleCrossings(singleCrossings: SingleCrossing[], hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions) {
+    singleCrossings.forEach(c => {
+        if (c.bsPosOfA.KUERZEL != c.bsPosOfB.KUERZEL) {
+            console.error('expected equal: ', c.bsPosOfA.KUERZEL, ', ', c.bsPosOfB.KUERZEL);
         }
-        if (!state.success) {
-            state = findRailwayRoutesFromIntersections(state, hs_pos_von, hs_pos_bis);
-        }
-        if (!state.success) {
-            state = findRailwayRoutesFromCrossings(state, hs_pos_von, hs_pos_bis);
-        }
-        if (!state.success) {
-        }
-    }
-    if (state.actualRailwayRoute != undefined) {
-        if (state.actualRailwayRoute.railwayRouteNr && hs_pos_list.length > 0) {
-            const last = buildStopWithRailwayRoutePosition(state.actualRailwayRoute.railwayRouteNr, hs_pos_list[hs_pos_list.length - 1]);
-            if (last) {
-                state.actualRailwayRoute.to = last;
-            }
-        }
-        state.railwayRoutes.push(state.actualRailwayRoute);
-    }
-    return state.railwayRoutes;
+        const distA = computeDistanceOfBetriebsstellen(c.streckennummerA, hs_pos_von.ds100_ref, c.ds100_crossing_point).toFixed(1);
+        const distB = computeDistanceOfBetriebsstellen(c.streckennummerB, c.ds100_crossing_point, hs_pos_bis.ds100_ref).toFixed(1);
+        console.log('von ', hs_pos_von.name, ', Strecke ', c.streckennummerA, 'km ', distA, ', über ', c.bsPosOfA.BEZEICHNUNG, ', Strecke ', c.streckennummerB, 'km ', distB, ', nach ', hs_pos_bis.name);
+    });
 }
 
 function removeRest(name: string, pattern: string) {
@@ -570,7 +497,7 @@ function splitName(name: string) {
     }
 }
 
-export function findBetriebsstelleDS100(name: string) {
+function findBetriebsstelleDS100(name: string) {
     const split = splitName(name);
     if (split.length == 2) {
         const from = betriebsstellen.find(b => b.Name === split[0] || b.Kurzname === split[0]);
@@ -595,21 +522,50 @@ export function findRailwayRouteDS100Endpoint() {
     return rrDS100Endpoints;
 }
 
-export function createMissingTripPositions(betriebsstelleMitPosition: Array<BetriebsstelleMitPositionAnStrecke>, rrEndpoints: RailwayRouteDS100Endpoint[]) {
-    const rrValid = rrEndpoints.filter(r => r.from && r.to);
-    const missing: BetriebsstelleMitPositionAnStrecke[] = [];
-    rrValid.forEach(rr => {
-        const foundFrom = betriebsstelleMitPosition.find(bs => bs.KUERZEL === rr.from?.Abk && bs.STRECKE_NR === rr.strecke.STRNR);
-        if (!foundFrom && rr.from) {
-            const found = betriebsstelleMitPosition.find(bs => bs.KUERZEL === rr.from?.Abk);
-            missing.push({ STRECKE_NR: rr.strecke.STRNR, KM_L: rr.strecke.KMANF_V, KM_I: rr.strecke.KMANF_E, BEZEICHNUNG: rr.from.Name, KUERZEL: rr.from.Abk, GEOGR_BREITE: found ? found.GEOGR_BREITE : 0, GEOGR_LAENGE: found ? found.GEOGR_LAENGE : 0, GK_H_DGN: 0, GK_R_DGN: 0, RICHTUNG: 0, STELLE_ART: '' });
+/**
+ * find railway route numbers for the station codes of a trip, 
+ * the solution is not unique and there may be others with smaller distances.
+ * 
+ * Depth-first search in the set of relations Betriebsstelle-RailwayRoute with the following steps:
+ * 1) lookup cache (findRailwayRoutesFromCache)
+ * 2) check if the stations have a common railway route (findRailwayRoutesFromIntersections)
+ * 3) check if the railway routes of the stations have a common 'Betriebsstelle' (singleCrossing)
+ *    or a common railway route (doubleCrossing) and pick the crossing with the smallest distance
+ * 
+ * @param uic_refs UIC station codes of trip
+ * @param useCache use railwayRoute cache
+ * @param routeSearchType search single or double crossings
+ */
+export function findRailwayRoutesOfTrip(uic_refs: number[], useCache: boolean, routeSearchType?: 'single' | 'double') {
+    if (!routeSearchType) {
+        routeSearchType = 'double';
+    }
+    const hs_pos_list = findStopWithRailwayRoutePositions(removeDuplicates(uic_refs));
+    let state: State = { railwayRoutes: [], actualRailwayRoute: undefined, success: false }
+    for (var n = 0; n < hs_pos_list.length - 1; n++) {
+        const hs_pos_from = hs_pos_list[n];
+        const hs_pos_to = hs_pos_list[n + 1];
+        state.success = false;
+        if (!state.success && useCache) {
+            state = findRailwayRoutesFromCache(state, hs_pos_from, hs_pos_to);
         }
-        const foundTo = betriebsstelleMitPosition.find(bs => bs.KUERZEL === rr.to?.Abk && bs.STRECKE_NR === rr.strecke.STRNR);
-        if (!foundTo && rr.to) {
-            const found = betriebsstelleMitPosition.find(bs => bs.KUERZEL === rr.to?.Abk);
-            missing.push({ STRECKE_NR: rr.strecke.STRNR, KM_L: rr.strecke.KMEND_V, KM_I: rr.strecke.KMEND_E, BEZEICHNUNG: rr.to.Name, KUERZEL: rr.to.Abk, GEOGR_BREITE: found ? found.GEOGR_BREITE : 0, GEOGR_LAENGE: found ? found.GEOGR_LAENGE : 0, GK_H_DGN: 0, GK_R_DGN: 0, RICHTUNG: 0, STELLE_ART: '' });
+        if (!state.success) {
+            state = findRailwayRoutesFromIntersections(state, hs_pos_from, hs_pos_to);
         }
-    })
-
-    return missing;
+        if (!state.success) {
+            state = findRailwayRoutesFromCrossings(state, hs_pos_from, hs_pos_to, routeSearchType);
+        }
+        if (!state.success) {
+        }
+    }
+    if (state.actualRailwayRoute != undefined) {
+        if (state.actualRailwayRoute.railwayRouteNr && hs_pos_list.length > 0) {
+            const last = buildStopWithRailwayRoutePosition(state.actualRailwayRoute.railwayRouteNr, hs_pos_list[hs_pos_list.length - 1]);
+            if (last) {
+                state.actualRailwayRoute.to = last;
+            }
+        }
+        state.railwayRoutes.push(state.actualRailwayRoute);
+    }
+    return state.railwayRoutes;
 }

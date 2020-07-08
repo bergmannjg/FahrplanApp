@@ -43,11 +43,12 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
 
     const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
     const stops: Stop[] = params.stops;
+    const routeSearch = params.routeSearch;
 
     console.log('stops.length: ', stops.length);
 
     const findRailwayRoutes = (stops: Stop[]) => {
-        return findRailwayRoutesOfTrip(stops.map(s => parseInt(s.id)), true);
+        return findRailwayRoutesOfTrip(stops.map(s => parseInt(s.id)), true, routeSearch === 'single' ? 'single' : 'double');
     }
 
     // const data: RailwayRouteOfTrip[] = findRailwayRoutes(params.stops);
@@ -57,7 +58,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
     const [distance, setDistance] = useState(0);
 
     useEffect(() => {
-        if (data.length == 0) {
+        if (loading && data.length == 0) {
             const routes = findRailwayRoutes(params.stops)
             setLoading(false);
             setDistance(computeDistance(routes));

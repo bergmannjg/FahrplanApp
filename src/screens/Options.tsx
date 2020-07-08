@@ -27,7 +27,7 @@ export default function OptionsScreen({ route, navigation }: Props) {
     const radioProps = [
         { label: 'Deutsche Bahn (DB)', value: 'db' },
         { label: 'Österreichische Bundesbahnen (ÖBB)', value: 'oebb' },
-        { label: 'Verbund Berlin-Brandenburg (BVG)', value: 'bvg' },
+        // { label: 'Verbund Berlin-Brandenburg (BVG)', value: 'bvg' },
         { label: 'Luxembourg National Railway Company (CFL)', value: 'cfl' }
     ];
 
@@ -41,19 +41,25 @@ export default function OptionsScreen({ route, navigation }: Props) {
         { label: t('OptionsScreen.English'), value: 'en' },
     ];
 
+    const radioRouteSearchProps = [
+        { label: t('OptionsScreen.SingleStage'), value: 'single' },
+        { label: t('OptionsScreen.DoubleStage'), value: 'double' },
+    ];
+
     const { params } = route;
 
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
+    const [routeSearch, setRouteSearch] = useState(params.navigationParams.routeSearch);
 
     const initialProfile = radioProps.findIndex(p => p.value === profile);
     const initialTripDetails = radioTripDetailsProps.findIndex(p => p.value === tripDetails);
-
     const initialLanguage = radioLanguageProps.findIndex(p => p.value === i18n.language);
+    const initialRouteSearch = radioRouteSearchProps.findIndex(p => p.value === routeSearch);
 
     const goback = () => {
         console.log('goback OptionsScreen', profile, tripDetails);
-        navigation.navigate('Home', { profile, tripDetails });
+        navigation.navigate('Home', { profile, tripDetails, routeSearch });
     }
 
     const showLicences = () => {
@@ -89,6 +95,14 @@ export default function OptionsScreen({ route, navigation }: Props) {
                     }}
                 />
             </View>
+            <Text style={styles.itemText1}>{t('OptionsScreen.Search')}</Text>
+            <View style={styles.radio}>
+                <RadioForm
+                    radio_props={radioRouteSearchProps}
+                    initial={initialRouteSearch}
+                    onPress={(value: any) => { setRouteSearch(value); }}
+                />
+            </View>
             <View style={styles.container3}>
                 <TouchableOpacity style={styles.button} onPress={() => goback()}>
                     <Text style={styles.itemText}>
@@ -114,6 +128,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     radio: {
+        fontSize: 10,
         paddingLeft: 22,
         paddingTop: 10,
     },
@@ -123,7 +138,7 @@ const styles = StyleSheet.create({
         left: 0,
         position: 'absolute',
         right: 0,
-        top: 450,
+        top: 485,
     },
     container4: {
         backgroundColor: '#F5FCFF',
@@ -131,14 +146,14 @@ const styles = StyleSheet.create({
         left: 0,
         position: 'absolute',
         right: 0,
-        top: 530,
+        top: 540,
     },
     itemText: {
         fontSize: 18,
         margin: 2
     },
     itemText1: {
-        fontSize: 18,
+        fontSize: 16,
         margin: 2,
         paddingLeft: 22
     },

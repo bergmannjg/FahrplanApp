@@ -46,6 +46,7 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
     const legs = journeyInfo.legs;
     const client: Hafas = params.client;
     const tripDetails = params.tripDetails;
+    const routeSearch = params.routeSearch;
 
     console.log('legs.length: ', legs.length);
     console.log('legs: ', legs);
@@ -54,7 +55,7 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
         console.log('showRailwayRoutes');
         const stops = await client.stopssOfJourney(journeyInfo, ['train', 'watercraft']);
         if (stops.length > 0) {
-            navigation.navigate('RailwayRoutesOfTrip', { stops });
+            navigation.navigate('RailwayRoutesOfTrip', { stops, routeSearch });
         }
     }
 
@@ -63,21 +64,21 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
 
         if (tripDetails) {
             const stops = await client.stopssOfJourney(journeyInfo, ['train', 'watercraft']);
-            const locations = stops.filter(stop => stop.location).map(stop => stop.location);
+            const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
             console.log('locations: ', locations.length);
-            if (locations.length > 0) {
-                navigation.navigate('BRouter', { isLongPress, locations } as BRouterScreenParams);
+            if (locations && locations.length > 0) {
+                navigation.navigate('BRouter', { isLongPress, locations });
             }
         }
         else {
             if (legs.length > 0) {
-                const locations = legs.filter(leg => leg.origin.location).map(leg => leg.origin.location);
+                const locations = legs.filter(leg => leg.origin.location).map(leg => leg.origin.location) as Location[];
                 const location = legs[legs.length - 1].destination.location;
                 if (location) {
                     locations.push(location);
                 }
-                if (locations.length > 0) {
-                    navigation.navigate('BRouter', { locations } as BRouterScreenParams);
+                if (locations && locations.length > 0) {
+                    navigation.navigate('BRouter', { isLongPress: false, locations });
                 }
             } else {
                 console.log('Bahnhofslisten leer');

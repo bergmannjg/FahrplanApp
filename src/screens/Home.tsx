@@ -44,6 +44,7 @@ export default function HomeScreen({ route, navigation }: Props) {
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date());
+  const [routeSearch, setRouteSearch] = useState('single');
 
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
@@ -54,6 +55,12 @@ export default function HomeScreen({ route, navigation }: Props) {
   // route.params from OptionsScreen
   if (route.params?.tripDetails !== undefined && route.params?.tripDetails !== tripDetails) {
     setTripDetails(route.params.tripDetails);
+    route.params.tripDetails = undefined;
+  }
+
+  // route.params from OptionsScreen
+  if (route.params?.routeSearch !== undefined && route.params?.routeSearch !== routeSearch) {
+    setRouteSearch(route.params.routeSearch);
     route.params.tripDetails = undefined;
   }
 
@@ -94,7 +101,7 @@ export default function HomeScreen({ route, navigation }: Props) {
 
   const suchen = () => {
     if (station1 !== '' && station2 !== '') {
-      navigation.navigate('Connections', { client, station1, station2, via: stationVia, date, tripDetails });
+      navigation.navigate('Connections', { client, station1, station2, via: stationVia, date, tripDetails, routeSearch });
     }
   }
 
@@ -121,7 +128,7 @@ export default function HomeScreen({ route, navigation }: Props) {
   }
 
   const navigateToOptionsScreen = () => {
-    navigation.navigate('Options', { navigationParams: { profile, tripDetails } });
+    navigation.navigate('Options', { navigationParams: { profile, tripDetails, routeSearch } });
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {

@@ -55,6 +55,7 @@ export default function ConnectionsScreen({ route, navigation }: Props) {
   const queryVia = params.via;
   const client: Hafas = params.client;
   const tripDetails = params.tripDetails;
+  const routeSearch = params.routeSearch;
 
   const makeRemoteRequest = () => {
     console.log('makeRemoteRequest, loading:', loading);
@@ -100,7 +101,7 @@ export default function ConnectionsScreen({ route, navigation }: Props) {
 
   const goToView = (item: JourneyInfo) => {
     console.log('Navigation router run to Journeyplan');
-    navigation.navigate('Journeyplan', { journey: item, client, tripDetails } as JourneyplanScreenParams)
+    navigation.navigate('Journeyplan', { journey: item, client, tripDetails,routeSearch })
   };
 
   const showIncr = (hours: number) => {

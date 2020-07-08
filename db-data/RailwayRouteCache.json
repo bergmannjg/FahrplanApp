@@ -1734,5 +1734,387 @@
                 }
             }
         ]
+    },
+    {
+        "uicFrom": 8000266,
+        "uicTo": 8000207,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2550,
+                "from": {
+                    "ds100_ref": "KW",
+                    "name": "Wuppertal Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 111530070,
+                        "KM_L": "115,3 + 70",
+                        "BEZEICHNUNG": "Wuppertal Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KW",
+                        "GK_R_DGN": 3370931.117,
+                        "GK_H_DGN": 5681593.519,
+                        "GEOGR_BREITE": 51.25457382,
+                        "GEOGR_LAENGE": 7.15004915
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KWV",
+                    "name": "Wuppertal-Vohwinkel",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 110910044,
+                        "KM_L": "109,1 + 44",
+                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KWV",
+                        "GK_R_DGN": 3365409.59,
+                        "GK_H_DGN": 5679438.005,
+                        "GEOGR_BREITE": 51.23393353,
+                        "GEOGR_LAENGE": 7.07181263
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2732,
+                "from": {
+                    "ds100_ref": "KWV",
+                    "name": "Wuppertal-Vohwinkel",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 110910044,
+                        "KM_L": "109,1 + 44",
+                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KWV",
+                        "GK_R_DGN": 3365409.59,
+                        "GK_H_DGN": 5679438.005,
+                        "GEOGR_BREITE": 51.23393353,
+                        "GEOGR_LAENGE": 7.07181263
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KGUI",
+                    "name": "Haan-Gruiten",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000019,
+                        "KM_L": "0,0 + 19",
+                        "BEZEICHNUNG": "Haan-Gruiten",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KGUI",
+                        "GK_R_DGN": 3361116.872,
+                        "GK_H_DGN": 5677389.599,
+                        "GEOGR_BREITE": 51.21450394,
+                        "GEOGR_LAENGE": 7.01118106
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2730,
+                "from": {
+                    "ds100_ref": "KGUI",
+                    "name": "Haan-Gruiten",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000019,
+                        "KM_L": "0,0 + 19",
+                        "BEZEICHNUNG": "Haan-Gruiten",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KGUI",
+                        "GK_R_DGN": 3361116.872,
+                        "GK_H_DGN": 5677389.599,
+                        "GEOGR_BREITE": 51.21450394,
+                        "GEOGR_LAENGE": 7.01118106
+                    }
+                },
+                "to": {
+                    "ds100_ref": "YKKNR",
+                    "name": "Köln Neurather Ring Strw 2652/2659/2730",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 102660000,
+                        "KM_L": "26,6 + 0",
+                        "BEZEICHNUNG": "Köln Neurather Ring Strw 2652/2659/2730",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YKKNR",
+                        "GK_R_DGN": 3360905.09,
+                        "GK_H_DGN": 5651640.89,
+                        "GEOGR_BREITE": 50.98314197,
+                        "GEOGR_LAENGE": 7.01807029
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2652,
+                "from": {
+                    "ds100_ref": "YKKNR",
+                    "name": "Köln Neurather Ring Strw 2652/2659/2730",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 102660000,
+                        "KM_L": "26,6 + 0",
+                        "BEZEICHNUNG": "Köln Neurather Ring Strw 2652/2659/2730",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YKKNR",
+                        "GK_R_DGN": 3360905.09,
+                        "GK_H_DGN": 5651640.89,
+                        "GEOGR_BREITE": 50.98314197,
+                        "GEOGR_LAENGE": 7.01807029
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KKM",
+                    "name": "Köln-Mülheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2670,
+                        "RICHTUNG": 0,
+                        "KM_I": 100490056,
+                        "KM_L": "4,9 + 56",
+                        "BEZEICHNUNG": "Köln-Mülheim",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KKM",
+                        "GK_R_DGN": 3360497.896,
+                        "GK_H_DGN": 5648796.833,
+                        "GEOGR_BREITE": 50.95749367,
+                        "GEOGR_LAENGE": 7.01336585
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2670,
+                "from": {
+                    "ds100_ref": "KKM",
+                    "name": "Köln-Mülheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2670,
+                        "RICHTUNG": 0,
+                        "KM_I": 100490056,
+                        "KM_L": "4,9 + 56",
+                        "BEZEICHNUNG": "Köln-Mülheim",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KKM",
+                        "GK_R_DGN": 3360497.896,
+                        "GK_H_DGN": 5648796.833,
+                        "GEOGR_BREITE": 50.95749367,
+                        "GEOGR_LAENGE": 7.01336585
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KK",
+                    "name": "Köln Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2670,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Köln Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KK",
+                        "GK_R_DGN": 3356680.047,
+                        "GK_H_DGN": 5647290.025,
+                        "GEOGR_BREITE": 50.94302089,
+                        "GEOGR_LAENGE": 6.95965523
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000207,
+        "uicTo": 8000266,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2670,
+                "from": {
+                    "ds100_ref": "KK",
+                    "name": "Köln Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2670,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Köln Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KK",
+                        "GK_R_DGN": 3356680.047,
+                        "GK_H_DGN": 5647290.025,
+                        "GEOGR_BREITE": 50.94302089,
+                        "GEOGR_LAENGE": 6.95965523
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KKM",
+                    "name": "Köln-Mülheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2670,
+                        "RICHTUNG": 0,
+                        "KM_I": 100490056,
+                        "KM_L": "4,9 + 56",
+                        "BEZEICHNUNG": "Köln-Mülheim",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KKM",
+                        "GK_R_DGN": 3360497.896,
+                        "GK_H_DGN": 5648796.833,
+                        "GEOGR_BREITE": 50.95749367,
+                        "GEOGR_LAENGE": 7.01336585
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2652,
+                "from": {
+                    "ds100_ref": "KKM",
+                    "name": "Köln-Mülheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2670,
+                        "RICHTUNG": 0,
+                        "KM_I": 100490056,
+                        "KM_L": "4,9 + 56",
+                        "BEZEICHNUNG": "Köln-Mülheim",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KKM",
+                        "GK_R_DGN": 3360497.896,
+                        "GK_H_DGN": 5648796.833,
+                        "GEOGR_BREITE": 50.95749367,
+                        "GEOGR_LAENGE": 7.01336585
+                    }
+                },
+                "to": {
+                    "ds100_ref": "YKKNR",
+                    "name": "Köln Neurather Ring Strw 2652/2659/2730",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 102660000,
+                        "KM_L": "26,6 + 0",
+                        "BEZEICHNUNG": "Köln Neurather Ring Strw 2652/2659/2730",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YKKNR",
+                        "GK_R_DGN": 3360905.09,
+                        "GK_H_DGN": 5651640.89,
+                        "GEOGR_BREITE": 50.98314197,
+                        "GEOGR_LAENGE": 7.01807029
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2730,
+                "from": {
+                    "ds100_ref": "YKKNR",
+                    "name": "Köln Neurather Ring Strw 2652/2659/2730",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 102660000,
+                        "KM_L": "26,6 + 0",
+                        "BEZEICHNUNG": "Köln Neurather Ring Strw 2652/2659/2730",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YKKNR",
+                        "GK_R_DGN": 3360905.09,
+                        "GK_H_DGN": 5651640.89,
+                        "GEOGR_BREITE": 50.98314197,
+                        "GEOGR_LAENGE": 7.01807029
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KGUI",
+                    "name": "Haan-Gruiten",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000019,
+                        "KM_L": "0,0 + 19",
+                        "BEZEICHNUNG": "Haan-Gruiten",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KGUI",
+                        "GK_R_DGN": 3361116.872,
+                        "GK_H_DGN": 5677389.599,
+                        "GEOGR_BREITE": 51.21450394,
+                        "GEOGR_LAENGE": 7.01118106
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2732,
+                "from": {
+                    "ds100_ref": "KGUI",
+                    "name": "Haan-Gruiten",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000019,
+                        "KM_L": "0,0 + 19",
+                        "BEZEICHNUNG": "Haan-Gruiten",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KGUI",
+                        "GK_R_DGN": 3361116.872,
+                        "GK_H_DGN": 5677389.599,
+                        "GEOGR_BREITE": 51.21450394,
+                        "GEOGR_LAENGE": 7.01118106
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KWV",
+                    "name": "Wuppertal-Vohwinkel",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 110910044,
+                        "KM_L": "109,1 + 44",
+                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KWV",
+                        "GK_R_DGN": 3365409.59,
+                        "GK_H_DGN": 5679438.005,
+                        "GEOGR_BREITE": 51.23393353,
+                        "GEOGR_LAENGE": 7.07181263
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2550,
+                "from": {
+                    "ds100_ref": "KWV",
+                    "name": "Wuppertal-Vohwinkel",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 110910044,
+                        "KM_L": "109,1 + 44",
+                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KWV",
+                        "GK_R_DGN": 3365409.59,
+                        "GK_H_DGN": 5679438.005,
+                        "GEOGR_BREITE": 51.23393353,
+                        "GEOGR_LAENGE": 7.07181263
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KW",
+                    "name": "Wuppertal Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 111530070,
+                        "KM_L": "115,3 + 70",
+                        "BEZEICHNUNG": "Wuppertal Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KW",
+                        "GK_R_DGN": 3370931.117,
+                        "GK_H_DGN": 5681593.519,
+                        "GEOGR_BREITE": 51.25457382,
+                        "GEOGR_LAENGE": 7.15004915
+                    }
+                }
+            }
+        ]
     }
 ]
