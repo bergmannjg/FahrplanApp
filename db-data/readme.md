@@ -30,9 +30,9 @@ source: https://data.deutschebahn.com/dataset/geo-strecke
 
 ### Geoinformation of Betriebsstellen and Railway route endpoints
 
-* extends file betriebsstellen_open_data.json with missing information of railway route endpoints
-* file: betriebsstellen_streckennummer.json
-* generrated by script [extend-geo-information.ts](../scripts/extend-geo-information.ts)
+* extend file betriebsstellen_open_data.json with missing information of railway route endpoints and extract railway routes with passenger trains
+* file: betriebsstellen_streckennummer_pz.json
+* generrated by scripts [extend-geo-information.ts](../scripts/extend-geo-information.ts) and [extract-pz-strecken.ts](../scripts/extract-pz-strecken.ts)
 
 ### Railway routes cache
 

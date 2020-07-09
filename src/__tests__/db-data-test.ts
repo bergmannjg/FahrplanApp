@@ -1,9 +1,20 @@
 import { findRailwayRoutesOfTrip } from '../lib/db-data'
 
+test('test ICE 1581 Hamburg München', () => {
+    ICE1581HamburgMünchen(false);
+});
+
+test('test Hannover Wolfsburg', () => {
+    const stops = [8000152, 8006552];
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    expect(railwayRoutes.length).toBe(2);
+    expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
+    expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
+});
+
 test('test ICE 651 Köln Berlin with cache', () => {
     ICE651KölnBerlin(true);
 });
-
 
 test('test ICE 651 Köln Berlin', () => {
     ICE651KölnBerlin(false);
@@ -23,7 +34,7 @@ function FrankfurtKöln(useCache: boolean) {
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(3520);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2690);
-    expect(railwayRoutes[2].railwayRouteNr).toBe(2620);
+    expect(railwayRoutes[2].railwayRouteNr).toBe(2630);
 };
 
 test('test Frankfurt Köln', () => {
@@ -45,14 +56,6 @@ test('test Nürnberg Ingolstadt', () => {
     expect(railwayRoutes[0].railwayRouteNr).toBe(5850);
     expect(railwayRoutes[1].railwayRouteNr).toBe(5934);
     expect(railwayRoutes[2].railwayRouteNr).toBe(5851);
-});
-
-test('test Hannover Wolfsburg', () => {
-    const stops = [8000152, 8006552];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
-    expect(railwayRoutes.length).toBe(2);
-    expect(railwayRoutes[0].railwayRouteNr).toBe(1734);
-    expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
 });
 
 test('test Frankurt Mannheim', () => {
@@ -77,7 +80,7 @@ test('test Hannover Berlin', () => {
     const stops = [8000152, 8098160];
     const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
     expect(railwayRoutes.length).toBe(2);
-    expect(railwayRoutes[0].railwayRouteNr).toBe(1734);
+    expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
 });
 
@@ -112,26 +115,21 @@ test('test ICE 73 Hamburg Freiburg', () => {
 function ICE1581HamburgMünchen(useCache: boolean) {
     const stops = [8002549, 8000147, 8000152, 8000128, 8003200, 8000115, 8000260, 8000284, 8000183, 8000261];
     const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache);
-    expect(railwayRoutes.length).toBe(11);
+    expect(railwayRoutes.length).toBe(10);
     expect(railwayRoutes[0].railwayRouteNr).toBe(2200);
-    expect(railwayRoutes[1].railwayRouteNr).toBe(1255);
-    expect(railwayRoutes[2].railwayRouteNr).toBe(1720);
-    expect(railwayRoutes[3].railwayRouteNr).toBe(1710);
-    expect(railwayRoutes[4].railwayRouteNr).toBe(1733);
-    expect(railwayRoutes[5].railwayRouteNr).toBe(5910);
-    expect(railwayRoutes[6].railwayRouteNr).toBe(5907);
-    expect(railwayRoutes[7].railwayRouteNr).toBe(5850);
-    expect(railwayRoutes[8].railwayRouteNr).toBe(5934);
-    expect(railwayRoutes[9].railwayRouteNr).toBe(5851);
-    expect(railwayRoutes[10].railwayRouteNr).toBe(5501);
+    expect(railwayRoutes[1].railwayRouteNr).toBe(1720);
+    expect(railwayRoutes[2].railwayRouteNr).toBe(1710);
+    expect(railwayRoutes[3].railwayRouteNr).toBe(1733);
+    expect(railwayRoutes[4].railwayRouteNr).toBe(5910);
+    expect(railwayRoutes[5].railwayRouteNr).toBe(5907);
+    expect(railwayRoutes[6].railwayRouteNr).toBe(5850);
+    expect(railwayRoutes[7].railwayRouteNr).toBe(5934);
+    expect(railwayRoutes[8].railwayRouteNr).toBe(5851);
+    expect(railwayRoutes[9].railwayRouteNr).toBe(5501);
 };
 
 test('test ICE 1581 Hamburg München with cache', () => {
     ICE1581HamburgMünchen(true);
-});
-
-test('test ICE 1581 Hamburg München', () => {
-    ICE1581HamburgMünchen(false);
 });
 
 function ICE651KölnBerlin(useCache: boolean) {
@@ -141,12 +139,12 @@ function ICE651KölnBerlin(useCache: boolean) {
     expect(railwayRoutes[0].railwayRouteNr).toBe(2670);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2652);
     expect(railwayRoutes[2].railwayRouteNr).toBe(2730);
-    expect(railwayRoutes[3].railwayRouteNr).toBe(2732);
+    expect(railwayRoutes[3].railwayRouteNr).toBe(2731);
     expect(railwayRoutes[4].railwayRouteNr).toBe(2550);
     expect(railwayRoutes[5].railwayRouteNr).toBe(2852);
     expect(railwayRoutes[6].railwayRouteNr).toBe(2932);
     expect(railwayRoutes[7].railwayRouteNr).toBe(1700);
-    expect(railwayRoutes[8].railwayRouteNr).toBe(1734);
+    expect(railwayRoutes[8].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[9].railwayRouteNr).toBe(6107);
 };
 

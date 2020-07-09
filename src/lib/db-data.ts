@@ -1,8 +1,8 @@
 
 export const haltestellen = require('../../db-data/D_Bahnhof_2020_alle.json') as Array<Haltestelle>;
 export const betriebsstellen = require('../../db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>;
-export const strecken = require('../../db-data/strecken.json') as Array<Strecke>;
-export const betriebsstelleMitPositionAnStrecke = require('../../db-data/betriebsstellen_streckennummer.json') as Array<BetriebsstelleMitPositionAnStrecke>;
+export const strecken = require('../../db-data/strecken_pz.json') as Array<Strecke>;
+export const betriebsstelleMitPositionAnStrecke = require('../../db-data/betriebsstellen_streckennummer_pz.json') as Array<BetriebsstelleMitPositionAnStrecke>;
 export const railwayRouteCache = require('../../db-data/RailwayRouteCache.json') as Array<RailwayRouteCache>;
 
 export interface Haltestelle {
@@ -42,6 +42,25 @@ export interface Strecke {
     "KMEND_V": string;
     "STRNAME": string;
     "STRKURZN": string;
+}
+
+export interface Streckenutzung {
+    "mifcode": string;
+    "strecke_nr": number;
+    "richtung": number;
+    "laenge": number;
+    "von_km_i": number;
+    "bis_km_i": number;
+    "von_km_l": string;
+    "bis_km_l": string;
+    "elektrifizierung": string;
+    "bahnnutzung": string;
+    "geschwindigkeit": string;
+    "strecke_kurzn": string;
+    "gleisanzahl": string;
+    "bahnart": string;
+    "kmspru_typ_anf": string;
+    "kmspru_typ_end": string;
 }
 
 export interface BetriebsstelleMitPositionAnStrecke {
@@ -93,7 +112,8 @@ export interface RailwayRouteCache {
  * examples for ds100 in haltestellen 'EBIL', 'EBIL,EBILP', 'KDN,KDN P', 'EHE P' 
  */
 export function matchWithDS100(s: string, ds100: string) {
-    if (ds100.indexOf(',') < 0 && ds100.indexOf(' ') < 0) return s === ds100;
+    if (s === ds100) return true;
+    if (ds100.indexOf(',') < 0 && ds100.indexOf(' ') < 0) return false;
     const splitCm = ds100.split(',');
     if (splitCm.length >= 2) {
         if (s === splitCm[0]) return true;
@@ -120,7 +140,7 @@ export function findStopWithRailwayRoutePositions(uic_refs: number[]) {
         const uic_ref = uic_refs[n];
         const hs = haltestellen.filter(h => h.EVA_NR === uic_ref);
         if (hs.length > 0) {
-            console.log('uic_ref: ', uic_ref, ', Ds100:', hs[0].DS100)
+            console.log('uic_ref:', uic_ref, ', Ds100:', hs[0].DS100, ', name:', hs[0].NAME)
             const strecken = betriebsstelleMitPositionAnStrecke.filter(b => matchWithDS100(b.KUERZEL, hs[0].DS100));
             if (strecken.length > 0) {
                 // strecken.forEach(s => console.log('Ds100: ', s.KUERZEL, ', strecke: ', s.STRECKE_NR));
@@ -444,7 +464,7 @@ function findRailwayRoutesFromCrossings(state: State, hs_pos_von: StopWithRailwa
             console.log('found singleCrossing: ', hs_pos_von.ds100_ref, singleCrossings[0].streckennummerA, singleCrossings[0].ds100_crossing_point, singleCrossings[0].streckennummerB, hs_pos_bis.ds100_ref)
             state = addSingleCrossingToRoute(state, singleCrossings[0], hs_pos_von, hs_pos_bis);
         } else {
-            console.log('found doubleCrossing: ', hs_pos_von.ds100_ref, doubleCrossings[0].streckennummerA, doubleCrossings[0].streckennummerAB, doubleCrossings[0].streckennummerB, hs_pos_bis.ds100_ref)
+            logFounddoubleCrossing(hs_pos_von, doubleCrossings[0], hs_pos_bis);
             state = addDoubleCrossingToRoute(state, doubleCrossings[0], hs_pos_von, hs_pos_bis);
         }
     }
@@ -455,11 +475,16 @@ function findRailwayRoutesFromCrossings(state: State, hs_pos_von: StopWithRailwa
     }
     else if (doubleCrossings.length > 0) {
         state.success = true;
-        console.log('found doubleCrossing: ', hs_pos_von.ds100_ref, doubleCrossings[0].streckennummerA, doubleCrossings[0].streckennummerAB, doubleCrossings[0].streckennummerB, hs_pos_bis.ds100_ref)
+        logFounddoubleCrossing(hs_pos_von, doubleCrossings[0], hs_pos_bis);
         state = addDoubleCrossingToRoute(state, doubleCrossings[0], hs_pos_von, hs_pos_bis);
     }
 
     return state;
+}
+
+function logFounddoubleCrossing(hs_pos_von: StopWithRailwayRoutePositions, dc: DoubleCrossing, hs_pos_bis: StopWithRailwayRoutePositions) {
+    console.log('found doubleCrossing: ', hs_pos_von.ds100_ref, dc.streckennummerA, dc.ds100_crossing_point_A, dc.streckennummerAB, dc.ds100_crossing_point_B, dc.streckennummerB, hs_pos_bis.ds100_ref);
+    console.log('add this line to cache script: [', hs_pos_von.uic_ref, ',', hs_pos_bis.uic_ref, '], //', hs_pos_von.name, hs_pos_bis.name);
 }
 
 function dumpDoubleCrossings(doubleCrossings: DoubleCrossing[], hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions) {
@@ -556,6 +581,7 @@ export function findRailwayRoutesOfTrip(uic_refs: number[], useCache: boolean, r
             state = findRailwayRoutesFromCrossings(state, hs_pos_from, hs_pos_to, routeSearchType);
         }
         if (!state.success) {
+            console.log('found nothing: ', hs_pos_from.ds100_ref, hs_pos_to.ds100_ref)
         }
     }
     if (state.actualRailwayRoute != undefined) {

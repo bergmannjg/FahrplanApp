@@ -38,7 +38,7 @@ type Props = {
 };
 
 export default function RailwayRouteScreen({ route, navigation }: Props) {
-    console.log('constructor JourneyplanScreen');
+    console.log('constructor RailwayRouteScreen');
 
     const { t, i18n } = useTranslation();
 

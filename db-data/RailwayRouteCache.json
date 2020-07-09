@@ -1,5 +1,239 @@
 [
     {
+        "uicFrom": 8011113,
+        "uicTo": 8010089,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6135,
+                "from": {
+                    "ds100_ref": "BPAF",
+                    "name": "Berlin Südkreuz",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6135,
+                        "KM_L": "3,5 +  16",
+                        "KM_I": 100350016,
+                        "BEZEICHNUNG": "Berlin Südkreuz",
+                        "KUERZEL": "BPAF",
+                        "GEOGR_BREITE": 52.47610971,
+                        "GEOGR_LAENGE": 13.36614349,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "BEW",
+                    "name": "Elsterwerda",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6135,
+                        "RICHTUNG": 0,
+                        "KM_I": 112270050,
+                        "KM_L": "122,7 + 50",
+                        "BEZEICHNUNG": "Elsterwerda",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "BEW",
+                        "GK_R_DGN": 3813907.75,
+                        "GK_H_DGN": 5712515.202,
+                        "GEOGR_BREITE": 51.46008275,
+                        "GEOGR_LAENGE": 13.51655536
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6273,
+                "from": {
+                    "ds100_ref": "BEW",
+                    "name": "Elsterwerda",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6135,
+                        "RICHTUNG": 0,
+                        "KM_I": 112270050,
+                        "KM_L": "122,7 + 50",
+                        "BEZEICHNUNG": "Elsterwerda",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "BEW",
+                        "GK_R_DGN": 3813907.75,
+                        "GK_H_DGN": 5712515.202,
+                        "GEOGR_BREITE": 51.46008275,
+                        "GEOGR_LAENGE": 13.51655536
+                    }
+                },
+                "to": {
+                    "ds100_ref": "DZN",
+                    "name": "Zeithain Bogendreieck",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6363,
+                        "RICHTUNG": 0,
+                        "KM_I": 106950051,
+                        "KM_L": "69,5 + 51",
+                        "BEZEICHNUNG": "Zeithain Bogendreieck",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "DZN",
+                        "GK_R_DGN": 3801939.911,
+                        "GK_H_DGN": 5696917.141,
+                        "GEOGR_BREITE": 51.32678475,
+                        "GEOGR_LAENGE": 13.33161221
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6363,
+                "from": {
+                    "ds100_ref": "DZN",
+                    "name": "Zeithain Bogendreieck",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6363,
+                        "RICHTUNG": 0,
+                        "KM_I": 106950051,
+                        "KM_L": "69,5 + 51",
+                        "BEZEICHNUNG": "Zeithain Bogendreieck",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "DZN",
+                        "GK_R_DGN": 3801939.911,
+                        "GK_H_DGN": 5696917.141,
+                        "GEOGR_BREITE": 51.32678475,
+                        "GEOGR_LAENGE": 13.33161221
+                    }
+                },
+                "to": {
+                    "ds100_ref": "DN",
+                    "name": "Dresden-Neustadt",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6363,
+                        "RICHTUNG": 0,
+                        "KM_I": 111590036,
+                        "KM_L": "115,9 + 36",
+                        "BEZEICHNUNG": "Dresden-Neustadt",
+                        "STELLE_ART": "Bft",
+                        "KUERZEL": "DN",
+                        "GK_R_DGN": 3832288.298,
+                        "GK_H_DGN": 5669689.836,
+                        "GEOGR_BREITE": 51.0660026,
+                        "GEOGR_LAENGE": 13.74040998
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8010089,
+        "uicTo": 8011113,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6363,
+                "from": {
+                    "ds100_ref": "DN",
+                    "name": "Dresden-Neustadt",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6363,
+                        "RICHTUNG": 0,
+                        "KM_I": 111590036,
+                        "KM_L": "115,9 + 36",
+                        "BEZEICHNUNG": "Dresden-Neustadt",
+                        "STELLE_ART": "Bft",
+                        "KUERZEL": "DN",
+                        "GK_R_DGN": 3832288.298,
+                        "GK_H_DGN": 5669689.836,
+                        "GEOGR_BREITE": 51.0660026,
+                        "GEOGR_LAENGE": 13.74040998
+                    }
+                },
+                "to": {
+                    "ds100_ref": "DZN",
+                    "name": "Zeithain Bogendreieck",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6363,
+                        "RICHTUNG": 0,
+                        "KM_I": 106950051,
+                        "KM_L": "69,5 + 51",
+                        "BEZEICHNUNG": "Zeithain Bogendreieck",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "DZN",
+                        "GK_R_DGN": 3801939.911,
+                        "GK_H_DGN": 5696917.141,
+                        "GEOGR_BREITE": 51.32678475,
+                        "GEOGR_LAENGE": 13.33161221
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6273,
+                "from": {
+                    "ds100_ref": "DZN",
+                    "name": "Zeithain Bogendreieck",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6363,
+                        "RICHTUNG": 0,
+                        "KM_I": 106950051,
+                        "KM_L": "69,5 + 51",
+                        "BEZEICHNUNG": "Zeithain Bogendreieck",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "DZN",
+                        "GK_R_DGN": 3801939.911,
+                        "GK_H_DGN": 5696917.141,
+                        "GEOGR_BREITE": 51.32678475,
+                        "GEOGR_LAENGE": 13.33161221
+                    }
+                },
+                "to": {
+                    "ds100_ref": "BEW",
+                    "name": "Elsterwerda",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6135,
+                        "RICHTUNG": 0,
+                        "KM_I": 112270050,
+                        "KM_L": "122,7 + 50",
+                        "BEZEICHNUNG": "Elsterwerda",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "BEW",
+                        "GK_R_DGN": 3813907.75,
+                        "GK_H_DGN": 5712515.202,
+                        "GEOGR_BREITE": 51.46008275,
+                        "GEOGR_LAENGE": 13.51655536
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6135,
+                "from": {
+                    "ds100_ref": "BEW",
+                    "name": "Elsterwerda",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6135,
+                        "RICHTUNG": 0,
+                        "KM_I": 112270050,
+                        "KM_L": "122,7 + 50",
+                        "BEZEICHNUNG": "Elsterwerda",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "BEW",
+                        "GK_R_DGN": 3813907.75,
+                        "GK_H_DGN": 5712515.202,
+                        "GEOGR_BREITE": 51.46008275,
+                        "GEOGR_LAENGE": 13.51655536
+                    }
+                },
+                "to": {
+                    "ds100_ref": "BPAF",
+                    "name": "Berlin Südkreuz",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6135,
+                        "KM_L": "3,5 +  16",
+                        "KM_I": 100350016,
+                        "BEZEICHNUNG": "Berlin Südkreuz",
+                        "KUERZEL": "BPAF",
+                        "GEOGR_BREITE": 52.47610971,
+                        "GEOGR_LAENGE": 13.36614349,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            }
+        ]
+    },
+    {
         "uicFrom": 8000105,
         "uicTo": 8000244,
         "railwayRoutes": [
@@ -275,14 +509,14 @@
                 }
             },
             {
-                "railwayRouteNr": 2620,
+                "railwayRouteNr": 2630,
                 "from": {
                     "ds100_ref": "IKG",
                     "name": "Köln                     (Uw)",
                     "railwayRoutePosition": {
-                        "STRECKE_NR": 2620,
-                        "KM_L": "0,0 +   0",
-                        "KM_I": 100000000,
+                        "STRECKE_NR": 2630,
+                        "KM_L": "-2,0 +  -1",
+                        "KM_I": 99799998,
                         "BEZEICHNUNG": "Köln                     (Uw)",
                         "KUERZEL": "IKG",
                         "GEOGR_BREITE": 0,
@@ -297,17 +531,17 @@
                     "ds100_ref": "KK",
                     "name": "Köln Hbf",
                     "railwayRoutePosition": {
-                        "STRECKE_NR": 2620,
+                        "STRECKE_NR": 2630,
                         "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
+                        "KM_I": 99799998,
+                        "KM_L": "-2,0 + -1",
                         "BEZEICHNUNG": "Köln Hbf",
                         "STELLE_ART": "Bf",
                         "KUERZEL": "KK",
-                        "GK_R_DGN": 3356680.047,
-                        "GK_H_DGN": 5647290.025,
-                        "GEOGR_BREITE": 50.94302089,
-                        "GEOGR_LAENGE": 6.95965523
+                        "GK_R_DGN": 3356638.624,
+                        "GK_H_DGN": 5647264.088,
+                        "GEOGR_BREITE": 50.9427776,
+                        "GEOGR_LAENGE": 6.95907644
                     }
                 }
             }
@@ -318,31 +552,31 @@
         "uicTo": 8070003,
         "railwayRoutes": [
             {
-                "railwayRouteNr": 2620,
+                "railwayRouteNr": 2630,
                 "from": {
                     "ds100_ref": "KK",
                     "name": "Köln Hbf",
                     "railwayRoutePosition": {
-                        "STRECKE_NR": 2620,
+                        "STRECKE_NR": 2630,
                         "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
+                        "KM_I": 99799998,
+                        "KM_L": "-2,0 + -1",
                         "BEZEICHNUNG": "Köln Hbf",
                         "STELLE_ART": "Bf",
                         "KUERZEL": "KK",
-                        "GK_R_DGN": 3356680.047,
-                        "GK_H_DGN": 5647290.025,
-                        "GEOGR_BREITE": 50.94302089,
-                        "GEOGR_LAENGE": 6.95965523
+                        "GK_R_DGN": 3356638.624,
+                        "GK_H_DGN": 5647264.088,
+                        "GEOGR_BREITE": 50.9427776,
+                        "GEOGR_LAENGE": 6.95907644
                     }
                 },
                 "to": {
                     "ds100_ref": "IKG",
                     "name": "Köln                     (Uw)",
                     "railwayRoutePosition": {
-                        "STRECKE_NR": 2620,
-                        "KM_L": "0,0 +   0",
-                        "KM_I": 100000000,
+                        "STRECKE_NR": 2630,
+                        "KM_L": "-2,0 +  -1",
+                        "KM_I": 99799998,
                         "BEZEICHNUNG": "Köln                     (Uw)",
                         "KUERZEL": "IKG",
                         "GEOGR_BREITE": 0,
@@ -388,6 +622,2050 @@
                         "GK_H_DGN": 5546399.269,
                         "GEOGR_BREITE": 50.05307062,
                         "GEOGR_LAENGE": 8.56966561
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8070003,
+        "uicTo": 8000244,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 3656,
+                "from": {
+                    "ds100_ref": "FFLF",
+                    "name": "Frankfurt(M) Flughafen Fernbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 3656,
+                        "RICHTUNG": 0,
+                        "KM_I": 100050048,
+                        "KM_L": "0,5 + 48",
+                        "BEZEICHNUNG": "Frankfurt am Main Flughafen Fernbahnhof",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "FFLF",
+                        "GK_R_DGN": 3469263.327,
+                        "GK_H_DGN": 5546381.62,
+                        "GEOGR_BREITE": 50.05291228,
+                        "GEOGR_LAENGE": 8.56975499
+                    }
+                },
+                "to": {
+                    "ds100_ref": "FZEP",
+                    "name": "Zeppelinheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 3656,
+                        "KM_L": "5,3 +  42",
+                        "KM_I": 100530042,
+                        "BEZEICHNUNG": "Zeppelinheim",
+                        "KUERZEL": "FZEP",
+                        "GEOGR_BREITE": 50.03666137,
+                        "GEOGR_LAENGE": 8.60522063,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4010,
+                "from": {
+                    "ds100_ref": "FZEP",
+                    "name": "Zeppelinheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 3656,
+                        "KM_L": "5,3 +  42",
+                        "KM_I": 100530042,
+                        "BEZEICHNUNG": "Zeppelinheim",
+                        "KUERZEL": "FZEP",
+                        "GEOGR_BREITE": 50.03666137,
+                        "GEOGR_LAENGE": 8.60522063,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "RMW",
+                    "name": "Mannheim-Waldhof",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4011,
+                        "RICHTUNG": 0,
+                        "KM_I": 100640036,
+                        "KM_L": "6,4 + 36",
+                        "BEZEICHNUNG": "Mannheim-Waldhof",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RMW",
+                        "GK_R_DGN": 3462616.392,
+                        "GK_H_DGN": 5487772.942,
+                        "GEOGR_BREITE": 49.52561285,
+                        "GEOGR_LAENGE": 8.48258969
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4011,
+                "from": {
+                    "ds100_ref": "RMW",
+                    "name": "Mannheim-Waldhof",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4011,
+                        "RICHTUNG": 0,
+                        "KM_I": 100640036,
+                        "KM_L": "6,4 + 36",
+                        "BEZEICHNUNG": "Mannheim-Waldhof",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RMW",
+                        "GK_R_DGN": 3462616.392,
+                        "GK_H_DGN": 5487772.942,
+                        "GEOGR_BREITE": 49.52561285,
+                        "GEOGR_LAENGE": 8.48258969
+                    }
+                },
+                "to": {
+                    "ds100_ref": "RM",
+                    "name": "Mannheim Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4011,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Mannheim Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RM",
+                        "GK_R_DGN": 3461624.73,
+                        "GK_H_DGN": 5482628.774,
+                        "GEOGR_BREITE": 49.47930019,
+                        "GEOGR_LAENGE": 8.46939337
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000244,
+        "uicTo": 8070003,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 4011,
+                "from": {
+                    "ds100_ref": "RM",
+                    "name": "Mannheim Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4011,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Mannheim Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RM",
+                        "GK_R_DGN": 3461624.73,
+                        "GK_H_DGN": 5482628.774,
+                        "GEOGR_BREITE": 49.47930019,
+                        "GEOGR_LAENGE": 8.46939337
+                    }
+                },
+                "to": {
+                    "ds100_ref": "RMW",
+                    "name": "Mannheim-Waldhof",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4011,
+                        "RICHTUNG": 0,
+                        "KM_I": 100640036,
+                        "KM_L": "6,4 + 36",
+                        "BEZEICHNUNG": "Mannheim-Waldhof",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RMW",
+                        "GK_R_DGN": 3462616.392,
+                        "GK_H_DGN": 5487772.942,
+                        "GEOGR_BREITE": 49.52561285,
+                        "GEOGR_LAENGE": 8.48258969
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4010,
+                "from": {
+                    "ds100_ref": "RMW",
+                    "name": "Mannheim-Waldhof",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4011,
+                        "RICHTUNG": 0,
+                        "KM_I": 100640036,
+                        "KM_L": "6,4 + 36",
+                        "BEZEICHNUNG": "Mannheim-Waldhof",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RMW",
+                        "GK_R_DGN": 3462616.392,
+                        "GK_H_DGN": 5487772.942,
+                        "GEOGR_BREITE": 49.52561285,
+                        "GEOGR_LAENGE": 8.48258969
+                    }
+                },
+                "to": {
+                    "ds100_ref": "FZEP",
+                    "name": "Zeppelinheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 3656,
+                        "KM_L": "5,3 +  42",
+                        "KM_I": 100530042,
+                        "BEZEICHNUNG": "Zeppelinheim",
+                        "KUERZEL": "FZEP",
+                        "GEOGR_BREITE": 50.03666137,
+                        "GEOGR_LAENGE": 8.60522063,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 3656,
+                "from": {
+                    "ds100_ref": "FZEP",
+                    "name": "Zeppelinheim",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 3656,
+                        "KM_L": "5,3 +  42",
+                        "KM_I": 100530042,
+                        "BEZEICHNUNG": "Zeppelinheim",
+                        "KUERZEL": "FZEP",
+                        "GEOGR_BREITE": 50.03666137,
+                        "GEOGR_LAENGE": 8.60522063,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "FFLF",
+                    "name": "Frankfurt(M) Flughafen Fernbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 3656,
+                        "RICHTUNG": 0,
+                        "KM_I": 100050048,
+                        "KM_L": "0,5 + 48",
+                        "BEZEICHNUNG": "Frankfurt am Main Flughafen Fernbahnhof",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "FFLF",
+                        "GK_R_DGN": 3469263.327,
+                        "GK_H_DGN": 5546381.62,
+                        "GEOGR_BREITE": 50.05291228,
+                        "GEOGR_LAENGE": 8.56975499
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8002549,
+        "uicTo": 8010324,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6100,
+                "from": {
+                    "ds100_ref": "AH",
+                    "name": "Hamburg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 128660063,
+                        "KM_L": "286,6 + 63",
+                        "BEZEICHNUNG": "Hamburg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AH",
+                        "GK_R_DGN": 3566774.197,
+                        "GK_H_DGN": 5936244.86,
+                        "GEOGR_BREITE": 53.55345283,
+                        "GEOGR_LAENGE": 10.0063973
+                    }
+                },
+                "to": {
+                    "ds100_ref": "WHL",
+                    "name": "Hagenow Land",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 119180030,
+                        "KM_L": "191,8 + 30",
+                        "BEZEICHNUNG": "Hagenow Land",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHL",
+                        "GK_R_DGN": 3647397.823,
+                        "GK_H_DGN": 5922462.313,
+                        "GEOGR_BREITE": 53.41329219,
+                        "GEOGR_LAENGE": 11.21572452
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6442,
+                "from": {
+                    "ds100_ref": "WHL",
+                    "name": "Hagenow Land",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 119180030,
+                        "KM_L": "191,8 + 30",
+                        "BEZEICHNUNG": "Hagenow Land",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHL",
+                        "GK_R_DGN": 3647397.823,
+                        "GK_H_DGN": 5922462.313,
+                        "GEOGR_BREITE": 53.41329219,
+                        "GEOGR_LAENGE": 11.21572452
+                    }
+                },
+                "to": {
+                    "ds100_ref": "WHO",
+                    "name": "Holthusen",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6441,
+                        "RICHTUNG": 0,
+                        "KM_I": 105680020,
+                        "KM_L": "56,8 + 20",
+                        "BEZEICHNUNG": "Holthusen",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHO",
+                        "GK_R_DGN": 3656791.291,
+                        "GK_H_DGN": 5938545.617,
+                        "GEOGR_BREITE": 53.5549767,
+                        "GEOGR_LAENGE": 11.36489627
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6441,
+                "from": {
+                    "ds100_ref": "WHO",
+                    "name": "Holthusen",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6441,
+                        "RICHTUNG": 0,
+                        "KM_I": 105680020,
+                        "KM_L": "56,8 + 20",
+                        "BEZEICHNUNG": "Holthusen",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHO",
+                        "GK_R_DGN": 3656791.291,
+                        "GK_H_DGN": 5938545.617,
+                        "GEOGR_BREITE": 53.5549767,
+                        "GEOGR_LAENGE": 11.36489627
+                    }
+                },
+                "to": {
+                    "ds100_ref": "WS",
+                    "name": "Schwerin Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6441,
+                        "RICHTUNG": 0,
+                        "KM_I": 106640000,
+                        "KM_L": "66,4 + 0",
+                        "BEZEICHNUNG": "Schwerin Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WS",
+                        "GK_R_DGN": 3659310.793,
+                        "GK_H_DGN": 5947515.465,
+                        "GEOGR_BREITE": 53.63474209,
+                        "GEOGR_LAENGE": 11.40745592
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8010324,
+        "uicTo": 8002549,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6441,
+                "from": {
+                    "ds100_ref": "WS",
+                    "name": "Schwerin Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6441,
+                        "RICHTUNG": 0,
+                        "KM_I": 106640000,
+                        "KM_L": "66,4 + 0",
+                        "BEZEICHNUNG": "Schwerin Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WS",
+                        "GK_R_DGN": 3659310.793,
+                        "GK_H_DGN": 5947515.465,
+                        "GEOGR_BREITE": 53.63474209,
+                        "GEOGR_LAENGE": 11.40745592
+                    }
+                },
+                "to": {
+                    "ds100_ref": "WHO",
+                    "name": "Holthusen",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6441,
+                        "RICHTUNG": 0,
+                        "KM_I": 105680020,
+                        "KM_L": "56,8 + 20",
+                        "BEZEICHNUNG": "Holthusen",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHO",
+                        "GK_R_DGN": 3656791.291,
+                        "GK_H_DGN": 5938545.617,
+                        "GEOGR_BREITE": 53.5549767,
+                        "GEOGR_LAENGE": 11.36489627
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6442,
+                "from": {
+                    "ds100_ref": "WHO",
+                    "name": "Holthusen",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6441,
+                        "RICHTUNG": 0,
+                        "KM_I": 105680020,
+                        "KM_L": "56,8 + 20",
+                        "BEZEICHNUNG": "Holthusen",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHO",
+                        "GK_R_DGN": 3656791.291,
+                        "GK_H_DGN": 5938545.617,
+                        "GEOGR_BREITE": 53.5549767,
+                        "GEOGR_LAENGE": 11.36489627
+                    }
+                },
+                "to": {
+                    "ds100_ref": "WHL",
+                    "name": "Hagenow Land",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 119180030,
+                        "KM_L": "191,8 + 30",
+                        "BEZEICHNUNG": "Hagenow Land",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHL",
+                        "GK_R_DGN": 3647397.823,
+                        "GK_H_DGN": 5922462.313,
+                        "GEOGR_BREITE": 53.41329219,
+                        "GEOGR_LAENGE": 11.21572452
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6100,
+                "from": {
+                    "ds100_ref": "WHL",
+                    "name": "Hagenow Land",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 119180030,
+                        "KM_L": "191,8 + 30",
+                        "BEZEICHNUNG": "Hagenow Land",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "WHL",
+                        "GK_R_DGN": 3647397.823,
+                        "GK_H_DGN": 5922462.313,
+                        "GEOGR_BREITE": 53.41329219,
+                        "GEOGR_LAENGE": 11.21572452
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AH",
+                    "name": "Hamburg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 128660063,
+                        "KM_L": "286,6 + 63",
+                        "BEZEICHNUNG": "Hamburg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AH",
+                        "GK_R_DGN": 3566774.197,
+                        "GK_H_DGN": 5936244.86,
+                        "GEOGR_BREITE": 53.55345283,
+                        "GEOGR_LAENGE": 10.0063973
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8002548,
+        "uicTo": 8003102,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6100,
+                "from": {
+                    "ds100_ref": "ADF",
+                    "name": "Hamburg Dammtor",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 128810014,
+                        "KM_L": "288,1 + 14",
+                        "BEZEICHNUNG": "Hamburg Dammtor",
+                        "STELLE_ART": "Hp",
+                        "KUERZEL": "ADF",
+                        "GK_R_DGN": 3565640.308,
+                        "GK_H_DGN": 5937052.219,
+                        "GEOGR_BREITE": 53.56084863,
+                        "GEOGR_LAENGE": 9.9894603
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AA",
+                    "name": "Hamburg-Altona",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 129310057,
+                        "KM_L": "293,1 + 57",
+                        "BEZEICHNUNG": "Hamburg-Altona",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AA",
+                        "GK_R_DGN": 3562029.956,
+                        "GK_H_DGN": 5936082.835,
+                        "GEOGR_BREITE": 53.55257809,
+                        "GEOGR_LAENGE": 9.93479105
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1220,
+                "from": {
+                    "ds100_ref": "AA",
+                    "name": "Hamburg-Altona",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 129310057,
+                        "KM_L": "293,1 + 57",
+                        "BEZEICHNUNG": "Hamburg-Altona",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AA",
+                        "GK_R_DGN": 3562029.956,
+                        "GK_H_DGN": 5936082.835,
+                        "GEOGR_BREITE": 53.55257809,
+                        "GEOGR_LAENGE": 9.93479105
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AEL",
+                    "name": "Elmshorn",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1210,
+                        "RICHTUNG": 0,
+                        "KM_I": 103060098,
+                        "KM_L": "30,6 + 98",
+                        "BEZEICHNUNG": "Elmshorn",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AEL",
+                        "GK_R_DGN": 3543527.876,
+                        "GK_H_DGN": 5958430.116,
+                        "GEOGR_BREITE": 53.75520877,
+                        "GEOGR_LAENGE": 9.65876978
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1210,
+                "from": {
+                    "ds100_ref": "AEL",
+                    "name": "Elmshorn",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1210,
+                        "RICHTUNG": 0,
+                        "KM_I": 103060098,
+                        "KM_L": "30,6 + 98",
+                        "BEZEICHNUNG": "Elmshorn",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AEL",
+                        "GK_R_DGN": 3543527.876,
+                        "GK_H_DGN": 5958430.116,
+                        "GEOGR_BREITE": 53.75520877,
+                        "GEOGR_LAENGE": 9.65876978
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AIZ",
+                    "name": "Itzehoe",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1210,
+                        "RICHTUNG": 0,
+                        "KM_I": 106490021,
+                        "KM_L": "64,9 + 21",
+                        "BEZEICHNUNG": "Itzehoe",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AIZ",
+                        "GK_R_DGN": 3533590.564,
+                        "GK_H_DGN": 5977132.019,
+                        "GEOGR_BREITE": 53.92396475,
+                        "GEOGR_LAENGE": 9.51015687
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8003102,
+        "uicTo": 8002548,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 1210,
+                "from": {
+                    "ds100_ref": "AIZ",
+                    "name": "Itzehoe",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1210,
+                        "RICHTUNG": 0,
+                        "KM_I": 106490021,
+                        "KM_L": "64,9 + 21",
+                        "BEZEICHNUNG": "Itzehoe",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AIZ",
+                        "GK_R_DGN": 3533590.564,
+                        "GK_H_DGN": 5977132.019,
+                        "GEOGR_BREITE": 53.92396475,
+                        "GEOGR_LAENGE": 9.51015687
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AEL",
+                    "name": "Elmshorn",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1210,
+                        "RICHTUNG": 0,
+                        "KM_I": 103060098,
+                        "KM_L": "30,6 + 98",
+                        "BEZEICHNUNG": "Elmshorn",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AEL",
+                        "GK_R_DGN": 3543527.876,
+                        "GK_H_DGN": 5958430.116,
+                        "GEOGR_BREITE": 53.75520877,
+                        "GEOGR_LAENGE": 9.65876978
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1220,
+                "from": {
+                    "ds100_ref": "AEL",
+                    "name": "Elmshorn",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1210,
+                        "RICHTUNG": 0,
+                        "KM_I": 103060098,
+                        "KM_L": "30,6 + 98",
+                        "BEZEICHNUNG": "Elmshorn",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AEL",
+                        "GK_R_DGN": 3543527.876,
+                        "GK_H_DGN": 5958430.116,
+                        "GEOGR_BREITE": 53.75520877,
+                        "GEOGR_LAENGE": 9.65876978
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AA",
+                    "name": "Hamburg-Altona",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 129310057,
+                        "KM_L": "293,1 + 57",
+                        "BEZEICHNUNG": "Hamburg-Altona",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AA",
+                        "GK_R_DGN": 3562029.956,
+                        "GK_H_DGN": 5936082.835,
+                        "GEOGR_BREITE": 53.55257809,
+                        "GEOGR_LAENGE": 9.93479105
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6100,
+                "from": {
+                    "ds100_ref": "AA",
+                    "name": "Hamburg-Altona",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 129310057,
+                        "KM_L": "293,1 + 57",
+                        "BEZEICHNUNG": "Hamburg-Altona",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AA",
+                        "GK_R_DGN": 3562029.956,
+                        "GK_H_DGN": 5936082.835,
+                        "GEOGR_BREITE": 53.55257809,
+                        "GEOGR_LAENGE": 9.93479105
+                    }
+                },
+                "to": {
+                    "ds100_ref": "ADF",
+                    "name": "Hamburg Dammtor",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6100,
+                        "RICHTUNG": 0,
+                        "KM_I": 128810014,
+                        "KM_L": "288,1 + 14",
+                        "BEZEICHNUNG": "Hamburg Dammtor",
+                        "STELLE_ART": "Hp",
+                        "KUERZEL": "ADF",
+                        "GK_R_DGN": 3565640.308,
+                        "GK_H_DGN": 5937052.219,
+                        "GEOGR_BREITE": 53.56084863,
+                        "GEOGR_LAENGE": 9.9894603
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000149,
+        "uicTo": 8000142,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2932,
+                "from": {
+                    "ds100_ref": "EHM",
+                    "name": "Hamm(Westf)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2932,
+                        "RICHTUNG": 0,
+                        "KM_I": 120720098,
+                        "KM_L": "207,2 + 98",
+                        "BEZEICHNUNG": "Hamm (Westf) Pbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EHM",
+                        "GK_R_DGN": 3417626.246,
+                        "GK_H_DGN": 5727762.781,
+                        "GEOGR_BREITE": 51.67812312,
+                        "GEOGR_LAENGE": 7.80797831
+                    }
+                },
+                "to": {
+                    "ds100_ref": "EUN",
+                    "name": "Unna",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2932,
+                        "RICHTUNG": 0,
+                        "KM_I": 118880068,
+                        "KM_L": "188,8 + 68",
+                        "BEZEICHNUNG": "Unna",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EUN",
+                        "GK_R_DGN": 3409342.173,
+                        "GK_H_DGN": 5712436.2,
+                        "GEOGR_BREITE": 51.53912752,
+                        "GEOGR_LAENGE": 7.69220691
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2852,
+                "from": {
+                    "ds100_ref": "EUN",
+                    "name": "Unna",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2932,
+                        "RICHTUNG": 0,
+                        "KM_I": 118880068,
+                        "KM_L": "188,8 + 68",
+                        "BEZEICHNUNG": "Unna",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EUN",
+                        "GK_R_DGN": 3409342.173,
+                        "GK_H_DGN": 5712436.2,
+                        "GEOGR_BREITE": 51.53912752,
+                        "GEOGR_LAENGE": 7.69220691
+                    }
+                },
+                "to": {
+                    "ds100_ref": "EFOE",
+                    "name": "Fröndenberg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 117090023,
+                        "KM_L": "170,9 + 23",
+                        "BEZEICHNUNG": "Fröndenberg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EFOE",
+                        "GK_R_DGN": 3414067.468,
+                        "GK_H_DGN": 5704817.452,
+                        "GEOGR_BREITE": 51.47140428,
+                        "GEOGR_LAENGE": 7.76215409
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2550,
+                "from": {
+                    "ds100_ref": "EFOE",
+                    "name": "Fröndenberg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 117090023,
+                        "KM_L": "170,9 + 23",
+                        "BEZEICHNUNG": "Fröndenberg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EFOE",
+                        "GK_R_DGN": 3414067.468,
+                        "GK_H_DGN": 5704817.452,
+                        "GEOGR_BREITE": 51.47140428,
+                        "GEOGR_LAENGE": 7.76215409
+                    }
+                },
+                "to": {
+                    "ds100_ref": "EHG",
+                    "name": "Hagen Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 114170040,
+                        "KM_L": "141,7 + 40",
+                        "BEZEICHNUNG": "Hagen Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EHG",
+                        "GK_R_DGN": 3392858.564,
+                        "GK_H_DGN": 5693120.874,
+                        "GEOGR_BREITE": 51.36269139,
+                        "GEOGR_LAENGE": 7.460555
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000142,
+        "uicTo": 8000149,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2550,
+                "from": {
+                    "ds100_ref": "EHG",
+                    "name": "Hagen Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 114170040,
+                        "KM_L": "141,7 + 40",
+                        "BEZEICHNUNG": "Hagen Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EHG",
+                        "GK_R_DGN": 3392858.564,
+                        "GK_H_DGN": 5693120.874,
+                        "GEOGR_BREITE": 51.36269139,
+                        "GEOGR_LAENGE": 7.460555
+                    }
+                },
+                "to": {
+                    "ds100_ref": "EFOE",
+                    "name": "Fröndenberg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 117090023,
+                        "KM_L": "170,9 + 23",
+                        "BEZEICHNUNG": "Fröndenberg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EFOE",
+                        "GK_R_DGN": 3414067.468,
+                        "GK_H_DGN": 5704817.452,
+                        "GEOGR_BREITE": 51.47140428,
+                        "GEOGR_LAENGE": 7.76215409
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2852,
+                "from": {
+                    "ds100_ref": "EFOE",
+                    "name": "Fröndenberg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2550,
+                        "RICHTUNG": 0,
+                        "KM_I": 117090023,
+                        "KM_L": "170,9 + 23",
+                        "BEZEICHNUNG": "Fröndenberg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EFOE",
+                        "GK_R_DGN": 3414067.468,
+                        "GK_H_DGN": 5704817.452,
+                        "GEOGR_BREITE": 51.47140428,
+                        "GEOGR_LAENGE": 7.76215409
+                    }
+                },
+                "to": {
+                    "ds100_ref": "EUN",
+                    "name": "Unna",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2932,
+                        "RICHTUNG": 0,
+                        "KM_I": 118880068,
+                        "KM_L": "188,8 + 68",
+                        "BEZEICHNUNG": "Unna",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EUN",
+                        "GK_R_DGN": 3409342.173,
+                        "GK_H_DGN": 5712436.2,
+                        "GEOGR_BREITE": 51.53912752,
+                        "GEOGR_LAENGE": 7.69220691
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2932,
+                "from": {
+                    "ds100_ref": "EUN",
+                    "name": "Unna",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2932,
+                        "RICHTUNG": 0,
+                        "KM_I": 118880068,
+                        "KM_L": "188,8 + 68",
+                        "BEZEICHNUNG": "Unna",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EUN",
+                        "GK_R_DGN": 3409342.173,
+                        "GK_H_DGN": 5712436.2,
+                        "GEOGR_BREITE": 51.53912752,
+                        "GEOGR_LAENGE": 7.69220691
+                    }
+                },
+                "to": {
+                    "ds100_ref": "EHM",
+                    "name": "Hamm(Westf)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2932,
+                        "RICHTUNG": 0,
+                        "KM_I": 120720098,
+                        "KM_L": "207,2 + 98",
+                        "BEZEICHNUNG": "Hamm (Westf) Pbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "EHM",
+                        "GK_R_DGN": 3417626.246,
+                        "GK_H_DGN": 5727762.781,
+                        "GEOGR_BREITE": 51.67812312,
+                        "GEOGR_LAENGE": 7.80797831
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000152,
+        "uicTo": 8098160,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 1730,
+                "from": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550615.028,
+                        "GK_H_DGN": 5805159.644,
+                        "GEOGR_BREITE": 52.37743453,
+                        "GEOGR_LAENGE": 9.74214992
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 101630049,
+                        "KM_L": "16,3 + 49",
+                        "BEZEICHNUNG": "Lehrte",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HLER",
+                        "GK_R_DGN": 3566378.026,
+                        "GK_H_DGN": 5805274.437,
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6107,
+                "from": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "238,5 +  34",
+                        "KM_I": 123850034,
+                        "BEZEICHNUNG": "Lehrte",
+                        "KUERZEL": "HLER",
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "BL",
+                    "name": "Berlin Hbf (tief)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "1,3 +   3",
+                        "KM_I": 100130003,
+                        "BEZEICHNUNG": "Berlin Hauptbahnhof - Lehrter Bahnhof",
+                        "KUERZEL": "BL",
+                        "GEOGR_BREITE": 52.525998,
+                        "GEOGR_LAENGE": 13.36936607,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8098160,
+        "uicTo": 8000152,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6107,
+                "from": {
+                    "ds100_ref": "BL",
+                    "name": "Berlin Hbf (tief)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "1,3 +   3",
+                        "KM_I": 100130003,
+                        "BEZEICHNUNG": "Berlin Hauptbahnhof - Lehrter Bahnhof",
+                        "KUERZEL": "BL",
+                        "GEOGR_BREITE": 52.525998,
+                        "GEOGR_LAENGE": 13.36936607,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "238,5 +  34",
+                        "KM_I": 123850034,
+                        "BEZEICHNUNG": "Lehrte",
+                        "KUERZEL": "HLER",
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1730,
+                "from": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 101630049,
+                        "KM_L": "16,3 + 49",
+                        "BEZEICHNUNG": "Lehrte",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HLER",
+                        "GK_R_DGN": 3566378.026,
+                        "GK_H_DGN": 5805274.437,
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550615.028,
+                        "GK_H_DGN": 5805159.644,
+                        "GEOGR_BREITE": 52.37743453,
+                        "GEOGR_LAENGE": 9.74214992
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000152,
+        "uicTo": 8010404,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 1730,
+                "from": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550615.028,
+                        "GK_H_DGN": 5805159.644,
+                        "GEOGR_BREITE": 52.37743453,
+                        "GEOGR_LAENGE": 9.74214992
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 101630049,
+                        "KM_L": "16,3 + 49",
+                        "BEZEICHNUNG": "Lehrte",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HLER",
+                        "GK_R_DGN": 3566378.026,
+                        "GK_H_DGN": 5805274.437,
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6107,
+                "from": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "238,5 +  34",
+                        "KM_I": 123850034,
+                        "BEZEICHNUNG": "Lehrte",
+                        "KUERZEL": "HLER",
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "BSPD",
+                    "name": "Berlin-Spandau",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "RICHTUNG": 0,
+                        "KM_I": 101270080,
+                        "KM_L": "12,7 + 80",
+                        "BEZEICHNUNG": "Berlin-Spandau",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "BSPD",
+                        "GK_R_DGN": 3784891.889,
+                        "GK_H_DGN": 5830637.917,
+                        "GEOGR_BREITE": 52.53424057,
+                        "GEOGR_LAENGE": 13.19826406
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8010404,
+        "uicTo": 8000152,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6107,
+                "from": {
+                    "ds100_ref": "BSPD",
+                    "name": "Berlin-Spandau",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "RICHTUNG": 0,
+                        "KM_I": 101270080,
+                        "KM_L": "12,7 + 80",
+                        "BEZEICHNUNG": "Berlin-Spandau",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "BSPD",
+                        "GK_R_DGN": 3784891.889,
+                        "GK_H_DGN": 5830637.917,
+                        "GEOGR_BREITE": 52.53424057,
+                        "GEOGR_LAENGE": 13.19826406
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "238,5 +  34",
+                        "KM_I": 123850034,
+                        "BEZEICHNUNG": "Lehrte",
+                        "KUERZEL": "HLER",
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1730,
+                "from": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 101630049,
+                        "KM_L": "16,3 + 49",
+                        "BEZEICHNUNG": "Lehrte",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HLER",
+                        "GK_R_DGN": 3566378.026,
+                        "GK_H_DGN": 5805274.437,
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550615.028,
+                        "GK_H_DGN": 5805159.644,
+                        "GEOGR_BREITE": 52.37743453,
+                        "GEOGR_LAENGE": 9.74214992
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000152,
+        "uicTo": 8002549,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 1710,
+                "from": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1710,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550586.96,
+                        "GK_H_DGN": 5805122.749,
+                        "GEOGR_BREITE": 52.37710558,
+                        "GEOGR_LAENGE": 9.74173223
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HC",
+                    "name": "Celle",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1710,
+                        "KM_L": "40,8 +  16",
+                        "KM_I": 104080016,
+                        "BEZEICHNUNG": "Celle",
+                        "KUERZEL": "HC",
+                        "GEOGR_BREITE": 52.62099445,
+                        "GEOGR_LAENGE": 10.06246963,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1720,
+                "from": {
+                    "ds100_ref": "HC",
+                    "name": "Celle",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1710,
+                        "KM_L": "40,8 +  16",
+                        "KM_I": 104080016,
+                        "BEZEICHNUNG": "Celle",
+                        "KUERZEL": "HC",
+                        "GEOGR_BREITE": 52.62099445,
+                        "GEOGR_LAENGE": 10.06246963,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AHAR",
+                    "name": "Hamburg-Harburg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2200,
+                        "RICHTUNG": 0,
+                        "KM_I": 134330000,
+                        "KM_L": "343,3 + 0",
+                        "BEZEICHNUNG": "Hamburg-Harburg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AHAR",
+                        "GK_R_DGN": 3565960.403,
+                        "GK_H_DGN": 5925417.45,
+                        "GEOGR_BREITE": 53.45628459,
+                        "GEOGR_LAENGE": 9.99184667
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2200,
+                "from": {
+                    "ds100_ref": "AHAR",
+                    "name": "Hamburg-Harburg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2200,
+                        "RICHTUNG": 0,
+                        "KM_I": 134330000,
+                        "KM_L": "343,3 + 0",
+                        "BEZEICHNUNG": "Hamburg-Harburg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AHAR",
+                        "GK_R_DGN": 3565960.403,
+                        "GK_H_DGN": 5925417.45,
+                        "GEOGR_BREITE": 53.45628459,
+                        "GEOGR_LAENGE": 9.99184667
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AH",
+                    "name": "Hamburg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2200,
+                        "RICHTUNG": 0,
+                        "KM_I": 135530022,
+                        "KM_L": "355,3 + 22",
+                        "BEZEICHNUNG": "Hamburg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AH",
+                        "GK_R_DGN": 3566729.44,
+                        "GK_H_DGN": 5936242.617,
+                        "GEOGR_BREITE": 53.55343836,
+                        "GEOGR_LAENGE": 10.00572161
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8002549,
+        "uicTo": 8000152,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2200,
+                "from": {
+                    "ds100_ref": "AH",
+                    "name": "Hamburg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2200,
+                        "RICHTUNG": 0,
+                        "KM_I": 135530022,
+                        "KM_L": "355,3 + 22",
+                        "BEZEICHNUNG": "Hamburg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AH",
+                        "GK_R_DGN": 3566729.44,
+                        "GK_H_DGN": 5936242.617,
+                        "GEOGR_BREITE": 53.55343836,
+                        "GEOGR_LAENGE": 10.00572161
+                    }
+                },
+                "to": {
+                    "ds100_ref": "AHAR",
+                    "name": "Hamburg-Harburg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2200,
+                        "RICHTUNG": 0,
+                        "KM_I": 134330000,
+                        "KM_L": "343,3 + 0",
+                        "BEZEICHNUNG": "Hamburg-Harburg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AHAR",
+                        "GK_R_DGN": 3565960.403,
+                        "GK_H_DGN": 5925417.45,
+                        "GEOGR_BREITE": 53.45628459,
+                        "GEOGR_LAENGE": 9.99184667
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1720,
+                "from": {
+                    "ds100_ref": "AHAR",
+                    "name": "Hamburg-Harburg",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2200,
+                        "RICHTUNG": 0,
+                        "KM_I": 134330000,
+                        "KM_L": "343,3 + 0",
+                        "BEZEICHNUNG": "Hamburg-Harburg",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "AHAR",
+                        "GK_R_DGN": 3565960.403,
+                        "GK_H_DGN": 5925417.45,
+                        "GEOGR_BREITE": 53.45628459,
+                        "GEOGR_LAENGE": 9.99184667
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HC",
+                    "name": "Celle",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1710,
+                        "KM_L": "40,8 +  16",
+                        "KM_I": 104080016,
+                        "BEZEICHNUNG": "Celle",
+                        "KUERZEL": "HC",
+                        "GEOGR_BREITE": 52.62099445,
+                        "GEOGR_LAENGE": 10.06246963,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1710,
+                "from": {
+                    "ds100_ref": "HC",
+                    "name": "Celle",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1710,
+                        "KM_L": "40,8 +  16",
+                        "KM_I": 104080016,
+                        "BEZEICHNUNG": "Celle",
+                        "KUERZEL": "HC",
+                        "GEOGR_BREITE": 52.62099445,
+                        "GEOGR_LAENGE": 10.06246963,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1710,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550586.96,
+                        "GK_H_DGN": 5805122.749,
+                        "GEOGR_BREITE": 52.37710558,
+                        "GEOGR_LAENGE": 9.74173223
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000152,
+        "uicTo": 8006552,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 1730,
+                "from": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550615.028,
+                        "GK_H_DGN": 5805159.644,
+                        "GEOGR_BREITE": 52.37743453,
+                        "GEOGR_LAENGE": 9.74214992
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 101630049,
+                        "KM_L": "16,3 + 49",
+                        "BEZEICHNUNG": "Lehrte",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HLER",
+                        "GK_R_DGN": 3566378.026,
+                        "GK_H_DGN": 5805274.437,
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 6107,
+                "from": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "238,5 +  34",
+                        "KM_I": 123850034,
+                        "BEZEICHNUNG": "Lehrte",
+                        "KUERZEL": "HLER",
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HWOB",
+                    "name": "Wolfsburg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "RICHTUNG": 0,
+                        "KM_I": 118080084,
+                        "KM_L": "180,8 + 84",
+                        "BEZEICHNUNG": "Wolfsburg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HWOB",
+                        "GK_R_DGN": 3621665.42,
+                        "GK_H_DGN": 5812215.696,
+                        "GEOGR_BREITE": 52.42966232,
+                        "GEOGR_LAENGE": 10.78767451
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8006552,
+        "uicTo": 8000152,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 6107,
+                "from": {
+                    "ds100_ref": "HWOB",
+                    "name": "Wolfsburg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "RICHTUNG": 0,
+                        "KM_I": 118080084,
+                        "KM_L": "180,8 + 84",
+                        "BEZEICHNUNG": "Wolfsburg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HWOB",
+                        "GK_R_DGN": 3621665.42,
+                        "GK_H_DGN": 5812215.696,
+                        "GEOGR_BREITE": 52.42966232,
+                        "GEOGR_LAENGE": 10.78767451
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 6107,
+                        "KM_L": "238,5 +  34",
+                        "KM_I": 123850034,
+                        "BEZEICHNUNG": "Lehrte",
+                        "KUERZEL": "HLER",
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 1730,
+                "from": {
+                    "ds100_ref": "HLER",
+                    "name": "Lehrte",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 101630049,
+                        "KM_L": "16,3 + 49",
+                        "BEZEICHNUNG": "Lehrte",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HLER",
+                        "GK_R_DGN": 3566378.026,
+                        "GK_H_DGN": 5805274.437,
+                        "GEOGR_BREITE": 52.3767861,
+                        "GEOGR_LAENGE": 9.97361547
+                    }
+                },
+                "to": {
+                    "ds100_ref": "HH",
+                    "name": "Hannover Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 1730,
+                        "RICHTUNG": 0,
+                        "KM_I": 100000000,
+                        "KM_L": "0,0 + 0",
+                        "BEZEICHNUNG": "Hannover Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "HH",
+                        "GK_R_DGN": 3550615.028,
+                        "GK_H_DGN": 5805159.644,
+                        "GEOGR_BREITE": 52.37743453,
+                        "GEOGR_LAENGE": 9.74214992
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000156,
+        "uicTo": 8000096,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 4000,
+                "from": {
+                    "ds100_ref": "RH",
+                    "name": "Heidelberg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4000,
+                        "RICHTUNG": 0,
+                        "KM_I": 101740090,
+                        "KM_L": "17,4 + 90",
+                        "BEZEICHNUNG": "Heidelberg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RH",
+                        "GK_R_DGN": 3476514.392,
+                        "GK_H_DGN": 5474109.327,
+                        "GEOGR_BREITE": 49.40346001,
+                        "GEOGR_LAENGE": 8.67536399
+                    }
+                },
+                "to": {
+                    "ds100_ref": "RBR",
+                    "name": "Bruchsal",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4000,
+                        "RICHTUNG": 0,
+                        "KM_I": 105160032,
+                        "KM_L": "51,6 + 32",
+                        "BEZEICHNUNG": "Bruchsal",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RBR",
+                        "GK_R_DGN": 3470132.772,
+                        "GK_H_DGN": 5443122.143,
+                        "GEOGR_BREITE": 49.12456135,
+                        "GEOGR_LAENGE": 8.58975548
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4130,
+                "from": {
+                    "ds100_ref": "RBR",
+                    "name": "Bruchsal",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4000,
+                        "RICHTUNG": 0,
+                        "KM_I": 105160032,
+                        "KM_L": "51,6 + 32",
+                        "BEZEICHNUNG": "Bruchsal",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RBR",
+                        "GK_R_DGN": 3470132.772,
+                        "GK_H_DGN": 5443122.143,
+                        "GEOGR_BREITE": 49.12456135,
+                        "GEOGR_LAENGE": 8.58975548
+                    }
+                },
+                "to": {
+                    "ds100_ref": "YRRBT",
+                    "name": "Bretten Streckenwechsel 4130/4800",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4800,
+                        "RICHTUNG": 0,
+                        "KM_I": 106240096,
+                        "KM_L": "62,4 + 96",
+                        "BEZEICHNUNG": "Bretten Streckenwechsel 4130/4800",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YRRBT",
+                        "GK_R_DGN": 3478287.579,
+                        "GK_H_DGN": 5432659.199,
+                        "GEOGR_BREITE": 49.03082351,
+                        "GEOGR_LAENGE": 8.70204372
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4800,
+                "from": {
+                    "ds100_ref": "YRRBT",
+                    "name": "Bretten Streckenwechsel 4130/4800",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4800,
+                        "RICHTUNG": 0,
+                        "KM_I": 106240096,
+                        "KM_L": "62,4 + 96",
+                        "BEZEICHNUNG": "Bretten Streckenwechsel 4130/4800",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YRRBT",
+                        "GK_R_DGN": 3478287.579,
+                        "GK_H_DGN": 5432659.199,
+                        "GEOGR_BREITE": 49.03082351,
+                        "GEOGR_LAENGE": 8.70204372
+                    }
+                },
+                "to": {
+                    "ds100_ref": "TS",
+                    "name": "Stuttgart Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4800,
+                        "RICHTUNG": 0,
+                        "KM_I": 100010041,
+                        "KM_L": "0,1 + 41",
+                        "BEZEICHNUNG": "Stuttgart Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "TS",
+                        "GK_R_DGN": 3513557.108,
+                        "GK_H_DGN": 5405259.552,
+                        "GEOGR_BREITE": 48.7846792,
+                        "GEOGR_LAENGE": 9.18345003
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000096,
+        "uicTo": 8000156,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 4800,
+                "from": {
+                    "ds100_ref": "TS",
+                    "name": "Stuttgart Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4800,
+                        "RICHTUNG": 0,
+                        "KM_I": 100010041,
+                        "KM_L": "0,1 + 41",
+                        "BEZEICHNUNG": "Stuttgart Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "TS",
+                        "GK_R_DGN": 3513557.108,
+                        "GK_H_DGN": 5405259.552,
+                        "GEOGR_BREITE": 48.7846792,
+                        "GEOGR_LAENGE": 9.18345003
+                    }
+                },
+                "to": {
+                    "ds100_ref": "YRRBT",
+                    "name": "Bretten Streckenwechsel 4130/4800",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4800,
+                        "RICHTUNG": 0,
+                        "KM_I": 106240096,
+                        "KM_L": "62,4 + 96",
+                        "BEZEICHNUNG": "Bretten Streckenwechsel 4130/4800",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YRRBT",
+                        "GK_R_DGN": 3478287.579,
+                        "GK_H_DGN": 5432659.199,
+                        "GEOGR_BREITE": 49.03082351,
+                        "GEOGR_LAENGE": 8.70204372
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4130,
+                "from": {
+                    "ds100_ref": "YRRBT",
+                    "name": "Bretten Streckenwechsel 4130/4800",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4800,
+                        "RICHTUNG": 0,
+                        "KM_I": 106240096,
+                        "KM_L": "62,4 + 96",
+                        "BEZEICHNUNG": "Bretten Streckenwechsel 4130/4800",
+                        "STELLE_ART": "Strw",
+                        "KUERZEL": "YRRBT",
+                        "GK_R_DGN": 3478287.579,
+                        "GK_H_DGN": 5432659.199,
+                        "GEOGR_BREITE": 49.03082351,
+                        "GEOGR_LAENGE": 8.70204372
+                    }
+                },
+                "to": {
+                    "ds100_ref": "RBR",
+                    "name": "Bruchsal",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4000,
+                        "RICHTUNG": 0,
+                        "KM_I": 105160032,
+                        "KM_L": "51,6 + 32",
+                        "BEZEICHNUNG": "Bruchsal",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RBR",
+                        "GK_R_DGN": 3470132.772,
+                        "GK_H_DGN": 5443122.143,
+                        "GEOGR_BREITE": 49.12456135,
+                        "GEOGR_LAENGE": 8.58975548
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 4000,
+                "from": {
+                    "ds100_ref": "RBR",
+                    "name": "Bruchsal",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4000,
+                        "RICHTUNG": 0,
+                        "KM_I": 105160032,
+                        "KM_L": "51,6 + 32",
+                        "BEZEICHNUNG": "Bruchsal",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RBR",
+                        "GK_R_DGN": 3470132.772,
+                        "GK_H_DGN": 5443122.143,
+                        "GEOGR_BREITE": 49.12456135,
+                        "GEOGR_LAENGE": 8.58975548
+                    }
+                },
+                "to": {
+                    "ds100_ref": "RH",
+                    "name": "Heidelberg Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 4000,
+                        "RICHTUNG": 0,
+                        "KM_I": 101740090,
+                        "KM_L": "17,4 + 90",
+                        "BEZEICHNUNG": "Heidelberg Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "RH",
+                        "GK_R_DGN": 3476514.392,
+                        "GK_H_DGN": 5474109.327,
+                        "GEOGR_BREITE": 49.40346001,
+                        "GEOGR_LAENGE": 8.67536399
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8000207,
+        "uicTo": 8005556,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2630,
+                "from": {
+                    "ds100_ref": "KK",
+                    "name": "Köln Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2630,
+                        "RICHTUNG": 0,
+                        "KM_I": 99799998,
+                        "KM_L": "-2,0 + -1",
+                        "BEZEICHNUNG": "Köln Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KK",
+                        "GK_R_DGN": 3356638.624,
+                        "GK_H_DGN": 5647264.088,
+                        "GEOGR_BREITE": 50.9427776,
+                        "GEOGR_LAENGE": 6.95907644
+                    }
+                },
+                "to": {
+                    "ds100_ref": "IKG",
+                    "name": "Köln                     (Uw)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2630,
+                        "KM_L": "-2,0 +  -1",
+                        "KM_I": 99799998,
+                        "BEZEICHNUNG": "Köln                     (Uw)",
+                        "KUERZEL": "IKG",
+                        "GEOGR_BREITE": 0,
+                        "GEOGR_LAENGE": 0,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2690,
+                "from": {
+                    "ds100_ref": "IKG",
+                    "name": "Köln                     (Uw)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2690,
+                        "KM_L": "9,1 +  58",
+                        "KM_I": 100910058,
+                        "BEZEICHNUNG": "Köln                     (Uw)",
+                        "KUERZEL": "IKG",
+                        "GEOGR_BREITE": 0,
+                        "GEOGR_LAENGE": 0,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KSIB",
+                    "name": "Siegburg/Bonn",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2690,
+                        "RICHTUNG": 0,
+                        "KM_I": 102590059,
+                        "KM_L": "25,9 + 59",
+                        "BEZEICHNUNG": "Siegburg/Bonn",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KSIB",
+                        "GK_R_DGN": 3373344.935,
+                        "GK_H_DGN": 5630259.55,
+                        "GEOGR_BREITE": 50.79390844,
+                        "GEOGR_LAENGE": 7.20253826
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "uicFrom": 8005556,
+        "uicTo": 8000207,
+        "railwayRoutes": [
+            {
+                "railwayRouteNr": 2690,
+                "from": {
+                    "ds100_ref": "KSIB",
+                    "name": "Siegburg/Bonn",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2690,
+                        "RICHTUNG": 0,
+                        "KM_I": 102590059,
+                        "KM_L": "25,9 + 59",
+                        "BEZEICHNUNG": "Siegburg/Bonn",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KSIB",
+                        "GK_R_DGN": 3373344.935,
+                        "GK_H_DGN": 5630259.55,
+                        "GEOGR_BREITE": 50.79390844,
+                        "GEOGR_LAENGE": 7.20253826
+                    }
+                },
+                "to": {
+                    "ds100_ref": "IKG",
+                    "name": "Köln                     (Uw)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2690,
+                        "KM_L": "9,1 +  58",
+                        "KM_I": 100910058,
+                        "BEZEICHNUNG": "Köln                     (Uw)",
+                        "KUERZEL": "IKG",
+                        "GEOGR_BREITE": 0,
+                        "GEOGR_LAENGE": 0,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                }
+            },
+            {
+                "railwayRouteNr": 2630,
+                "from": {
+                    "ds100_ref": "IKG",
+                    "name": "Köln                     (Uw)",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2630,
+                        "KM_L": "-2,0 +  -1",
+                        "KM_I": 99799998,
+                        "BEZEICHNUNG": "Köln                     (Uw)",
+                        "KUERZEL": "IKG",
+                        "GEOGR_BREITE": 0,
+                        "GEOGR_LAENGE": 0,
+                        "GK_H_DGN": 0,
+                        "GK_R_DGN": 0,
+                        "RICHTUNG": 0,
+                        "STELLE_ART": ""
+                    }
+                },
+                "to": {
+                    "ds100_ref": "KK",
+                    "name": "Köln Hbf",
+                    "railwayRoutePosition": {
+                        "STRECKE_NR": 2630,
+                        "RICHTUNG": 0,
+                        "KM_I": 99799998,
+                        "KM_L": "-2,0 + -1",
+                        "BEZEICHNUNG": "Köln Hbf",
+                        "STELLE_ART": "Bf",
+                        "KUERZEL": "KK",
+                        "GK_R_DGN": 3356638.624,
+                        "GK_H_DGN": 5647264.088,
+                        "GEOGR_BREITE": 50.9427776,
+                        "GEOGR_LAENGE": 6.95907644
                     }
                 }
             }
@@ -1022,720 +3300,6 @@
         ]
     },
     {
-        "uicFrom": 8000152,
-        "uicTo": 8098160,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 1734,
-                "from": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550619.128,
-                        "GK_H_DGN": 5805165.014,
-                        "GEOGR_BREITE": 52.37748241,
-                        "GEOGR_LAENGE": 9.74221093
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "KM_L": "15,4 +  37",
-                        "KM_I": 101540037,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 6107,
-                "from": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "238,5 +  34",
-                        "KM_I": 123850034,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "BL",
-                    "name": "Berlin Hbf (tief)",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "1,3 +   3",
-                        "KM_I": 100130003,
-                        "BEZEICHNUNG": "Berlin Hauptbahnhof - Lehrter Bahnhof",
-                        "KUERZEL": "BL",
-                        "GEOGR_BREITE": 52.525998,
-                        "GEOGR_LAENGE": 13.36936607,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8098160,
-        "uicTo": 8000152,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 6107,
-                "from": {
-                    "ds100_ref": "BL",
-                    "name": "Berlin Hbf (tief)",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "1,3 +   3",
-                        "KM_I": 100130003,
-                        "BEZEICHNUNG": "Berlin Hauptbahnhof - Lehrter Bahnhof",
-                        "KUERZEL": "BL",
-                        "GEOGR_BREITE": 52.525998,
-                        "GEOGR_LAENGE": 13.36936607,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "238,5 +  34",
-                        "KM_I": 123850034,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 1734,
-                "from": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "KM_L": "15,4 +  37",
-                        "KM_I": 101540037,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550619.128,
-                        "GK_H_DGN": 5805165.014,
-                        "GEOGR_BREITE": 52.37748241,
-                        "GEOGR_LAENGE": 9.74221093
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8000152,
-        "uicTo": 8010404,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 1734,
-                "from": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550619.128,
-                        "GK_H_DGN": 5805165.014,
-                        "GEOGR_BREITE": 52.37748241,
-                        "GEOGR_LAENGE": 9.74221093
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "KM_L": "15,4 +  37",
-                        "KM_I": 101540037,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 6107,
-                "from": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "238,5 +  34",
-                        "KM_I": 123850034,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "BSPD",
-                    "name": "Berlin-Spandau",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "RICHTUNG": 0,
-                        "KM_I": 101270080,
-                        "KM_L": "12,7 + 80",
-                        "BEZEICHNUNG": "Berlin-Spandau",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "BSPD",
-                        "GK_R_DGN": 3784891.889,
-                        "GK_H_DGN": 5830637.917,
-                        "GEOGR_BREITE": 52.53424057,
-                        "GEOGR_LAENGE": 13.19826406
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8010404,
-        "uicTo": 8000152,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 6107,
-                "from": {
-                    "ds100_ref": "BSPD",
-                    "name": "Berlin-Spandau",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "RICHTUNG": 0,
-                        "KM_I": 101270080,
-                        "KM_L": "12,7 + 80",
-                        "BEZEICHNUNG": "Berlin-Spandau",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "BSPD",
-                        "GK_R_DGN": 3784891.889,
-                        "GK_H_DGN": 5830637.917,
-                        "GEOGR_BREITE": 52.53424057,
-                        "GEOGR_LAENGE": 13.19826406
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "238,5 +  34",
-                        "KM_I": 123850034,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 1734,
-                "from": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "KM_L": "15,4 +  37",
-                        "KM_I": 101540037,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550619.128,
-                        "GK_H_DGN": 5805165.014,
-                        "GEOGR_BREITE": 52.37748241,
-                        "GEOGR_LAENGE": 9.74221093
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8000152,
-        "uicTo": 8002549,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 1710,
-                "from": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1710,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550586.96,
-                        "GK_H_DGN": 5805122.749,
-                        "GEOGR_BREITE": 52.37710558,
-                        "GEOGR_LAENGE": 9.74173223
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HC",
-                    "name": "Celle",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1710,
-                        "KM_L": "40,8 +  16",
-                        "KM_I": 104080016,
-                        "BEZEICHNUNG": "Celle",
-                        "KUERZEL": "HC",
-                        "GEOGR_BREITE": 52.62099445,
-                        "GEOGR_LAENGE": 10.06246963,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 1720,
-                "from": {
-                    "ds100_ref": "HC",
-                    "name": "Celle",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1710,
-                        "KM_L": "40,8 +  16",
-                        "KM_I": 104080016,
-                        "BEZEICHNUNG": "Celle",
-                        "KUERZEL": "HC",
-                        "GEOGR_BREITE": 52.62099445,
-                        "GEOGR_LAENGE": 10.06246963,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "AHAR",
-                    "name": "Hamburg-Harburg",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 2200,
-                        "RICHTUNG": 0,
-                        "KM_I": 134330000,
-                        "KM_L": "343,3 + 0",
-                        "BEZEICHNUNG": "Hamburg-Harburg",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "AHAR",
-                        "GK_R_DGN": 3565960.403,
-                        "GK_H_DGN": 5925417.45,
-                        "GEOGR_BREITE": 53.45628459,
-                        "GEOGR_LAENGE": 9.99184667
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 2200,
-                "from": {
-                    "ds100_ref": "AHAR",
-                    "name": "Hamburg-Harburg",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 2200,
-                        "RICHTUNG": 0,
-                        "KM_I": 134330000,
-                        "KM_L": "343,3 + 0",
-                        "BEZEICHNUNG": "Hamburg-Harburg",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "AHAR",
-                        "GK_R_DGN": 3565960.403,
-                        "GK_H_DGN": 5925417.45,
-                        "GEOGR_BREITE": 53.45628459,
-                        "GEOGR_LAENGE": 9.99184667
-                    }
-                },
-                "to": {
-                    "ds100_ref": "AH",
-                    "name": "Hamburg Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 2200,
-                        "RICHTUNG": 0,
-                        "KM_I": 135530022,
-                        "KM_L": "355,3 + 22",
-                        "BEZEICHNUNG": "Hamburg Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "AH",
-                        "GK_R_DGN": 3566729.44,
-                        "GK_H_DGN": 5936242.617,
-                        "GEOGR_BREITE": 53.55343836,
-                        "GEOGR_LAENGE": 10.00572161
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8002549,
-        "uicTo": 8000152,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 2200,
-                "from": {
-                    "ds100_ref": "AH",
-                    "name": "Hamburg Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 2200,
-                        "RICHTUNG": 0,
-                        "KM_I": 135530022,
-                        "KM_L": "355,3 + 22",
-                        "BEZEICHNUNG": "Hamburg Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "AH",
-                        "GK_R_DGN": 3566729.44,
-                        "GK_H_DGN": 5936242.617,
-                        "GEOGR_BREITE": 53.55343836,
-                        "GEOGR_LAENGE": 10.00572161
-                    }
-                },
-                "to": {
-                    "ds100_ref": "AHAR",
-                    "name": "Hamburg-Harburg",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 2200,
-                        "RICHTUNG": 0,
-                        "KM_I": 134330000,
-                        "KM_L": "343,3 + 0",
-                        "BEZEICHNUNG": "Hamburg-Harburg",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "AHAR",
-                        "GK_R_DGN": 3565960.403,
-                        "GK_H_DGN": 5925417.45,
-                        "GEOGR_BREITE": 53.45628459,
-                        "GEOGR_LAENGE": 9.99184667
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 1720,
-                "from": {
-                    "ds100_ref": "AHAR",
-                    "name": "Hamburg-Harburg",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 2200,
-                        "RICHTUNG": 0,
-                        "KM_I": 134330000,
-                        "KM_L": "343,3 + 0",
-                        "BEZEICHNUNG": "Hamburg-Harburg",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "AHAR",
-                        "GK_R_DGN": 3565960.403,
-                        "GK_H_DGN": 5925417.45,
-                        "GEOGR_BREITE": 53.45628459,
-                        "GEOGR_LAENGE": 9.99184667
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HC",
-                    "name": "Celle",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1710,
-                        "KM_L": "40,8 +  16",
-                        "KM_I": 104080016,
-                        "BEZEICHNUNG": "Celle",
-                        "KUERZEL": "HC",
-                        "GEOGR_BREITE": 52.62099445,
-                        "GEOGR_LAENGE": 10.06246963,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 1710,
-                "from": {
-                    "ds100_ref": "HC",
-                    "name": "Celle",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1710,
-                        "KM_L": "40,8 +  16",
-                        "KM_I": 104080016,
-                        "BEZEICHNUNG": "Celle",
-                        "KUERZEL": "HC",
-                        "GEOGR_BREITE": 52.62099445,
-                        "GEOGR_LAENGE": 10.06246963,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1710,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550586.96,
-                        "GK_H_DGN": 5805122.749,
-                        "GEOGR_BREITE": 52.37710558,
-                        "GEOGR_LAENGE": 9.74173223
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8000152,
-        "uicTo": 8006552,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 1734,
-                "from": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550619.128,
-                        "GK_H_DGN": 5805165.014,
-                        "GEOGR_BREITE": 52.37748241,
-                        "GEOGR_LAENGE": 9.74221093
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "KM_L": "15,4 +  37",
-                        "KM_I": 101540037,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 6107,
-                "from": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "238,5 +  34",
-                        "KM_I": 123850034,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HWOB",
-                    "name": "Wolfsburg Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "RICHTUNG": 0,
-                        "KM_I": 118080084,
-                        "KM_L": "180,8 + 84",
-                        "BEZEICHNUNG": "Wolfsburg Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HWOB",
-                        "GK_R_DGN": 3621665.42,
-                        "GK_H_DGN": 5812215.696,
-                        "GEOGR_BREITE": 52.42966232,
-                        "GEOGR_LAENGE": 10.78767451
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "uicFrom": 8006552,
-        "uicTo": 8000152,
-        "railwayRoutes": [
-            {
-                "railwayRouteNr": 6107,
-                "from": {
-                    "ds100_ref": "HWOB",
-                    "name": "Wolfsburg Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "RICHTUNG": 0,
-                        "KM_I": 118080084,
-                        "KM_L": "180,8 + 84",
-                        "BEZEICHNUNG": "Wolfsburg Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HWOB",
-                        "GK_R_DGN": 3621665.42,
-                        "GK_H_DGN": 5812215.696,
-                        "GEOGR_BREITE": 52.42966232,
-                        "GEOGR_LAENGE": 10.78767451
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 6107,
-                        "KM_L": "238,5 +  34",
-                        "KM_I": 123850034,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                }
-            },
-            {
-                "railwayRouteNr": 1734,
-                "from": {
-                    "ds100_ref": "HLER",
-                    "name": "Lehrte",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "KM_L": "15,4 +  37",
-                        "KM_I": 101540037,
-                        "BEZEICHNUNG": "Lehrte",
-                        "KUERZEL": "HLER",
-                        "GEOGR_BREITE": 52.3767861,
-                        "GEOGR_LAENGE": 9.97361547,
-                        "GK_H_DGN": 0,
-                        "GK_R_DGN": 0,
-                        "RICHTUNG": 0,
-                        "STELLE_ART": ""
-                    }
-                },
-                "to": {
-                    "ds100_ref": "HH",
-                    "name": "Hannover Hbf",
-                    "railwayRoutePosition": {
-                        "STRECKE_NR": 1734,
-                        "RICHTUNG": 0,
-                        "KM_I": 100000000,
-                        "KM_L": "0,0 + 0",
-                        "BEZEICHNUNG": "Hannover Hbf",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "HH",
-                        "GK_R_DGN": 3550619.128,
-                        "GK_H_DGN": 5805165.014,
-                        "GEOGR_BREITE": 52.37748241,
-                        "GEOGR_LAENGE": 9.74221093
-                    }
-                }
-            }
-        ]
-    },
-    {
         "uicFrom": 8000266,
         "uicTo": 8000207,
         "railwayRoutes": [
@@ -1759,40 +3323,40 @@
                     }
                 },
                 "to": {
-                    "ds100_ref": "KWV",
-                    "name": "Wuppertal-Vohwinkel",
+                    "ds100_ref": "KLID",
+                    "name": "Wuppertal Linden",
                     "railwayRoutePosition": {
                         "STRECKE_NR": 2550,
                         "RICHTUNG": 0,
-                        "KM_I": 110910044,
-                        "KM_L": "109,1 + 44",
-                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "KWV",
-                        "GK_R_DGN": 3365409.59,
-                        "GK_H_DGN": 5679438.005,
-                        "GEOGR_BREITE": 51.23393353,
-                        "GEOGR_LAENGE": 7.07181263
+                        "KM_I": 110600086,
+                        "KM_L": "106,0 + 86",
+                        "BEZEICHNUNG": "Wuppertal Linden",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "KLID",
+                        "GK_R_DGN": 3362990.167,
+                        "GK_H_DGN": 5677622.774,
+                        "GEOGR_BREITE": 51.21705108,
+                        "GEOGR_LAENGE": 7.0378861
                     }
                 }
             },
             {
-                "railwayRouteNr": 2732,
+                "railwayRouteNr": 2731,
                 "from": {
-                    "ds100_ref": "KWV",
-                    "name": "Wuppertal-Vohwinkel",
+                    "ds100_ref": "KLID",
+                    "name": "Wuppertal Linden",
                     "railwayRoutePosition": {
                         "STRECKE_NR": 2550,
                         "RICHTUNG": 0,
-                        "KM_I": 110910044,
-                        "KM_L": "109,1 + 44",
-                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "KWV",
-                        "GK_R_DGN": 3365409.59,
-                        "GK_H_DGN": 5679438.005,
-                        "GEOGR_BREITE": 51.23393353,
-                        "GEOGR_LAENGE": 7.07181263
+                        "KM_I": 110600086,
+                        "KM_L": "106,0 + 86",
+                        "BEZEICHNUNG": "Wuppertal Linden",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "KLID",
+                        "GK_R_DGN": 3362990.167,
+                        "GK_H_DGN": 5677622.774,
+                        "GEOGR_BREITE": 51.21705108,
+                        "GEOGR_LAENGE": 7.0378861
                     }
                 },
                 "to": {
@@ -2042,7 +3606,7 @@
                 }
             },
             {
-                "railwayRouteNr": 2732,
+                "railwayRouteNr": 2731,
                 "from": {
                     "ds100_ref": "KGUI",
                     "name": "Haan-Gruiten",
@@ -2061,40 +3625,40 @@
                     }
                 },
                 "to": {
-                    "ds100_ref": "KWV",
-                    "name": "Wuppertal-Vohwinkel",
+                    "ds100_ref": "KLID",
+                    "name": "Wuppertal Linden",
                     "railwayRoutePosition": {
                         "STRECKE_NR": 2550,
                         "RICHTUNG": 0,
-                        "KM_I": 110910044,
-                        "KM_L": "109,1 + 44",
-                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "KWV",
-                        "GK_R_DGN": 3365409.59,
-                        "GK_H_DGN": 5679438.005,
-                        "GEOGR_BREITE": 51.23393353,
-                        "GEOGR_LAENGE": 7.07181263
+                        "KM_I": 110600086,
+                        "KM_L": "106,0 + 86",
+                        "BEZEICHNUNG": "Wuppertal Linden",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "KLID",
+                        "GK_R_DGN": 3362990.167,
+                        "GK_H_DGN": 5677622.774,
+                        "GEOGR_BREITE": 51.21705108,
+                        "GEOGR_LAENGE": 7.0378861
                     }
                 }
             },
             {
                 "railwayRouteNr": 2550,
                 "from": {
-                    "ds100_ref": "KWV",
-                    "name": "Wuppertal-Vohwinkel",
+                    "ds100_ref": "KLID",
+                    "name": "Wuppertal Linden",
                     "railwayRoutePosition": {
                         "STRECKE_NR": 2550,
                         "RICHTUNG": 0,
-                        "KM_I": 110910044,
-                        "KM_L": "109,1 + 44",
-                        "BEZEICHNUNG": "Wuppertal-Vohwinkel",
-                        "STELLE_ART": "Bf",
-                        "KUERZEL": "KWV",
-                        "GK_R_DGN": 3365409.59,
-                        "GK_H_DGN": 5679438.005,
-                        "GEOGR_BREITE": 51.23393353,
-                        "GEOGR_LAENGE": 7.07181263
+                        "KM_I": 110600086,
+                        "KM_L": "106,0 + 86",
+                        "BEZEICHNUNG": "Wuppertal Linden",
+                        "STELLE_ART": "Abzw",
+                        "KUERZEL": "KLID",
+                        "GK_R_DGN": 3362990.167,
+                        "GK_H_DGN": 5677622.774,
+                        "GEOGR_BREITE": 51.21705108,
+                        "GEOGR_LAENGE": 7.0378861
                     }
                 },
                 "to": {
