@@ -2,7 +2,7 @@
 export const haltestellen = require('../../db-data/D_Bahnhof_2020_alle.json') as Array<Haltestelle>;
 export const betriebsstellen = require('../../db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>;
 export const strecken = require('../../db-data/strecken_pz.json') as Array<Strecke>;
-export const betriebsstelleMitPositionAnStrecke = require('../../db-data/betriebsstellen_streckennummer_pz.json') as Array<BetriebsstelleMitPositionAnStrecke>;
+export const betriebsstellenMitPositionAnStrecke = require('../../db-data/betriebsstellen_streckennummer_pz.json') as Array<BetriebsstelleMitPositionAnStrecke>;
 export const railwayRouteCache = require('../../db-data/RailwayRouteCache.json') as Array<RailwayRouteCache>;
 
 export interface Haltestelle {
@@ -108,6 +108,53 @@ export interface RailwayRouteCache {
     railwayRoutes: Array<RailwayRouteOfTrip>;
 }
 
+interface Ds100UndBetriebsstellenMitPositionAnStrecke {
+    Ds100: string;
+    betriebsstellenMitPositionAnStrecke: Array<BetriebsstelleMitPositionAnStrecke>
+}
+
+interface StreckeNrUndBetriebsstellenMitPositionAnStrecke {
+    StreckeNr: number;
+    betriebsstellenMitPositionAnStrecke: Array<BetriebsstelleMitPositionAnStrecke>
+}
+
+const useIndexes = true;
+
+console.log('betriebsstellenMitPositionAnStrecke..length:', betriebsstellenMitPositionAnStrecke.length);
+
+const arrDs100UndBetriebsstellenMitPositionAnStrecke =
+    betriebsstellenMitPositionAnStrecke
+        .reduce((accu: Array<Ds100UndBetriebsstellenMitPositionAnStrecke>, bs) => {
+            const entry = accu.find(s => s.Ds100 === bs.KUERZEL);
+            if (entry) entry.betriebsstellenMitPositionAnStrecke.push(bs);
+            else accu.push({ Ds100: bs.KUERZEL, betriebsstellenMitPositionAnStrecke: [bs] })
+            return accu;
+        }, [])
+        .filter(ds => ds.betriebsstellenMitPositionAnStrecke.length > 1);
+
+console.log('arrDs100UndBetriebsstellenMitPositionAnStrecke..length:', arrDs100UndBetriebsstellenMitPositionAnStrecke.length);
+
+const arrStreckeNrUndBetriebsstellenMitPositionAnStrecke =
+    betriebsstellenMitPositionAnStrecke
+        .reduce((accu: Array<StreckeNrUndBetriebsstellenMitPositionAnStrecke>, bs) => {
+            const entry = accu.find(s => s.StreckeNr === bs.STRECKE_NR);
+            if (entry) entry.betriebsstellenMitPositionAnStrecke.push(bs);
+            else accu.push({ StreckeNr: bs.STRECKE_NR, betriebsstellenMitPositionAnStrecke: [bs] })
+            return accu;
+        }, []);
+
+console.log('arrStreckeNrUndBetriebsstellenMitPositionAnStrecke..length:', arrStreckeNrUndBetriebsstellenMitPositionAnStrecke.length);
+
+function findBetriebsstellenMitPositionAnStreckeForKUERZEL(KUERZEL: string) {
+    if (useIndexes) return arrDs100UndBetriebsstellenMitPositionAnStrecke.find(s => s.Ds100 === KUERZEL)?.betriebsstellenMitPositionAnStrecke || [];
+    else return betriebsstellenMitPositionAnStrecke.filter(bs => bs.KUERZEL == KUERZEL);
+}
+
+function findBetriebsstellenMitPositionAnStreckeForSTRECKE_NR(STRECKE_NR: number) {
+    if (useIndexes) return arrStreckeNrUndBetriebsstellenMitPositionAnStrecke.find(s => s.StreckeNr === STRECKE_NR)?.betriebsstellenMitPositionAnStrecke || [];
+    else return betriebsstellenMitPositionAnStrecke.filter(bs => bs.STRECKE_NR == STRECKE_NR);
+}
+
 /*
  * examples for ds100 in haltestellen 'EBIL', 'EBIL,EBILP', 'KDN,KDN P', 'EHE P' 
  */
@@ -136,12 +183,11 @@ function getFirstPartOfDS100(ds100: string) {
 
 export function findStopWithRailwayRoutePositions(uic_refs: number[]) {
     const hsStrecken: Array<StopWithRailwayRoutePositions> = [];
-    for (var n = 0; n < uic_refs.length; n++) {
-        const uic_ref = uic_refs[n];
+    uic_refs.forEach(uic_ref => {
         const hs = haltestellen.filter(h => h.EVA_NR === uic_ref);
         if (hs.length > 0) {
             console.log('uic_ref:', uic_ref, ', Ds100:', hs[0].DS100, ', name:', hs[0].NAME)
-            const strecken = betriebsstelleMitPositionAnStrecke.filter(b => matchWithDS100(b.KUERZEL, hs[0].DS100));
+            const strecken = betriebsstellenMitPositionAnStrecke.filter(b => matchWithDS100(b.KUERZEL, hs[0].DS100));
             if (strecken.length > 0) {
                 // strecken.forEach(s => console.log('Ds100: ', s.KUERZEL, ', strecke: ', s.STRECKE_NR));
                 hsStrecken.push({ ds100_ref: hs[0].DS100, uic_ref: uic_ref, name: hs[0].NAME, streckenpositionen: strecken });
@@ -153,7 +199,7 @@ export function findStopWithRailwayRoutePositions(uic_refs: number[]) {
             // console.log('Uic: ', uic_ref, ', Ds100 not found')
             hsStrecken.push({ ds100_ref: '', uic_ref: uic_ref, name: '', streckenpositionen: [] });
         }
-    }
+    });
     return hsStrecken;
 }
 
@@ -166,7 +212,7 @@ function removeDuplicates(arr: Array<number>) {
 }
 
 function findCommonRailwayRoutes(arrA: Array<BetriebsstelleMitPositionAnStrecke>, arrB: Array<BetriebsstelleMitPositionAnStrecke>) {
-    return arrA.filter(a => arrB.filter(b => a.STRECKE_NR === b.STRECKE_NR).length > 0).map(a => a.STRECKE_NR)
+    return arrA.filter(a => arrB.find(b => a.STRECKE_NR === b.STRECKE_NR)).map(a => a.STRECKE_NR)
 }
 
 interface SingleCrossing {
@@ -177,19 +223,18 @@ interface SingleCrossing {
     bsPosOfB: BetriebsstelleMitPositionAnStrecke;
 }
 
-export function findRailwayRoutesWithSingleCrossing(arrA: Array<BetriebsstelleMitPositionAnStrecke>, arrB: Array<BetriebsstelleMitPositionAnStrecke>) {
+export function findRailwayRoutesWithSingleCrossing(arrStreckenA: Array<BetriebsstelleMitPositionAnStrecke>, arrStreckenB: Array<BetriebsstelleMitPositionAnStrecke>) {
     const crossings: SingleCrossing[] = [];
-    arrA.forEach(a => {
-        const hsOfA = betriebsstelleMitPositionAnStrecke.filter(bs => bs.STRECKE_NR == a.STRECKE_NR);
-        arrB.forEach(b => {
+    arrStreckenA.forEach(a => {
+        const arrBsOfStreckeA = findBetriebsstellenMitPositionAnStreckeForSTRECKE_NR(a.STRECKE_NR);
+        arrStreckenB.forEach(b => {
             if (a.STRECKE_NR != b.STRECKE_NR) {
-                const hsOfB = betriebsstelleMitPositionAnStrecke.filter(bs => bs.STRECKE_NR == b.STRECKE_NR);
-                const commonBetriebsstellen = hsOfA.filter(x => hsOfB.filter(y => x.KUERZEL === y.KUERZEL).length > 0)
-                commonBetriebsstellen.forEach(cOfA => {
-                    const hs = haltestellen.find(h => h.DS100 === cOfA.KUERZEL);
-                    const cOfB = hsOfB.find(y => cOfA.KUERZEL === y.KUERZEL);
-                    if (cOfB) {
-                        crossings.push({ streckennummerA: a.STRECKE_NR, streckennummerB: b.STRECKE_NR, ds100_crossing_point: getFirstPartOfDS100(cOfA.KUERZEL), bsPosOfA: cOfA, bsPosOfB: cOfB });
+                const arrBsOfStreckeB = findBetriebsstellenMitPositionAnStreckeForSTRECKE_NR(b.STRECKE_NR);
+                const commonBetriebsstellen = arrBsOfStreckeA.filter(bsOfStreckeA => arrBsOfStreckeB.find(bsOfStreckeB => bsOfStreckeA.KUERZEL === bsOfStreckeB.KUERZEL));
+                commonBetriebsstellen.forEach(bsOfStreckeA => {
+                    const bsOfStreckeB = arrBsOfStreckeB.find(bs => bsOfStreckeA.KUERZEL === bs.KUERZEL);
+                    if (bsOfStreckeB) {
+                        crossings.push({ streckennummerA: a.STRECKE_NR, streckennummerB: b.STRECKE_NR, ds100_crossing_point: getFirstPartOfDS100(bsOfStreckeA.KUERZEL), bsPosOfA: bsOfStreckeA, bsPosOfB: bsOfStreckeB });
                     }
                 });
             }
@@ -200,8 +245,8 @@ export function findRailwayRoutesWithSingleCrossing(arrA: Array<BetriebsstelleMi
 
 function findStreckenBetweenBetriebsstellen(ds100A: string, ds100B: string, exlcudes: number[]) {
     const strecken: number[] = [];
-    const hsOfA = betriebsstelleMitPositionAnStrecke.filter(bs => bs.KUERZEL == ds100A && exlcudes.indexOf(bs.STRECKE_NR) < 0);
-    const hsOfB = betriebsstelleMitPositionAnStrecke.filter(bs => bs.KUERZEL == ds100B && exlcudes.indexOf(bs.STRECKE_NR) < 0);
+    const hsOfA = findBetriebsstellenMitPositionAnStreckeForKUERZEL(ds100A).filter(bs => exlcudes.indexOf(bs.STRECKE_NR) < 0);
+    const hsOfB = findBetriebsstellenMitPositionAnStreckeForKUERZEL(ds100B).filter(bs => exlcudes.indexOf(bs.STRECKE_NR) < 0);
     hsOfA.forEach(a => {
         const match = hsOfB.find(b => b.STRECKE_NR === a.STRECKE_NR);
         if (match) {
@@ -221,32 +266,27 @@ interface DoubleCrossing {
     bsPosOfB: BetriebsstelleMitPositionAnStrecke;
 }
 
-function findRailwayRoutesWithDoubleCrossing(ds100A: string, arrA: Array<BetriebsstelleMitPositionAnStrecke>, ds100B: string, arrB: Array<BetriebsstelleMitPositionAnStrecke>) {
+function findRailwayRoutesWithDoubleCrossing(ds100A: string, arrStreckenA: Array<BetriebsstelleMitPositionAnStrecke>, ds100B: string, arrStreckenB: Array<BetriebsstelleMitPositionAnStrecke>) {
     const crossings: DoubleCrossing[] = [];
-    arrA.forEach(a => {
-        const hsOfA = betriebsstelleMitPositionAnStrecke.filter(bs => bs.STRECKE_NR == a.STRECKE_NR && bs.KUERZEL !== ds100A);
-        arrB.forEach(b => {
+    arrStreckenA.forEach(a => {
+        const arrBsOfStreckeA = findBetriebsstellenMitPositionAnStreckeForSTRECKE_NR(a.STRECKE_NR).filter(bs => bs.KUERZEL !== ds100A);
+        arrStreckenB.forEach(b => {
             if (a.STRECKE_NR != b.STRECKE_NR) {
-                const hsOfB = betriebsstelleMitPositionAnStrecke.filter(bs => bs.STRECKE_NR == b.STRECKE_NR && bs.KUERZEL !== ds100B);
-
-                hsOfA.forEach(x => {
-                    hsOfB.forEach(y => {
-                        if (x.KUERZEL !== y.KUERZEL) {
-                            const strecken = findStreckenBetweenBetriebsstellen(x.KUERZEL, y.KUERZEL, [a.STRECKE_NR, b.STRECKE_NR]);
+                const arrBsOfStreckeB = findBetriebsstellenMitPositionAnStreckeForSTRECKE_NR(b.STRECKE_NR).filter(bs => bs.KUERZEL !== ds100B);
+                arrBsOfStreckeA.forEach(bsAnStreckeA => {
+                    arrBsOfStreckeB.forEach(bsAnStreckeB => {
+                        if (bsAnStreckeA.KUERZEL !== bsAnStreckeB.KUERZEL) {
+                            const strecken = findStreckenBetweenBetriebsstellen(bsAnStreckeA.KUERZEL, bsAnStreckeB.KUERZEL, [a.STRECKE_NR, b.STRECKE_NR]);
                             if (strecken.length > 0) {
-                                const cOfA = hsOfA.find(z => z.KUERZEL === x.KUERZEL);
-                                const cOfB = hsOfB.find(z => z.KUERZEL === y.KUERZEL);
-                                if (cOfA && cOfB) {
-                                    crossings.push({
-                                        streckennummerA: a.STRECKE_NR,
-                                        streckennummerAB: strecken[0],
-                                        streckennummerB: b.STRECKE_NR,
-                                        ds100_crossing_point_A: getFirstPartOfDS100(x.KUERZEL),
-                                        ds100_crossing_point_B: getFirstPartOfDS100(y.KUERZEL),
-                                        bsPosOfA: cOfA,
-                                        bsPosOfB: cOfB
-                                    });
-                                }
+                                crossings.push({
+                                    streckennummerA: a.STRECKE_NR,
+                                    streckennummerAB: strecken[0],
+                                    streckennummerB: b.STRECKE_NR,
+                                    ds100_crossing_point_A: getFirstPartOfDS100(bsAnStreckeA.KUERZEL),
+                                    ds100_crossing_point_B: getFirstPartOfDS100(bsAnStreckeB.KUERZEL),
+                                    bsPosOfA: bsAnStreckeA,
+                                    bsPosOfB: bsAnStreckeB
+                                });
                             }
                         }
                     });
@@ -271,8 +311,9 @@ export function findRailwayRouteText(railwayRouteNr: number) {
 }
 
 function computeDistanceOfBetriebsstellen(strecke: number, ds100A: string, ds100B: string, distanceOfUndef?: number) {
-    const nodeA = betriebsstelleMitPositionAnStrecke.find(s => s.STRECKE_NR == strecke && s.KUERZEL === ds100A);
-    const nodeB = betriebsstelleMitPositionAnStrecke.find(s => s.STRECKE_NR == strecke && s.KUERZEL === ds100B);
+    const bsAnStrecke = findBetriebsstellenMitPositionAnStreckeForSTRECKE_NR(strecke);
+    const nodeA = bsAnStrecke.find(s => s.KUERZEL === ds100A);
+    const nodeB = bsAnStrecke.find(s => s.KUERZEL === ds100B);
     if (nodeA && nodeB) {
         const kmA = (nodeA.KM_I - 100000000) / 100000;
         const kmB = (nodeB.KM_I - 100000000) / 100000;

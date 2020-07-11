@@ -27,7 +27,7 @@ import { ListItem, SearchBar, Icon } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { BetriebsstelleMitPositionAnStrecke, strecken, betriebsstelleMitPositionAnStrecke } from '../lib/db-data';
+import { BetriebsstelleMitPositionAnStrecke, strecken, betriebsstellenMitPositionAnStrecke } from '../lib/db-data';
 import { Location } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRouteScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -45,7 +45,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
 
-    const data: BetriebsstelleMitPositionAnStrecke[] = betriebsstelleMitPositionAnStrecke.filter(b => b.STRECKE_NR === railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
+    const data: BetriebsstelleMitPositionAnStrecke[] = betriebsstellenMitPositionAnStrecke.filter(b => b.STRECKE_NR === railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
     const streckeOfNr = strecken.filter(s => s.STRNR === railwayRouteNr);
     const strecke = streckeOfNr.length > 0 ? streckeOfNr[0] : undefined;
     const STRNAME = strecke?.STRNAME || '';

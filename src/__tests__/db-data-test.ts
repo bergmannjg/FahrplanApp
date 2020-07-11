@@ -1,6 +1,6 @@
 import { findRailwayRoutesOfTrip } from '../lib/db-data'
 
-test('test ICE 1581 Hamburg München', () => {
+test('test ICE 1581 Hamburg München without cache', () => {
     ICE1581HamburgMünchen(false);
 });
 

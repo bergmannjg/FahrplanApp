@@ -6,7 +6,9 @@
     "android-debug": "react-native run-android --variant=debug --deviceId process.env.deviceId",
     "android-release": "react-native run-android --variant=release --deviceId process.env.deviceId",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "test-file": "jest db-data-test",
+    "test-one": "jest -t 'test ICE 1581 Hamburg München without cache'"
   },
   "dependencies": {
     "@react-native-community/clipboard": "^1.2.3",

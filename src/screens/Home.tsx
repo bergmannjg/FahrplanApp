@@ -44,7 +44,7 @@ export default function HomeScreen({ route, navigation }: Props) {
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date());
-  const [routeSearch, setRouteSearch] = useState('single');
+  const [routeSearch, setRouteSearch] = useState('double');
 
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
