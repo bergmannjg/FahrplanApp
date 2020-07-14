@@ -27,7 +27,7 @@ import { ListItem, SearchBar, Icon } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { BetriebsstelleMitPositionAnStrecke, strecken, betriebsstellenMitPositionAnStrecke } from '../lib/db-data';
+import { BetriebsstelleRailwayRoutePosition, findRailwayRoute, findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr } from '../lib/db-data';
 import { Location } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRouteScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -45,9 +45,8 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
 
-    const data: BetriebsstelleMitPositionAnStrecke[] = betriebsstellenMitPositionAnStrecke.filter(b => b.STRECKE_NR === railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
-    const streckeOfNr = strecken.filter(s => s.STRNR === railwayRouteNr);
-    const strecke = streckeOfNr.length > 0 ? streckeOfNr[0] : undefined;
+    const data: BetriebsstelleRailwayRoutePosition[] = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
+    const strecke = findRailwayRoute(railwayRouteNr);
     const STRNAME = strecke?.STRNAME || '';
 
     const showRoute = async (isLongPress: boolean) => {
@@ -71,13 +70,13 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     };
 
     interface ItemProps {
-        item: BetriebsstelleMitPositionAnStrecke
+        item: BetriebsstelleRailwayRoutePosition
     }
 
     const Item = ({ item }: ItemProps) => {
         return (
             <View style={styles.subtitleView}>
-                <Text style={styles.itemStationText}>{`km: ${item.KM_L} ${item.BEZEICHNUNG}`}</Text>
+                <Text style={styles.itemStationText}>{`km: ${item.KM_L} ${item.BEZEICHNUNG} ${item.STELLE_ART}`}</Text>
             </View >
         );
     }

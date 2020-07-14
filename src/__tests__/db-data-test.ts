@@ -1,8 +1,5 @@
-import { findRailwayRoutesOfTrip } from '../lib/db-data'
-
-test('test ICE 1581 Hamburg München without cache', () => {
-    ICE1581HamburgMünchen(false);
-});
+import { findRailwayRoutesOfTrip, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data'
+import { loadOptions } from '@babel/core';
 
 test('test Hannover Wolfsburg', () => {
     const stops = [8000152, 8006552];
@@ -10,6 +7,14 @@ test('test Hannover Wolfsburg', () => {
     expect(railwayRoutes.length).toBe(2);
     expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
+
+    const locations = findRailwayRoutePositionForRailwayRoutes(railwayRoutes);
+    console.log('locations.length:', locations.length)
+    expect(locations.length > 0).toBe(true)
+});
+
+test('test ICE 1581 Hamburg München without cache', () => {
+    ICE1581HamburgMünchen(false);
 });
 
 test('test ICE 651 Köln Berlin with cache', () => {

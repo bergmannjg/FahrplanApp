@@ -59,7 +59,7 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps) {
             autoCorrect={false}
             hideResults={query.length < 3}
             data={getdata()}
-            defaultValue={query}
+            value={query}
             onChangeText={text => {
                 if (text.length === 0) {
                     onPress('');

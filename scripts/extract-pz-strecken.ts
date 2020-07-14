@@ -3,11 +3,30 @@
 // extract pz (Personenzug) strecken from file strecken.json
 // requires ts-node (https://github.com/TypeStrong/ts-node)
 
-import { Streckenutzung, Strecke, BetriebsstelleMitPositionAnStrecke } from '../src/lib/db-data'
+import { RailwayRoute, BetriebsstelleRailwayRoutePosition } from '../src/lib/db-data'
 const fs = require('fs');
-const strecken = require('../db-data/strecken.json') as Array<Strecke>;
-const betriebsstellen_streckennummer = require('../db-data/betriebsstellen_streckennummer.json') as Array<BetriebsstelleMitPositionAnStrecke>;
+const strecken = require('../db-data/strecken.json') as Array<RailwayRoute>;
+const betriebsstellen_streckennummer = require('../db-data/betriebsstellen_streckennummer.json') as Array<BetriebsstelleRailwayRoutePosition>;
 const streckennutzung = require('../db-data/strecken_nutzung.json') as Array<Streckenutzung>;
+
+interface Streckenutzung {
+    "mifcode": string;
+    "strecke_nr": number;
+    "richtung": number;
+    "laenge": number;
+    "von_km_i": number;
+    "bis_km_i": number;
+    "von_km_l": string;
+    "bis_km_l": string;
+    "elektrifizierung": string;
+    "bahnnutzung": string;
+    "geschwindigkeit": string;
+    "strecke_kurzn": string;
+    "gleisanzahl": string;
+    "bahnart": string;
+    "kmspru_typ_anf": string;
+    "kmspru_typ_end": string;
+}
 
 const strecken_pz = strecken.filter(s => streckennutzung.find(sn => sn.strecke_nr === s.STRNR && sn.bahnnutzung.startsWith('Pz')))
 

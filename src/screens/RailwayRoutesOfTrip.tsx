@@ -23,10 +23,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
 import { ListItem, SearchBar, Icon } from "react-native-elements";
+import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { RailwayRouteOfTrip, findRailwayRoutesOfTrip, findRailwayRouteText, computeDistance } from '../lib/db-data';
+import { RailwayRouteOfTrip, findRailwayRoutesOfTrip, findRailwayRouteText, computeDistance, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data';
 import { Stop } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -47,24 +48,29 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
 
     console.log('stops.length: ', stops.length);
 
-    const findRailwayRoutes = (stops: Stop[]) => {
-        return findRailwayRoutesOfTrip(stops.map(s => parseInt(s.id)), true, routeSearch === 'single' ? 'single' : 'double');
+    const findRailwayRoutes = (stopsOfRoute: Stop[]) => {
+        return findRailwayRoutesOfTrip(stopsOfRoute.map(s => parseInt(s.id, 10)), true, routeSearch === 'single' ? 'single' : 'double');
     }
 
-    // const data: RailwayRouteOfTrip[] = findRailwayRoutes(params.stops);
-    const emptyData: RailwayRouteOfTrip[] = []
-    const [data, setData] = useState(emptyData);
+    const [data, setData] = useState([] as RailwayRouteOfTrip[]);
     const [loading, setLoading] = useState(true);
     const [distance, setDistance] = useState(0);
 
     useEffect(() => {
-        if (loading && data.length == 0) {
+        if (loading && data.length === 0) {
             const routes = findRailwayRoutes(params.stops)
             setLoading(false);
             setDistance(computeDistance(routes));
             setData(routes);
         }
     });
+
+    const showRoute = async (isLongPress: boolean) => {
+        if (data.length > 0) {
+            const locations: Location[] = findRailwayRoutePositionForRailwayRoutes(data, isLongPress).filter(s => s.GEOGR_LAENGE > 0 && s.GEOGR_LAENGE > 0).map(s => { return { type: 'location', longitude: s.GEOGR_LAENGE, latitude: s.GEOGR_BREITE } })
+            navigation.navigate('BRouter', { isLongPress: false, locations });
+        }
+    }
 
     const showRailwayRoute = async (railwayRouteNr: number) => {
         console.log('showRailwayRoute');
@@ -114,7 +120,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
         return (
             <View style={styles.subtitleView}>
                 <Text style={styles.itemStationText}>{`${normalizeString(item.from?.name ?? '')} km: ${item.from?.railwayRoutePosition?.KM_L}`}</Text>
-                <TouchableOpacity style={styles.button} onPress={() => showRailwayRoute(item.railwayRouteNr ?? 0)}>
+                <TouchableOpacity style={styles.itemButton} onPress={() => showRailwayRoute(item.railwayRouteNr ?? 0)}>
                     <Text style={styles.itemButtonText}>{`${t('RailwayRoutesOfTripScreen.RailwayRoute')} ${item.railwayRouteNr} ${findRailwayRouteText(item.railwayRouteNr ?? 0)} `}</Text>
                 </TouchableOpacity>
                 <Text style={styles.itemStationText}>{`${normalizeString(item.to?.name ?? '')} km: ${item.to?.railwayRoutePosition?.KM_L}`}</Text>
@@ -124,6 +130,13 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
 
     return (
         <View style={styles.container}>
+            <View >
+                <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                    <Text style={styles.buttonText}>
+                        {t('JourneyplanScreen.ShowRoute')}
+                    </Text>
+                </TouchableOpacity>
+            </View>
             <View >
                 <Text style={styles.itemHeaderText}>
                     km: {distance.toFixed(2)}
@@ -218,7 +231,7 @@ const styles = StyleSheet.create({
         paddingRight: 12,
         textAlign: 'right',
     },
-    button: {
+    itemButton: {
         alignItems: 'flex-start',
         fontWeight: 'normal',
         // backgroundColor: '#DDDDDD',
@@ -228,6 +241,17 @@ const styles = StyleSheet.create({
     itemButtonText: {
         margin: 2,
         fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    button: {
+        alignItems: 'center',
+        backgroundColor: '#DDDDDD',
+        padding: 8,
+        margin: 2,
+    },
+    buttonText: {
+        fontSize: 18,
+        margin: 2,
         textAlign: 'center'
     },
 });

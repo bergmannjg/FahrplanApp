@@ -3,9 +3,9 @@
 // extends file betriebsstellen_open_data.json with missing information of railway route endpoints
 // requires ts-node (https://github.com/TypeStrong/ts-node)
 
-import { findRailwayRouteDS100Endpoint, RailwayRouteDS100Endpoint, BetriebsstelleMitPositionAnStrecke } from '../src/lib/db-data'
+import { findRailwayRouteDS100Endpoint, RailwayRouteDS100Endpoint, BetriebsstelleRailwayRoutePosition } from '../src/lib/db-data'
 const fs = require('fs');
-const betriebsstelleMitPositionAnStreckeOrig = require('../db-data/betriebsstellen_open_data.json') as Array<BetriebsstelleMitPositionAnStrecke>;
+const BetriebsstelleRailwayRoutePositionOrig = require('../db-data/betriebsstellen_open_data.json') as Array<BetriebsstelleRailwayRoutePosition>;
 
 // missing from dataset/geo-betriebsstelle, see https://de.wikipedia.org/wiki/Bahnstrecke_Berlin-Lehrte
 export const missing = JSON.parse(`[
@@ -22,11 +22,11 @@ export const missing = JSON.parse(`[
         "GEOGR_BREITE": 52.53424057,
         "GEOGR_LAENGE": 13.19826406
     }
-]`) as Array<BetriebsstelleMitPositionAnStrecke>;
+]`) as Array<BetriebsstelleRailwayRoutePosition>;
 
-function createMissingTripPositions(betriebsstelleMitPosition: Array<BetriebsstelleMitPositionAnStrecke>, rrEndpoints: RailwayRouteDS100Endpoint[]) {
+function createMissingTripPositions(betriebsstelleMitPosition: Array<BetriebsstelleRailwayRoutePosition>, rrEndpoints: RailwayRouteDS100Endpoint[]) {
     const rrValid = rrEndpoints.filter(r => r.from && r.to);
-    const missing: BetriebsstelleMitPositionAnStrecke[] = [];
+    const missing: BetriebsstelleRailwayRoutePosition[] = [];
     rrValid.forEach(rr => {
         const foundFrom = betriebsstelleMitPosition.find(bs => bs.KUERZEL === rr.from?.Abk && bs.STRECKE_NR === rr.strecke.STRNR);
         if (!foundFrom && rr.from) {
@@ -47,10 +47,10 @@ const rrEndpoints = findRailwayRouteDS100Endpoint();
 console.log('rrEndpoints.length: ', rrEndpoints.length);
 const rrUndef = rrEndpoints.filter(r => r.from === undefined || r.to === undefined);
 console.log('incomplete rrEndpoints.length: ', rrUndef.length);
-const missingMissingTripPositions = createMissingTripPositions(betriebsstelleMitPositionAnStreckeOrig, rrEndpoints);
+const missingMissingTripPositions = createMissingTripPositions(BetriebsstelleRailwayRoutePositionOrig, rrEndpoints);
 console.log('missing.length: ', missingMissingTripPositions.length);
-const betriebsstelleMitPositionAnStreckeNeu = betriebsstelleMitPositionAnStreckeOrig.concat(missingMissingTripPositions, missing);
-fs.writeFile("./db-data/betriebsstellen_streckennummer.json", JSON.stringify(betriebsstelleMitPositionAnStreckeNeu), function (err: any) {
+const BetriebsstelleRailwayRoutePositionNeu = BetriebsstelleRailwayRoutePositionOrig.concat(missingMissingTripPositions, missing);
+fs.writeFile("./db-data/betriebsstellen_streckennummer.json", JSON.stringify(BetriebsstelleRailwayRoutePositionNeu), function (err: any) {
     if (err) {
         console.log(err);
     }

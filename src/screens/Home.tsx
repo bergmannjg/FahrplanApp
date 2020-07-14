@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, Text, Button, TextInput, Keyboard } from "react-native";
+import React, { useState, useEffect } from "react";
+import AsyncStorage from '@react-native-community/async-storage';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, Text, Button, TextInput, Keyboard, ActivityIndicator } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import CustomAutocomplete from './components/CustomAutocomplete';
-// import DeviceInfo from 'react-native-device-info'
 import { useTranslation } from 'react-i18next';
 import { hafas, Hafas } from '../lib/hafas';
 import { Station, Stop, Location, Alternative } from 'hafas-client';
@@ -17,6 +17,11 @@ type Props = {
     StackNavigationProp<RootStackParamList>
   >;
 };
+
+type LocalData = {
+  station1: string;
+  station2: string;
+}
 
 export default function HomeScreen({ route, navigation }: Props) {
   console.log('home constructor, route: ', route);
@@ -36,10 +41,34 @@ export default function HomeScreen({ route, navigation }: Props) {
     ),
   });
 
-  const emulator = false;
-  const [station1, setStation1] = useState(emulator ? 'Hannover' : '');
-  const [station2, setStation2] = useState(emulator ? 'Bielfeld' : '');
+  const [station1, setStation1] = useState('');
+  const [station2, setStation2] = useState('');
   const [stationVia, setStationVia] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const retrieveData = async () => {
+      try {
+        const valueString = await AsyncStorage.getItem('user');
+        const value: LocalData = valueString ? JSON.parse(valueString) : { station1: '', station2: '' };
+        console.log('loadData:', value)
+        setStation1(value.station1);
+        setStation2(value.station2)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (loading) {
+      console.log('loading:', loading)
+      retrieveData();
+      setLoading(false);
+    }
+  });
+
+  const saveData = async (localData: LocalData) => {
+    console.log('saveData:', localData)
+    await AsyncStorage.setItem('user', JSON.stringify(localData));
+  };
 
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
@@ -76,6 +105,16 @@ export default function HomeScreen({ route, navigation }: Props) {
 
   const client = hafas(profile);
 
+  const setAndSaveStation1 = (s: string) => {
+    setStation1(s);
+    saveData({ station1: s, station2 });
+  }
+
+  const setAndSaveStation2 = (s: string) => {
+    setStation2(s)
+    saveData({ station1, station2: s });
+  }
+
   const asyncFindBahnhoefe = (query: string, callback: (arr: ReadonlyArray<Station | Stop | Location>) => void) => {
     if (query.length > 0) {
       client.locations(query, 1)
@@ -101,7 +140,7 @@ export default function HomeScreen({ route, navigation }: Props) {
 
   const suchen = () => {
     if (station1 !== '' && station2 !== '') {
-      navigation.navigate('Connections', { client, station1, station2, via: stationVia, date, tripDetails, routeSearch });
+      navigation.navigate('Connections', { client, station1: station1, station2: station2, via: stationVia, date, tripDetails, routeSearch });
     }
   }
 
@@ -141,16 +180,32 @@ export default function HomeScreen({ route, navigation }: Props) {
 
   const searchEnabled = station1.length > 0 && station2.length > 0;
 
+  const A1 = ({ s }: { s: string }) => {
+    return (
+      !loading ?
+        <CustomAutocomplete client={client} placeholder={t('HomeScreen.From')} query={s} onPress={(name) => { setAndSaveStation1(name); }} />
+        : <View />
+    );
+  }
+
+  const A2 = ({ s }: { s: string }) => {
+    return (
+      !loading ?
+        <CustomAutocomplete client={client} placeholder={t('HomeScreen.To')} query={s} onPress={(name) => { setAndSaveStation2(name); }} />
+        : <View />
+    );
+  }
+
   return (
     <View>
       <View style={styles.autocompleteContainerFrom}>
-        <CustomAutocomplete client={client} placeholder={t('HomeScreen.From')} query={station1} onPress={(name) => { setStation1(name); }} />
+        <A1 s={station1} />
       </View>
       <View style={styles.autocompleteContainerVia}>
         <CustomAutocomplete client={client} placeholder="via" query={stationVia} onPress={(name) => { setStationVia(name); }} />
       </View>
       <View style={styles.autocompleteContainerTo}>
-        <CustomAutocomplete client={client} placeholder={t('HomeScreen.To')} query={station2} onPress={(name) => { setStation2(name); }} />
+        <A2 s={station2} />
       </View>
 
       <View style={styles.containerDateTime}>
