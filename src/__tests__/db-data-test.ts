@@ -8,7 +8,7 @@ test('test Hannover Wolfsburg', () => {
     expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
 
-    const locations = findRailwayRoutePositionForRailwayRoutes(railwayRoutes);
+    const locations = findRailwayRoutePositionForRailwayRoutes(railwayRoutes, true);
     console.log('locations.length:', locations.length)
     expect(locations.length > 0).toBe(true)
 });

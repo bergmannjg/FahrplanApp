@@ -123,8 +123,8 @@ export default function ConnectionsScreen({ route, navigation }: Props) {
   }
 
   const showDiffDays = (from: Date, to: Date) => {
-    console.log('from.dayOfYear', moment(from).dayOfYear());
-    console.log('to.dayOfYear', moment(to).dayOfYear());
+    // console.log('from.dayOfYear', moment(from).dayOfYear());
+    // console.log('to.dayOfYear', moment(to).dayOfYear());
     const diffDays = to.getFullYear() === from.getFullYear() ? moment(to).dayOfYear() - moment(from).dayOfYear() : 0;
     return diffDays > 0 ? t('ConnectionsScreen.DaysDifference', { count: diffDays }) : '';
   }

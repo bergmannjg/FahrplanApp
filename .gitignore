@@ -31,8 +31,6 @@ src/__tests__/__snapshots__/
 
 .vscode/
 
-types/
-
 android/.settings
 android/app/.classpath
 android/app/.settings

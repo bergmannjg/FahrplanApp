@@ -1,10 +1,12 @@
 import { Lazy } from './Lazy'
+import createTree from 'functional-red-black-tree'
+import type { RedBlackTree } from 'functional-red-black-tree'
 
-const haltestellen = new Lazy<Stop[]>(() => require('../../db-data/D_Bahnhof_2020_alle.json') as Array<Stop>)
-const betriebsstellen = new Lazy<Betriebsstelle[]>(() => require('../../db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>)
-const railwayRoutes = new Lazy<RailwayRoute[]>(() => require('../../db-data/strecken_pz.json') as Array<RailwayRoute>)
-const betriebsstellenWithRailwayRoutePositions = new Lazy<BetriebsstelleRailwayRoutePosition[]>(() => require('../../db-data/betriebsstellen_streckennummer_pz.json') as Array<BetriebsstelleRailwayRoutePosition>)
-const railwayRouteCache = new Lazy<RailwayRouteCache[]>(() => require('../../db-data/RailwayRouteCache.json') as Array<RailwayRouteCache>)
+const stops = new Lazy<Stop[]>(() => require('../../db-data/D_Bahnhof_2020_alle.json') as Array<Stop>, 'haltestellen')
+const betriebsstellen = new Lazy<Betriebsstelle[]>(() => require('../../db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>, 'betriebsstellen')
+const railwayRoutes = new Lazy<RailwayRoute[]>(() => require('../../db-data/strecken_pz.json') as Array<RailwayRoute>, 'railwayRoutes')
+const betriebsstellenWithRailwayRoutePositions = new Lazy<BetriebsstelleRailwayRoutePosition[]>(() => require('../../db-data/betriebsstellen_streckennummer_pz.json') as Array<BetriebsstelleRailwayRoutePosition>, 'betriebsstellenWithRailwayRoutePositions')
+const railwayRouteCache = new Lazy<RailwayRouteCache[]>(() => require('../../db-data/RailwayRouteCache.json') as Array<RailwayRouteCache>, 'railwayRouteCache')
 
 // a stop is identified by EVA_NR (uic_ref) and is a Betriebsstelle
 interface Stop {
@@ -18,6 +20,7 @@ interface Stop {
     "Betreiber_Name": string;
     "Betreiber_Nr": string;
     "Status": string;
+    streckenpositionen?: Array<BetriebsstelleRailwayRoutePosition>
 }
 
 // a Betriebsstelle is identified by Abk (DS100)
@@ -97,65 +100,79 @@ interface RailwayRouteCache {
     railwayRoutes: Array<RailwayRouteOfTrip>;
 }
 
-interface Ds100AndBetriebsstellenWithRailwayRoutePosition {
-    Ds100: string;
-    betriebsstellenWithRailwayRoutePosition: Array<BetriebsstelleRailwayRoutePosition>
-}
+const btDS100WithCrossingsOfBetriebsstellenWithRailwayRoutePositions = new Lazy<RedBlackTree<string, Array<BetriebsstelleRailwayRoutePosition>>>(() => createTreeDs100WithCrossingsOfBetriebsstellenWithRailwayRoutePositions(), 'btDS100WithCrossingsOfBetriebsstellenWithRailwayRoutePositions');
 
-interface RailwayRouteNrAndBetriebsstellenWithRailwayRoutePosition {
-    StreckeNr: number;
-    betriebsstellenWithRailwayRoutePosition: Array<BetriebsstelleRailwayRoutePosition>
-}
-
-const arrDs100UndBetriebsstellenMitPositionAnStrecke = new Lazy<Ds100AndBetriebsstellenWithRailwayRoutePosition[]>(() =>
-    betriebsstellenWithRailwayRoutePositions.value
-        .reduce((accu: Array<Ds100AndBetriebsstellenWithRailwayRoutePosition>, bs) => {
-            const entry = accu.find(s => s.Ds100 === bs.KUERZEL);
-            if (entry) entry.betriebsstellenWithRailwayRoutePosition.push(bs);
-            else accu.push({ Ds100: bs.KUERZEL, betriebsstellenWithRailwayRoutePosition: [bs] })
+function createTreeDs100WithCrossingsOfBetriebsstellenWithRailwayRoutePositions() {
+    let tree = betriebsstellenWithRailwayRoutePositions.value
+        .reduce((accu: RedBlackTree<string, Array<BetriebsstelleRailwayRoutePosition>>, bs) => {
+            const entry = accu.get(bs.KUERZEL);
+            if (entry) entry.push(bs);
+            else accu = accu.insert(bs.KUERZEL, [bs]);
             return accu;
-        }, [])
-        .filter(ds => ds.betriebsstellenWithRailwayRoutePosition.length > 1))
+        }, createTree());
 
-const arrStreckeNrUndBetriebsstellenMitPositionAnStrecke = new Lazy<RailwayRouteNrAndBetriebsstellenWithRailwayRoutePosition[]>(() =>
-    betriebsstellenWithRailwayRoutePositions.value
-        .reduce((accu: Array<RailwayRouteNrAndBetriebsstellenWithRailwayRoutePosition>, bs) => {
-            const entry = accu.find(s => s.StreckeNr === bs.STRECKE_NR);
-            if (entry) entry.betriebsstellenWithRailwayRoutePosition.push(bs);
-            else accu.push({ StreckeNr: bs.STRECKE_NR, betriebsstellenWithRailwayRoutePosition: [bs] })
-            return accu;
-        }, []));
+    // remove Ds100 items without crossings
+    tree.forEach((k, v) => {
+        if (v.length < 2) {
+            tree = tree.remove(k);
+        }
+        return false; // continue
+    })
 
-function findBetriebsstellenMitPositionAnStreckeForDS100(KUERZEL: string) {
-    return arrDs100UndBetriebsstellenMitPositionAnStrecke.value.find(s => s.Ds100 === KUERZEL)?.betriebsstellenWithRailwayRoutePosition || [];
+    return tree;
 }
 
-function findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(STRECKE_NR: number) {
-    return arrStreckeNrUndBetriebsstellenMitPositionAnStrecke.value.find(s => s.StreckeNr === STRECKE_NR)?.betriebsstellenWithRailwayRoutePosition || [];
+const btRailwayRouteNrOfBetriebsstellenWithRailwayRoutePositions = new Lazy<RedBlackTree<number, Array<BetriebsstelleRailwayRoutePosition>>>(() => createTreeRailwayRouteNrOfBetriebsstellenWithRailwayRoutePositions(), 'btRailwayRouteNrOfBetriebsstellenWithRailwayRoutePositions');
+
+function createTreeRailwayRouteNrOfBetriebsstellenWithRailwayRoutePositions() {
+    return betriebsstellenWithRailwayRoutePositions.value
+        .reduce((accu: RedBlackTree<number, Array<BetriebsstelleRailwayRoutePosition>>, bs) => {
+            const entry = accu.get(bs.STRECKE_NR);
+            if (entry) entry.push(bs);
+            else accu = accu.insert(bs.STRECKE_NR, [bs]);
+            return accu;
+        }, createTree())
+}
+
+function findBetriebsstellenWithRailwayRoutePositionForDS100WithCrossings(KUERZEL: string) {
+    return btDS100WithCrossingsOfBetriebsstellenWithRailwayRoutePositions.value.get(KUERZEL) || [];
+}
+
+function findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(RailwayRouteNr: number) {
+    return btRailwayRouteNrOfBetriebsstellenWithRailwayRoutePositions.value.get(RailwayRouteNr) || [];
+}
+
+const btUicRefOfStops = new Lazy<RedBlackTree<number, Stop>>(() => createTreeUicRefOfStops(), 'btUicRefOfStops');
+
+function createTreeUicRefOfStops() {
+    return stops.value.reduce((accu: RedBlackTree<number, Stop>, s) => {
+        return accu.insert(s.EVA_NR, s);
+    }, createTree())
+}
+
+function findStopForUicRef(uicref: number) {
+    return btUicRefOfStops.value.get(uicref);
 }
 
 function findRailwayRoutePositionForRailwayRoutes(routes: RailwayRouteOfTrip[], allPoints: boolean): RailwayRoutePosition[] {
-    let positions: RailwayRoutePosition[] = []
-    routes.forEach(r => {
+    return routes.reduce((accu: RailwayRoutePosition[], r) => {
         if (r.railwayRouteNr) {
-
-            const arrBs = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(r.railwayRouteNr)
+            const arrBs = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(r.railwayRouteNr)
                 .filter(bs => allPoints || (bs.KUERZEL === r.from?.ds100_ref || bs.KUERZEL === r.to?.ds100_ref || bs.STELLE_ART.startsWith('Bf')));
-
             const from = arrBs.findIndex(s => s.KUERZEL === r.from?.ds100_ref)
             console.log('findIndex:', from, r.from?.ds100_ref)
             const to = arrBs.findIndex(s => s.KUERZEL === r.to?.ds100_ref)
             console.log('findIndex:', to, r.to?.ds100_ref)
-            if (from != -1 && from < to) {
+            if (from !== -1 && from < to) {
                 const slice = arrBs.slice(from, to + 1);
-                positions = positions.concat(slice.map(s => { return { GEOGR_BREITE: s.GEOGR_BREITE, GEOGR_LAENGE: s.GEOGR_LAENGE } }))
-            } else if (to != -1 && to < from) {
+                accu = accu.concat(slice.map(s => { return { GEOGR_BREITE: s.GEOGR_BREITE, GEOGR_LAENGE: s.GEOGR_LAENGE } }))
+            } else if (to !== -1 && to < from) {
                 const slice = arrBs.slice(to, from + 1).reverse();
-                positions = positions.concat(slice.map(s => { return { GEOGR_BREITE: s.GEOGR_BREITE, GEOGR_LAENGE: s.GEOGR_LAENGE } }))
+                accu = accu.concat(slice.map(s => { return { GEOGR_BREITE: s.GEOGR_BREITE, GEOGR_LAENGE: s.GEOGR_LAENGE } }))
             }
         }
-    })
-    return positions;
+        return accu;
+    }, [])
 }
 
 function findRailwayRoute(strecke: number) {
@@ -165,19 +182,13 @@ function findRailwayRoute(strecke: number) {
 /*
  * examples for ds100 in haltestellen 'EBIL', 'EBIL,EBILP', 'KDN,KDN P', 'EHE P'
  */
-function matchWithDS100(s: string, ds100: string) {
+function matchWithDS100(s: string, ds100: string, splitDs100: string[]) {
     if (s === ds100) return true;
-    if (ds100.indexOf(',') < 0 && ds100.indexOf(' ') < 0) return false;
-    const splitCm = ds100.split(',');
-    if (splitCm.length >= 2) {
-        if (s === splitCm[0]) return true;
-        if (s === splitCm[1].replace(' ', '')) return true;
-        if (splitCm.length >= 3 && s === splitCm[2].replace(' ', '')) return true;
-    }
-    const splitBlk = ds100.split(' ');
-    if (splitBlk.length === 2) {
-        if (s === splitBlk[0]) return true;
-        if (s === splitBlk[0] + splitBlk[1]) return true;
+    if (splitDs100.length === 0) return false;
+    if (splitDs100.length >= 2) {
+        if (s === splitDs100[0]) return true;
+        if (s === splitDs100[1]) return true;
+        if (splitDs100.length >= 3 && s === splitDs100[2]) return true;
     }
     return false;
 }
@@ -188,26 +199,32 @@ function getFirstPartOfDS100(ds100: string) {
     else return ds100;
 }
 
+function findBetriebsstellenWithRailwayRoutePositionsForDS100Pattern(ds100Pattern: string) {
+    const splitDs100 = ds100Pattern.indexOf(',') > 0 ? ds100Pattern.split(',') : [];
+    return betriebsstellenWithRailwayRoutePositions.value.filter(b => matchWithDS100(b.KUERZEL, ds100Pattern, splitDs100));
+}
+
 function findStopWithRailwayRoutePositions(uicrefs: number[]) {
-    const hsStrecken: Array<StopWithRailwayRoutePositions> = [];
-    uicrefs.forEach(uicref => {
-        const hs = haltestellen.value.find(h => h.EVA_NR === uicref);
+    return uicrefs.reduce((accu: StopWithRailwayRoutePositions[], uicref) => {
+        const hs = findStopForUicRef(uicref);
         if (hs) {
-            console.log('uic_ref:', uicref, ', Ds100:', hs.DS100, ', name:', hs.NAME)
-            const strecken = betriebsstellenWithRailwayRoutePositions.value.filter(b => matchWithDS100(b.KUERZEL, hs.DS100));
-            if (strecken.length > 0) {
-                // strecken.forEach(s => console.log('Ds100: ', s.KUERZEL, ', strecke: ', s.STRECKE_NR));
-                hsStrecken.push({ ds100_ref: hs.DS100, uic_ref: uicref, name: hs.NAME, streckenpositionen: strecken });
+            const streckenpositionen =
+                hs.streckenpositionen ??
+                findBetriebsstellenWithRailwayRoutePositionsForDS100Pattern(hs.DS100);
+            console.log('uic_ref:', uicref, ', Ds100:', hs.DS100, ', name:', hs.NAME, ', streckenpositionen:', streckenpositionen.length, ', from cache:', hs.streckenpositionen !== undefined)
+            if (!hs.streckenpositionen) {
+                hs.streckenpositionen = streckenpositionen;
+            }
+            if (streckenpositionen.length > 0) {
+                accu.push({ ds100_ref: hs.DS100, uic_ref: uicref, name: hs.NAME, streckenpositionen });
             } else {
-                // console.log('Ds100: ', haltestellen[0].DS100, ', strecken not found')
-                hsStrecken.push({ ds100_ref: hs.DS100, uic_ref: uicref, name: hs.NAME, streckenpositionen: [] });
+                accu.push({ ds100_ref: hs.DS100, uic_ref: uicref, name: hs.NAME, streckenpositionen });
             }
         } else {
-            // console.log('Uic: ', uic_ref, ', Ds100 not found')
-            hsStrecken.push({ ds100_ref: '', uic_ref: uicref, name: '', streckenpositionen: [] });
+            accu.push({ ds100_ref: '', uic_ref: uicref, name: '', streckenpositionen: [] });
         }
-    });
-    return hsStrecken;
+        return accu;
+    }, []);
 }
 
 function removeDuplicates(arr: Array<number>) {
@@ -229,10 +246,10 @@ interface SingleCrossing {
 function findRailwayRoutesWithSingleCrossing(arrStreckenA: Array<BetriebsstelleRailwayRoutePosition>, arrStreckenB: Array<BetriebsstelleRailwayRoutePosition>) {
     const crossings: SingleCrossing[] = [];
     arrStreckenA.forEach(a => {
-        const arrBsOfStreckeA = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(a.STRECKE_NR);
+        const arrBsOfStreckeA = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(a.STRECKE_NR);
         arrStreckenB.forEach(b => {
             if (a.STRECKE_NR !== b.STRECKE_NR) {
-                const arrBsOfStreckeB = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(b.STRECKE_NR);
+                const arrBsOfStreckeB = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(b.STRECKE_NR);
                 const commonBetriebsstellen = arrBsOfStreckeA.filter(bsOfStreckeA => arrBsOfStreckeB.find(bsOfStreckeB => bsOfStreckeA.KUERZEL === bsOfStreckeB.KUERZEL));
                 commonBetriebsstellen.forEach(bsOfStreckeA => {
                     const bsOfStreckeB = arrBsOfStreckeB.find(bs => bsOfStreckeA.KUERZEL === bs.KUERZEL);
@@ -259,16 +276,16 @@ interface DoubleCrossing {
 function findRailwayRoutesWithDoubleCrossing(ds100A: string, arrStreckenA: Array<BetriebsstelleRailwayRoutePosition>, ds100B: string, arrStreckenB: Array<BetriebsstelleRailwayRoutePosition>) {
     const crossings: DoubleCrossing[] = [];
     arrStreckenA.forEach(a => {
-        const arrBsOfStreckeA = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(a.STRECKE_NR).filter(bs => bs.KUERZEL !== ds100A);
+        const arrBsOfStreckeA = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(a.STRECKE_NR).filter(bs => bs.KUERZEL !== ds100A);
         arrStreckenB.forEach(b => {
             if (a.STRECKE_NR !== b.STRECKE_NR) {
                 const excludes = [a.STRECKE_NR, b.STRECKE_NR];
-                const arrBsOfStreckeB = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(b.STRECKE_NR).filter(bs => bs.KUERZEL !== ds100B);
+                const arrBsOfStreckeB = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(b.STRECKE_NR).filter(bs => bs.KUERZEL !== ds100B);
                 arrBsOfStreckeA.forEach(bsAnStreckeA => {
-                    const arrBsOfAKuerzel = findBetriebsstellenMitPositionAnStreckeForDS100(bsAnStreckeA.KUERZEL).filter(bs => excludes.indexOf(bs.STRECKE_NR) < 0);
+                    const arrBsOfAKuerzel = findBetriebsstellenWithRailwayRoutePositionForDS100WithCrossings(bsAnStreckeA.KUERZEL).filter(bs => excludes.indexOf(bs.STRECKE_NR) < 0);
                     arrBsOfStreckeB.forEach(bsAnStreckeB => {
                         if (bsAnStreckeA.KUERZEL !== bsAnStreckeB.KUERZEL) {
-                            const arrBsOfBKuerzel = findBetriebsstellenMitPositionAnStreckeForDS100(bsAnStreckeB.KUERZEL).filter(bs => excludes.indexOf(bs.STRECKE_NR) < 0);
+                            const arrBsOfBKuerzel = findBetriebsstellenWithRailwayRoutePositionForDS100WithCrossings(bsAnStreckeB.KUERZEL).filter(bs => excludes.indexOf(bs.STRECKE_NR) < 0);
                             const streckeFromAtoB = arrBsOfAKuerzel.find(bsOfA => arrBsOfBKuerzel.find(bsOfB => bsOfB.STRECKE_NR === bsOfA.STRECKE_NR));
                             if (streckeFromAtoB) {
                                 crossings.push({
@@ -305,7 +322,7 @@ function findRailwayRouteText(railwayRouteNr: number) {
 }
 
 function computeDistanceOfBetriebsstellen(strecke: number, ds100A: string, ds100B: string, distanceOfUndef?: number) {
-    const bsAnStrecke = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(strecke);
+    const bsAnStrecke = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(strecke);
     const nodeA = bsAnStrecke.find(s => s.KUERZEL === ds100A);
     const nodeB = bsAnStrecke.find(s => s.KUERZEL === ds100B);
     if (nodeA && nodeB) {
@@ -330,14 +347,12 @@ function computeDistanceOfDoubleCrossing(c: DoubleCrossing, ds100refvon: string,
 }
 
 function computeDistance(routes: Array<RailwayRouteOfTrip>) {
-    let distance = 0;
-    routes.forEach(r => {
+    return routes.reduce((accu: number, r) => {
         if (r.railwayRouteNr && r.from && r.to) {
-            distance += computeDistanceOfBetriebsstellen(r.railwayRouteNr, r.from?.ds100_ref, r.to?.ds100_ref)
+            accu += computeDistanceOfBetriebsstellen(r.railwayRouteNr, r.from?.ds100_ref, r.to?.ds100_ref)
         }
-    })
-
-    return distance;
+        return accu;
+    }, 0)
 }
 
 interface State {
@@ -634,6 +649,6 @@ function findRailwayRoutesOfTrip(uic_refs: number[], useCache: boolean, routeSea
     return state.railwayRoutes;
 }
 
-export { findRailwayRoutesOfTrip, findRailwayRouteDS100Endpoint, findRailwayRoutePositionForRailwayRoutes, findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr, findRailwayRoute, findRailwayRouteText, computeDistance }
+export { findRailwayRoutesOfTrip, findRailwayRouteDS100Endpoint, findRailwayRoutePositionForRailwayRoutes, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr as findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr, findRailwayRoute, findRailwayRouteText, computeDistance }
 
 export type { BetriebsstelleRailwayRoutePosition, RailwayRouteOfTrip, RailwayRouteCache, RailwayRoute, RailwayRouteDS100Endpoint }
