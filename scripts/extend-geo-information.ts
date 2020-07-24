@@ -7,7 +7,11 @@ import { findRailwayRouteDS100Endpoint, RailwayRouteDS100Endpoint, Betriebsstell
 const fs = require('fs');
 const BetriebsstelleRailwayRoutePositionOrig = require('../db-data/betriebsstellen_open_data.json') as Array<BetriebsstelleRailwayRoutePosition>;
 
-// missing from dataset/geo-betriebsstelle, see https://de.wikipedia.org/wiki/Bahnstrecke_Berlin-Lehrte
+/** 
+ * missing from dataset/geo-betriebsstelle,
+ * route 6107: see https://de.wikipedia.org/wiki/Bahnstrecke_Berlin-Lehrte
+ * route 1103: see https://trassenfinder.de
+ */
 export const missing = JSON.parse(`[
     {
         "STRECKE_NR": 6107,
@@ -21,6 +25,45 @@ export const missing = JSON.parse(`[
         "GK_H_DGN": 5830637.917,
         "GEOGR_BREITE": 52.53424057,
         "GEOGR_LAENGE": 13.19826406
+    },
+    {
+        "STRECKE_NR": 1103,
+        "KM_L": "8,8 + 55",
+        "KM_I": 100880055,
+        "BEZEICHNUNG": "Burg (Fehmarn) West",
+        "KUERZEL": "ABUW",
+        "GEOGR_BREITE": 54.45033292,
+        "GEOGR_LAENGE": 11.18080135,
+        "GK_H_DGN": 0,
+        "GK_R_DGN": 0,
+        "RICHTUNG": 0,
+        "STELLE_ART": ""
+    },
+    {
+        "STRECKE_NR": 1103,
+        "KM_L": "8,0 + 31",
+        "KM_I": 100800031,
+        "BEZEICHNUNG": "Burg (Fehmarn) Abzw",
+        "KUERZEL": "ABUA",
+        "GEOGR_BREITE": 54.4472937,
+        "GEOGR_LAENGE": 11.1856228,
+        "GK_H_DGN": 0,
+        "GK_R_DGN": 0,
+        "RICHTUNG": 0,
+        "STELLE_ART": ""
+    }, 
+    {
+        "STRECKE_NR": 1103,
+        "RICHTUNG": 0,
+        "KM_I": 100740052,
+        "KM_L": "7,4 + 52",
+        "BEZEICHNUNG": "Fehmarn-Burg",
+        "STELLE_ART": "Bf",
+        "KUERZEL": "ABUF",
+        "GK_R_DGN": 0,
+        "GK_H_DGN": 0,
+        "GEOGR_BREITE": 54.443591,
+        "GEOGR_LAENGE": 11.18898
     }
 ]`) as Array<BetriebsstelleRailwayRoutePosition>;
 

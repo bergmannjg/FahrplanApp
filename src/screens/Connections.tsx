@@ -115,11 +115,11 @@ export default function ConnectionsScreen({ route, navigation }: Props) {
   }
 
   const showPrev = () => {
-    showIncr(-2);
+    showIncr(-1);
   }
 
   const showNext = () => {
-    showIncr(2);
+    showIncr(1);
   }
 
   const showDiffDays = (from: Date, to: Date) => {

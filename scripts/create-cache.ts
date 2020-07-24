@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node-script
 
-// create matchings of a two station trip and the corresponding railway route numbers to avoid complex search with 'DoubleCrossings'
+// create matchings of a two station trip and the corresponding railway route numbers to avoid complex search
 // requires ts-node (https://github.com/TypeStrong/ts-node)
 
 import { findRailwayRoutesOfTrip, RailwayRouteCache } from '../src/lib/db-data'

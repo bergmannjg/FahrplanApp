@@ -74,10 +74,11 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps) {
             )}
             renderItem={({ item, index }) => (
                 <TouchableOpacity onPress={() => {
-                    console.log('onPress: ', item.name);
-                    setQuery(item.name ?? "");
+                    const x = item.name ?? '';
+                    console.log('onPress: ', x);
+                    setQuery(x);
                     setBahnhoefe([])
-                    onPress(item.name ?? "");
+                    onPress(x);
                     Keyboard.dismiss();
                 }}>
                     <Text style={styles.itemText}>
