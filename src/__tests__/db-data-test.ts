@@ -1,5 +1,9 @@
 import { findRailwayRoutesOfTrip, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data'
 
+test('test Frankfurt Köln witch cache', () => {
+    FrankfurtKöln(true);
+});
+
 function ICE73HamburgFreiburg(useCache: boolean) {
     const stops = [8002549, 8000152, 8000128, 8003200, 8000105, 8000244, 8000191, 8000191, 8000774, 8000290, 8000107];
     const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache);
@@ -270,10 +274,6 @@ function FrankfurtKöln(useCache: boolean) {
 
 test('test Frankfurt Köln', () => {
     FrankfurtKöln(false);
-});
-
-test('test Frankfurt Köln witch cache', () => {
-    FrankfurtKöln(true);
 });
 
 test('test Nürnberg München', () => {

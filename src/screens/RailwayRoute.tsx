@@ -27,7 +27,7 @@ import { ListItem, SearchBar, Icon } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { BetriebsstelleRailwayRoutePosition, findRailwayRoute, findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr } from '../lib/db-data';
+import { BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition, findRailwayRoute, findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr } from '../lib/db-data';
 import { Location } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRouteScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -70,13 +70,13 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     };
 
     interface ItemProps {
-        item: BetriebsstelleRailwayRoutePosition
+        item: BetriebsstelleRailwayRoutePositionEx
     }
 
     const Item = ({ item }: ItemProps) => {
         return (
             <View style={styles.subtitleView}>
-                <Text style={styles.itemStationText}>{`km: ${item.KM_L} ${item.BEZEICHNUNG} ${item.STELLE_ART}`}</Text>
+                <Text style={styles.itemStationText}>{`km: ${item.KM_L} ${item.BEZEICHNUNG}, max: ${item.maxSpeed} km`}</Text>
             </View >
         );
     }
