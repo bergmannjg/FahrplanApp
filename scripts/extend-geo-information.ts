@@ -3,9 +3,10 @@
 // extends file betriebsstellen_open_data.json with missing information of railway route endpoints
 // requires ts-node (https://github.com/TypeStrong/ts-node)
 
-import { findRailwayRouteDS100Endpoint, RailwayRouteDS100Endpoint, BetriebsstelleRailwayRoutePosition } from '../src/lib/db-data'
+import { findRailwayRouteDS100Endpoint, RailwayRouteDS100Endpoint, BetriebsstelleRailwayRoutePosition, Stop } from '../src/lib/db-data'
 const fs = require('fs');
 const BetriebsstelleRailwayRoutePositionOrig = require('../db-data/betriebsstellen_open_data.json') as Array<BetriebsstelleRailwayRoutePosition>;
+const stops = require('../db-data/D_Bahnhof_2020_alle.json') as Array<Stop>
 
 /** 
  * missing from dataset/geo-betriebsstelle,
@@ -67,6 +68,15 @@ export const missing = JSON.parse(`[
     }
 ]`) as Array<BetriebsstelleRailwayRoutePosition>;
 
+/** change stops to match with betriebsstellen_open_data */
+function createMissingStopData(stops: Array<Stop>) {
+    const stop = stops.find(s => s.EVA_NR === 8000036 && s.DS100 === "EBILP");
+    if (stop) {
+        stop.DS100 = "EBIL,EBILP";
+    }
+    return stops;
+}
+
 function createMissingTripPositions(betriebsstelleMitPosition: Array<BetriebsstelleRailwayRoutePosition>, rrEndpoints: RailwayRouteDS100Endpoint[]) {
     const rrValid = rrEndpoints.filter(r => r.from && r.to);
     const missing: BetriebsstelleRailwayRoutePosition[] = [];
@@ -94,6 +104,13 @@ const missingMissingTripPositions = createMissingTripPositions(BetriebsstelleRai
 console.log('missing.length: ', missingMissingTripPositions.length);
 const BetriebsstelleRailwayRoutePositionNeu = BetriebsstelleRailwayRoutePositionOrig.concat(missingMissingTripPositions, missing);
 fs.writeFile("./db-data/betriebsstellen_streckennummer.json", JSON.stringify(BetriebsstelleRailwayRoutePositionNeu), function (err: any) {
+    if (err) {
+        console.log(err);
+    }
+});
+
+const newStops = createMissingStopData(stops)
+fs.writeFile("./db-data/D_Bahnhof_2020_alle.json", JSON.stringify(newStops), function (err: any) {
     if (err) {
         console.log(err);
     }

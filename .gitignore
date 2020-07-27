@@ -28,6 +28,7 @@ package-lock.json
 report*.json
 
 src/__tests__/__snapshots__/
+db-data/*.json
 
 .vscode/
 

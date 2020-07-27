@@ -3,8 +3,8 @@ import createTree from 'functional-red-black-tree'
 import type { RedBlackTree } from 'functional-red-black-tree'
 import { Dijkstra } from './dijkstra'
 import type { Graph } from './dijkstra'
-import { stat } from 'fs'
 
+const railwayRoutesOrig = new Lazy<RailwayRoute[]>(() => require('../../db-data/strecken.json') as Array<RailwayRoute>, 'railwayRoutes')
 const stops = new Lazy<Stop[]>(() => require('../../db-data/D_Bahnhof_2020_alle.json') as Array<Stop>, 'haltestellen')
 const betriebsstellen = new Lazy<Betriebsstelle[]>(() => require('../../db-data/DBNetz-Betriebsstellenverzeichnis-Stand2018-04.json') as Array<Betriebsstelle>, 'betriebsstellen')
 const railwayRoutes = new Lazy<RailwayRoute[]>(() => require('../../db-data/strecken_pz.json') as Array<RailwayRoute>, 'railwayRoutes')
@@ -318,6 +318,12 @@ function createGraph() {
             return false; // continue
         })
 
+    const countNodes = Object.keys(g).length
+    const countEdges = Object.keys(g).reduce((accu, k) => {
+        accu += Object.keys(k).length;
+        return accu
+    }, 0);
+    console.log('createGraph: nodes', countNodes, ', edges', countEdges)
     return g;
 }
 
@@ -657,7 +663,7 @@ function findBetriebsstelleDS100(name: string) {
 
 function findRailwayRouteDS100Endpoint() {
     const rrDS100Endpoints: RailwayRouteDS100Endpoint[] = [];
-    railwayRoutes.value.forEach(s => {
+    railwayRoutesOrig.value.forEach(s => {
         const x1 = findBetriebsstelleDS100(s.STRKURZN);
         if (x1[0] && x1[1]) {
             rrDS100Endpoints.push({ strecke: s, from: x1[0], to: x1[1] });
@@ -720,4 +726,4 @@ function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean, routeSe
 
 export { createGraph, findRailwayRoutesOfTrip, findRailwayRouteDS100Endpoint, findRailwayRoutePositionForRailwayRoutes, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr as findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr, findRailwayRoute, findRailwayRouteText, computeDistance }
 
-export type { BetriebsstelleRailwayRoutePositionEx, Streckenutzung, BetriebsstelleRailwayRoutePosition, RailwayRouteOfTrip, RailwayRouteCache, RailwayRoute, RailwayRouteDS100Endpoint }
+export type { Stop, BetriebsstelleRailwayRoutePositionEx, Streckenutzung, BetriebsstelleRailwayRoutePosition, RailwayRouteOfTrip, RailwayRouteCache, RailwayRoute, RailwayRouteDS100Endpoint }

@@ -19,6 +19,7 @@
     "@tyriar/fibonacci-heap": "^2.0.9",
     "acorn": "^7.2.0",
     "core-js": "^3.6.5",
+    "csv2json": "^2.0.2",
     "functional-red-black-tree": "^1.0.1",
     "hafas-client": "^5.6.0",
     "i18next": "^19.4.4",
