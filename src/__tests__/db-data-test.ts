@@ -1,4 +1,4 @@
-import { findRailwayRoutesOfTrip, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data'
+import { findRailwayRoutesOfTrip, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data-railway-routes'
 
 test('test Frankfurt Köln witch cache', () => {
     FrankfurtKöln(true);
@@ -159,7 +159,6 @@ test('test x', () => {
     const d2_meter = Math.trunc(x % 100);
     const d_meter = d1_meter + d2_meter;
 
-    console.log(d_meter);
     expect(d_meter).toBe(143590);
 });
 

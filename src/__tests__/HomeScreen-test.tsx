@@ -4,7 +4,7 @@ import HomeScreen from '../screens/Home';
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import translationDE from '../locales/de/translation.json';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import moment from 'moment';
 
 i18next
@@ -42,11 +42,16 @@ const setOptionsArgsuments = {
     "headerTitle": "Reiseauskunft"
 };
 
-it('renders HomeScreen correctly', () => {
+it('renders HomeScreen correctly', async () => {
     const props = createTestProps({});
-    const tree = renderer.create(
-        <HomeScreen {...props} />
-    ).toJSON();
-    expect(tree).toMatchSnapshot();
-    expect(props.navigation.setOptions).toHaveBeenCalledWith(setOptionsArgsuments);
+    let testRenderer: any;
+    await act(() => {
+        testRenderer = renderer.create(<HomeScreen {...props} />);
+        return Promise.resolve();
+    });
+    if (testRenderer) {
+        const tree = testRenderer.toJSON();
+        expect(tree).toMatchSnapshot();
+        expect(props.navigation.setOptions).toHaveBeenCalledWith(setOptionsArgsuments);
+    }
 });

@@ -6,7 +6,7 @@ if [ ! -d "./scripts" ]; then
     exit 1
 fi
 
-cd db-data
+cd db-data/original
 
 #
 # Haltestellendaten
@@ -86,6 +86,7 @@ rm -f ${INFILE}
 rm -f geo-betriebsstelle_2020.zip
 rm -rf geo-betriebsstelle
 
+cd ..
 cd ..
 
 #

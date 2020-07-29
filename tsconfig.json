@@ -22,9 +22,6 @@
       ],
       "js-cache": [
         "types/js-cache"
-      ],
-      "functional-red-black-tree": [
-        "types/functional-red-black-tree"
       ]
     }
   },

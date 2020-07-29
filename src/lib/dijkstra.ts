@@ -53,7 +53,6 @@ export class Dijkstra {
     const open = new PriorityQueue();
     open.push(s, 0);
 
-    let count = 0;
     while (!open.empty()) {
       // In the nodes remaining in graph that have a known cost from s,
       // find the node, u, that currently has the shortest path from s.
@@ -68,7 +67,6 @@ export class Dijkstra {
       // the cost of the shortest paths to any or all of those nodes as
       // necessary. v is the node across the current edge from u.
       for (const v in adjacent_nodes) {
-        count++;
         if (adjacent_nodes.hasOwnProperty(v)) {
           // Get the cost of the edge running from u to v.
           const cost_of_e = adjacent_nodes[v];
@@ -92,8 +90,6 @@ export class Dijkstra {
         }
       }
     }
-
-    console.log('loop count', count);
 
     if (typeof d !== 'undefined' && typeof costs[d] === 'undefined') {
       var msg = ['Could not find a path from ', s, ' to ', d, '.'].join('');

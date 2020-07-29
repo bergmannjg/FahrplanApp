@@ -5,8 +5,8 @@
 
 import { findRailwayRouteDS100Endpoint, RailwayRouteDS100Endpoint, BetriebsstelleRailwayRoutePosition, Stop } from '../src/lib/db-data'
 const fs = require('fs');
-const BetriebsstelleRailwayRoutePositionOrig = require('../db-data/betriebsstellen_open_data.json') as Array<BetriebsstelleRailwayRoutePosition>;
-const stops = require('../db-data/D_Bahnhof_2020_alle.json') as Array<Stop>
+const BetriebsstelleRailwayRoutePositionOrig = require('../db-data/original/betriebsstellen_open_data.json') as Array<BetriebsstelleRailwayRoutePosition>;
+const stops = require('../db-data/original/D_Bahnhof_2020_alle.json') as Array<Stop>
 
 /** 
  * missing from dataset/geo-betriebsstelle,
@@ -68,7 +68,7 @@ export const missing = JSON.parse(`[
     }
 ]`) as Array<BetriebsstelleRailwayRoutePosition>;
 
-/** change stops to match with betriebsstellen_open_data */
+/** see check-missing.ts, results are 'EBILP' and 'ABUF' */
 function createMissingStopData(stops: Array<Stop>) {
     const stop = stops.find(s => s.EVA_NR === 8000036 && s.DS100 === "EBILP");
     if (stop) {
@@ -103,14 +103,14 @@ console.log('incomplete rrEndpoints.length: ', rrUndef.length);
 const missingMissingTripPositions = createMissingTripPositions(BetriebsstelleRailwayRoutePositionOrig, rrEndpoints);
 console.log('missing.length: ', missingMissingTripPositions.length);
 const BetriebsstelleRailwayRoutePositionNeu = BetriebsstelleRailwayRoutePositionOrig.concat(missingMissingTripPositions, missing);
-fs.writeFile("./db-data/betriebsstellen_streckennummer.json", JSON.stringify(BetriebsstelleRailwayRoutePositionNeu), function (err: any) {
+fs.writeFile("./db-data/generated/betriebsstellen_streckennummer.json", JSON.stringify(BetriebsstelleRailwayRoutePositionNeu), function (err: any) {
     if (err) {
         console.log(err);
     }
 });
 
 const newStops = createMissingStopData(stops)
-fs.writeFile("./db-data/D_Bahnhof_2020_alle.json", JSON.stringify(newStops), function (err: any) {
+fs.writeFile("./db-data/generated/stops.json", JSON.stringify(newStops), function (err: any) {
     if (err) {
         console.log(err);
     }

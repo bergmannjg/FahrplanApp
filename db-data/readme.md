@@ -2,7 +2,7 @@
 
 Open data from [Deutsche Bahn](https://data.deutschebahn.com/) of stations, *Betriebsstellen* and  railway routes.
 
-The data is used to match the [UIC station codes](https://www.wikidata.org/wiki/Property:P722) of trips with [railway route numbers](https://en.wikipedia.org/wiki/German_railway_route_numbers), function *findRailwayRoutesOfTrip* in [db-data.ts](../src/lib/db-data.ts).
+The data is used to match the [UIC station codes](https://www.wikidata.org/wiki/Property:P722) of trips with [railway route numbers](https://en.wikipedia.org/wiki/German_railway_route_numbers), function *findRailwayRoutesOfTrip* in [db-data-railway-routes.ts](../src/lib/db-data-railway-routes.ts).
 
 The files can be restored with the script [restore.sh](../scripts/restore.sh).
 

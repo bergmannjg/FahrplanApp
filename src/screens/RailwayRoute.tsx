@@ -27,7 +27,8 @@ import { ListItem, SearchBar, Icon } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition, findRailwayRoute, findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr } from '../lib/db-data';
+import { BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition } from '../lib/db-data';
+import { findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr } from '../lib/db-data-railway-routes';
 import { Location } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRouteScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -45,7 +46,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
 
-    const data: BetriebsstelleRailwayRoutePosition[] = findBetriebsstellenMitPositionAnStreckeForRailwayRouteNr(railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
+    const data: BetriebsstelleRailwayRoutePosition[] = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
     const strecke = findRailwayRoute(railwayRouteNr);
     const STRNAME = strecke?.STRNAME || '';
 

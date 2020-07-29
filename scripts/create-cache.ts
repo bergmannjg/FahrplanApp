@@ -3,7 +3,7 @@
 // create matchings of a two station trip and the corresponding railway route numbers to avoid complex search
 // requires ts-node (https://github.com/TypeStrong/ts-node)
 
-import { findRailwayRoutesOfTrip, RailwayRouteCache } from '../src/lib/db-data'
+import { findRailwayRoutesOfTrip, RailwayRouteCache } from '../src/lib/db-data-railway-routes'
 const fs = require('fs');
 
 const cache: RailwayRouteCache[] = [];
@@ -40,7 +40,7 @@ stopsForCache.forEach(s => {
     }
 })
 
-fs.writeFile("./db-data/RailwayRouteCache.json", JSON.stringify(cache), function (err: any) {
+fs.writeFile("./db-data/generated/RailwayRouteCache.json", JSON.stringify(cache), function (err: any) {
     if (err) {
         console.log(err);
     }

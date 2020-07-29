@@ -27,7 +27,8 @@ import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { RailwayRouteOfTrip, findRailwayRoutesOfTrip, findRailwayRouteText, computeDistance, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data';
+import { RailwayRouteOfTrip } from '../lib/db-data-railway-routes';
+import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data-railway-routes';
 import { Stop } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, BRouterScreenParams } from './ScreenTypes';
@@ -60,7 +61,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
         if (loading && data.length === 0) {
             const routes = findRailwayRoutes(params.stops)
             setLoading(false);
-            setDistance(computeDistance(routes));
+            setDistance(computeDistanceOfRoutes(routes));
             setData(routes);
         }
     });
