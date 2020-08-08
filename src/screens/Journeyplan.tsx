@@ -1,52 +1,41 @@
 import React from 'react';
 import {
-    SafeAreaView,
     StyleSheet,
-    ScrollView,
     View,
     Text,
-    StatusBar,
     TouchableOpacity,
-    FlatList,
-    ActivityIndicator
+    FlatList
 } from 'react-native';
 
-import {
-    Header,
-    LearnMoreLinks,
-    Colors,
-    DebugInstructions,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
-import { ListItem, SearchBar, Icon } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
 import { Hafas, JourneyInfo } from '../lib/hafas';
-import { Stop, Products, Location, Leg } from 'hafas-client';
+import { Location, Leg } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { MainStackParamList, JourneyplanScreenParams, BRouterScreenParams } from './ScreenTypes';
+import { MainStackParamList, JourneyplanScreenParams } from './ScreenTypes';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Journeyplan'>;
     navigation: StackNavigationProp<MainStackParamList, 'Journeyplan'>;
 };
 
-export default function JourneyplanScreen({ route, navigation }: Props) {
+export default function JourneyplanScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor JourneyplanScreen');
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const { params }: { params: JourneyplanScreenParams } = route;
     const journeyInfo: JourneyInfo = params.journey;
     const legs = journeyInfo.legs;
     const client: Hafas = params.client;
     const tripDetails = params.tripDetails;
-    const routeSearch = params.routeSearch;
 
     console.log('legs.length: ', legs.length);
     console.log('legs: ', legs);
@@ -55,7 +44,7 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
         console.log('showRailwayRoutes');
         const stops = await client.stopssOfJourney(journeyInfo, ['train', 'watercraft']);
         if (stops.length > 0) {
-            navigation.navigate('RailwayRoutesOfTrip', { stops, routeSearch });
+            navigation.navigate('RailwayRoutesOfTrip', { stops });
         }
     }
 
@@ -138,7 +127,7 @@ export default function JourneyplanScreen({ route, navigation }: Props) {
         }
         else {
             return '';
-        };
+        }
     }
 
     interface ItemProps {

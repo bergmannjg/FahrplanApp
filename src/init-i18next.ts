@@ -19,8 +19,10 @@ moment.locale(currentLanguage);
 
 const languageDetector: LanguageDetectorModule = {
     type: 'languageDetector',
-    init: (services: Services, detectorOptions: object, i18nextOptions: InitOptions) => { },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+    init: (services: Services, detectorOptions: unknown, i18nextOptions: InitOptions) => { },
     detect: () => currentLanguage,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     cacheUserLanguage: (lng: string) => { },
 };
 
@@ -43,7 +45,7 @@ i18next
             }
         },
         interpolation: {
-            format: function (value, format, lng) {
+            format: function (value, format) {
                 if (value instanceof Date) return moment(value).format(format);
                 else if (moment.isMoment(value)) return value.format(format);
                 else if (moment.isDuration(value)) return Math.floor(value.asHours()) + ':' + zeroFill(value.minutes(), 2);

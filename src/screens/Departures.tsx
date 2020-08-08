@@ -1,33 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-    SafeAreaView,
     StyleSheet,
-    ScrollView,
-    View,
     Text,
-    StatusBar,
-    TouchableOpacity,
     FlatList,
-    ActivityIndicator
+    ActivityIndicator,
+    View
 } from 'react-native';
 
-import {
-    Header,
-    LearnMoreLinks,
-    Colors,
-    DebugInstructions,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
-import { ListItem, SearchBar, Icon } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
-import { extractTimeOfDatestring, momentAtLocation } from '../lib/iso-8601-datetime-utils';
-import { Hafas, JourneyInfo } from '../lib/hafas';
-import { MainStackParamList, JourneyplanScreenParams, ConnectionsScreenParams, DepartureScreenParams } from './ScreenTypes';
+import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
+import { MainStackParamList, DepartureScreenParams } from './ScreenTypes';
 import { Alternative, Line } from 'hafas-client';
 
 type Props = {
@@ -35,17 +23,14 @@ type Props = {
     navigation: StackNavigationProp<MainStackParamList, 'Departures'>;
 };
 
-export default function DepartureScreen({ route, navigation }: Props) {
+export default function DepartureScreen({ route, navigation }: Props): JSX.Element {
     const { params }: { params: DepartureScreenParams } = route;
 
     if (__DEV__) {
         console.log('constructor DepartureScreen, params.alternatives.length: ', params.alternatives.length);
     }
 
-    const { t, i18n } = useTranslation();
-
-    const [loading, setLoading] = useState(false);
-    const [count, setCount] = useState(0);
+    const { t } = useTranslation();
 
     const data = params.alternatives;
     const client = params.client;
@@ -78,8 +63,6 @@ export default function DepartureScreen({ route, navigation }: Props) {
     }
 
     const renderFooter = () => {
-        if (!loading) return null;
-
         return (
             <View
                 style={{
@@ -99,7 +82,7 @@ export default function DepartureScreen({ route, navigation }: Props) {
         }
         else {
             return '';
-        };
+        }
     }
 
     const title = (item: Alternative) => {

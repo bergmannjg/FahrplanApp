@@ -19,7 +19,7 @@ type Props = {
     >;
 };
 
-export default function OptionsScreen({ route, navigation }: Props) {
+export default function OptionsScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor OptionsScreen, route: ', route);
 
     const { t, i18n } = useTranslation();
@@ -41,25 +41,25 @@ export default function OptionsScreen({ route, navigation }: Props) {
         { label: t('OptionsScreen.English'), value: 'en' },
     ];
 
-    const radioRouteSearchProps = [
-        { label: t('OptionsScreen.SingleStage'), value: 'single' },
-        { label: t('OptionsScreen.DoubleStage'), value: 'double' },
+    const radioTransferTimeProps = [
+        { label: '8 min.', value: 8 },
+        { label: '30 min.', value: 30 },
     ];
 
     const { params } = route;
 
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
-    const [routeSearch, setRouteSearch] = useState(params.navigationParams.routeSearch);
+    const [transferTime, setTransferTime] = useState(params.navigationParams.transferTime);
 
     const initialProfile = radioProps.findIndex(p => p.value === profile);
     const initialTripDetails = radioTripDetailsProps.findIndex(p => p.value === tripDetails);
     const initialLanguage = radioLanguageProps.findIndex(p => p.value === i18n.language);
-    const initialRouteSearch = radioRouteSearchProps.findIndex(p => p.value === routeSearch);
+    const initialtransferTime = radioTransferTimeProps.findIndex(p => p.value === transferTime);
 
     const goback = () => {
         console.log('goback OptionsScreen', profile, tripDetails);
-        navigation.navigate('Home', { profile, tripDetails, routeSearch });
+        navigation.navigate('Home', { profile, tripDetails, transferTime });
     }
 
     const showLicences = () => {
@@ -73,7 +73,7 @@ export default function OptionsScreen({ route, navigation }: Props) {
                 <RadioForm
                     radio_props={radioProps}
                     initial={initialProfile}
-                    onPress={(value: any) => { setProfile(value) }}
+                    onPress={(value: string) => { setProfile(value) }}
                 />
             </View>
             <Text style={styles.itemText1}>Tripdetails Router</Text>
@@ -81,7 +81,7 @@ export default function OptionsScreen({ route, navigation }: Props) {
                 <RadioForm
                     radio_props={radioTripDetailsProps}
                     initial={initialTripDetails}
-                    onPress={(value: any) => { setTripDetails(value) }}
+                    onPress={(value: boolean) => { setTripDetails(value) }}
                 />
             </View>
             <Text style={styles.itemText1}>{t('OptionsScreen.Language')}</Text>
@@ -89,7 +89,7 @@ export default function OptionsScreen({ route, navigation }: Props) {
                 <RadioForm
                     radio_props={radioLanguageProps}
                     initial={initialLanguage}
-                    onPress={(value: any) => {
+                    onPress={(value: string) => {
                         i18n.changeLanguage(value);
                         moment.locale(value);
                     }}
@@ -98,9 +98,9 @@ export default function OptionsScreen({ route, navigation }: Props) {
             <Text style={styles.itemText1}>{t('OptionsScreen.Search')}</Text>
             <View style={styles.radio}>
                 <RadioForm
-                    radio_props={radioRouteSearchProps}
-                    initial={initialRouteSearch}
-                    onPress={(value: any) => { setRouteSearch(value); }}
+                    radio_props={radioTransferTimeProps}
+                    initial={initialtransferTime}
+                    onPress={(value: number) => { setTransferTime(value); }}
                 />
             </View>
             <View style={styles.container3}>

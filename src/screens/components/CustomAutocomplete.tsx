@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, Text, Button, TextInput, Keyboard } from "react-native";
+import { StyleSheet, TouchableOpacity, Text, TextInput, Keyboard } from "react-native";
 import Autocomplete from 'react-native-autocomplete-input';
 import useDebounce from './use-debounce';
-import { useTranslation } from 'react-i18next';
 import { Hafas } from '../../lib/hafas';
 import { Station, Stop, Location } from 'hafas-client';
 
@@ -13,9 +12,7 @@ export interface CustomAutocompleteProps {
     client: Hafas
 }
 
-export default function CustomAutocomplete(props: CustomAutocompleteProps) {
-
-    const { t, i18n } = useTranslation();
+export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.Element {
 
     const client = props.client;
     const onPress = props.onPress;
@@ -68,11 +65,11 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps) {
                 setCount(count + 1);
             }}
             placeholder={props.placeholder}
-            keyExtractor={(item, index) => item.name ?? ""}
+            keyExtractor={(item) => item.name ?? ""}
             renderTextInput={(renderTextProps) => (
                 <TextInput {...renderTextProps} style={styles.itemText} />
             )}
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => {
                     const x = item.name ?? '';
                     console.log('onPress: ', x);

@@ -1,16 +1,19 @@
 import { Lazy } from './Lazy'
 
 import { getSpeed, computeDistanceOfKmI, findBetriebsstellenWithRailwayRoutePositionsForDS100Pattern, findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionsForRailwayRouteNr, findCrossingsOfBetriebsstellenWithRailwayRoutePositionsForDS100, findStopForUicRef, findStreckennutzungForRailwayRouteNr } from './db-data'
-import type { BetriebsstelleWithRailwayRoutePosition, RailwayRoutePosition, StopWithRailwayRoutePositions, Stop, BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition, Betriebsstelle, RailwayRoute } from './db-data'
+import type { BetriebsstelleWithRailwayRoutePosition, RailwayRoutePosition, StopWithRailwayRoutePositions, BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition } from './db-data'
 import { addStopToGraph } from './db-data-graph'
 import { Dijkstra } from './dijkstra'
 import type { Graph } from './dijkstra'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const railwayRouteCache = new Lazy<RailwayRouteCache[]>(() => require('../../db-data/generated/RailwayRouteCache.json') as Array<RailwayRouteCache>, 'railwayRouteCache')
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const graph = new Lazy<Graph>(() => require('../../db-data/generated/graph.json') as Graph, 'graph')
 
 const dijkstra = new Dijkstra();
-let verbose = false;
+const verbose = false;
 
 interface RailwayRouteOfTrip {
     railwayRouteNr?: number;
@@ -24,7 +27,7 @@ interface RailwayRouteCache {
     railwayRoutes: Array<RailwayRouteOfTrip>;
 }
 
-function findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(RailwayRouteNr: number) {
+function findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(RailwayRouteNr: number): BetriebsstelleRailwayRoutePosition[] {
     const arrBs = findBetriebsstellenWithRailwayRoutePositionsForRailwayRouteNr(RailwayRouteNr);
     addMoreInfo(RailwayRouteNr, arrBs);
     return arrBs;
@@ -33,8 +36,7 @@ function findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(RailwayRou
 function addMoreInfo(railwayRouteNr: number, arrBs: BetriebsstelleRailwayRoutePosition[]) {
     const arrStreckennutzung = findStreckennutzungForRailwayRouteNr(railwayRouteNr);
     if (arrStreckennutzung) {
-        for (let n = 0; n < arrStreckennutzung.length; n++) {
-            const curr = arrStreckennutzung[n];
+        for (const curr of arrStreckennutzung) {
             const speed = getSpeed(curr.geschwindigkeit);
             arrBs
                 .filter(b => curr.von_km_i <= b.KM_I && b.KM_I <= curr.bis_km_i)
@@ -42,7 +44,7 @@ function addMoreInfo(railwayRouteNr: number, arrBs: BetriebsstelleRailwayRoutePo
                     const bsExCurr = bsCurr as BetriebsstelleRailwayRoutePositionEx;
                     if ((bsExCurr.maxSpeed ?? 0) < speed) bsExCurr.maxSpeed = speed;
                 });
-        };
+        }
     }
 }
 
@@ -113,7 +115,7 @@ function buildStopWithRailwayRoutePosition(streckennummer: number, hspos: StopWi
     }
 }
 
-function findRailwayRouteText(railwayRouteNr: number) {
+function findRailwayRouteText(railwayRouteNr: number): string {
     const route = findRailwayRoute(railwayRouteNr);
     return route ? route.STRKURZN : '';
 }
@@ -129,7 +131,7 @@ function computeDistanceOfBetriebsstellen(strecke: number, ds100A: string, ds100
     }
 }
 
-function computeDistanceOfRoutes(routes: Array<RailwayRouteOfTrip>) {
+function computeDistanceOfRoutes(routes: Array<RailwayRouteOfTrip>): number {
     return routes.reduce((accu: number, r) => {
         if (r.railwayRouteNr && r.from && r.to) {
             accu += computeDistanceOfBetriebsstellen(r.railwayRouteNr, r.from?.ds100_ref, r.to?.ds100_ref)
@@ -150,8 +152,7 @@ function findRailwayRoutesFromCache(state: State, hs_pos_von: StopWithRailwayRou
         state.success = true;
         if (verbose) console.log('found cache: ', hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref)
 
-        for (let n = 0; n < cache.railwayRoutes.length; n++) {
-            const route = cache.railwayRoutes[n];
+        for (const route of cache.railwayRoutes) {
             if (route.railwayRouteNr && route.from && route.to) {
                 addToState(state, route.railwayRouteNr, route.from, route.to, 'cache')
             }
@@ -166,7 +167,7 @@ function findRailwayRoutesFromPath(state: State, hs_pos_von: StopWithRailwayRout
     addStopToGraph(graph.value, hs_pos_von);
     addStopToGraph(graph.value, hs_pos_bis);
 
-    var path = dijkstra.find_path(graph.value, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref);
+    const path = dijkstra.find_path(graph.value, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref);
     if (verbose) console.log('hs_pos_von', hs_pos_von.ds100_ref, ', hs_pos_bis', hs_pos_bis.ds100_ref, ', path', path)
     if (path.length === 2) {
         state.success = true;
@@ -194,7 +195,7 @@ function findRailwayRoutesFromPath(state: State, hs_pos_von: StopWithRailwayRout
         let prevPositions = hs_pos_von.streckenpositionen;
         path.forEach(p => {
             if (p !== hs_pos_von.ds100_ref) {
-                let positions: Array<BetriebsstelleRailwayRoutePosition> | undefined = undefined;
+                let positions: Array<BetriebsstelleRailwayRoutePosition> | undefined;
                 if (p === hs_pos_von.ds100_ref) {
                     positions = hs_pos_von.streckenpositionen;
                 } else if (p === hs_pos_bis.ds100_ref) {
@@ -266,7 +267,7 @@ function addToState(state: State, railwayRouteNr: number, from: BetriebsstelleWi
                 state.railwayRoutes.push(state.actualRailwayRoute);
             }
             state.actualRailwayRoute = {
-                railwayRouteNr: railwayRouteNr,
+                railwayRouteNr,
                 from,
                 to
             };
@@ -287,11 +288,7 @@ function addToState(state: State, railwayRouteNr: number, from: BetriebsstelleWi
  * @param useCache use railwayRoute cache
  * @param routeSearchType search single or double crossings
  */
-function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean, routeSearchType?: 'single' | 'double') {
-    if (!routeSearchType) {
-        routeSearchType = 'double';
-    }
-
+function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean): RailwayRouteOfTrip[] {
     const hs_pos_list = findStopWithRailwayRoutePositions(removeDuplicates(uic_refs));
     let state: State = { railwayRoutes: [], actualRailwayRoute: undefined, success: false }
     for (let n = 0; n < hs_pos_list.length - 1; n++) {

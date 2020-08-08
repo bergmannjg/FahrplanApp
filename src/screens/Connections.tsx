@@ -1,47 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
   TouchableOpacity,
   FlatList,
   ActivityIndicator
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
-import { ListItem, SearchBar, Icon } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { extractTimeOfDatestring, momentAtLocation } from '../lib/iso-8601-datetime-utils';
+import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { Hafas, JourneyInfo } from '../lib/hafas';
-import { MainStackParamList, JourneyplanScreenParams, ConnectionsScreenParams } from './ScreenTypes';
+import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
   navigation: StackNavigationProp<MainStackParamList, 'Connections'>;
 };
 
-export default function ConnectionsScreen({ route, navigation }: Props) {
+export default function ConnectionsScreen({ route, navigation }: Props): JSX.Element {
   const { params }: { params: ConnectionsScreenParams } = route;
 
   if (__DEV__) {
     console.log('constructor ConnectionsScreen, params.date: ', params.date);
   }
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const [data, setData] = useState([] as JourneyInfo[]);
   const [date, setDate] = useState(params.date);
@@ -55,14 +46,14 @@ export default function ConnectionsScreen({ route, navigation }: Props) {
   const queryVia = params.via;
   const client: Hafas = params.client;
   const tripDetails = params.tripDetails;
-  const routeSearch = params.routeSearch;
+  const transferTime = params.transferTime;
 
   const makeRemoteRequest = () => {
     console.log('makeRemoteRequest, loading:', loading);
     if (loading) return;
     setLoading(true);
 
-    client.journeys(query1, query2, 3, date, queryVia)
+    client.journeys(query1, query2, 3, date, queryVia, transferTime)
       .then(journeys => {
         console.log('journeys', journeys);
         const infos = [] as JourneyInfo[];
@@ -101,7 +92,7 @@ export default function ConnectionsScreen({ route, navigation }: Props) {
 
   const goToView = (item: JourneyInfo) => {
     console.log('Navigation router run to Journeyplan');
-    navigation.navigate('Journeyplan', { journey: item, client, tripDetails,routeSearch })
+    navigation.navigate('Journeyplan', { journey: item, client, tripDetails })
   };
 
   const showIncr = (hours: number) => {

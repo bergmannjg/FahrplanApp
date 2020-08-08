@@ -37,7 +37,7 @@ const centerOflocations = (locations: Location[]): Location => {
 
     let lon = lon1 + ((lon2 - lon1) / 2);
     let lat = lat1 + ((lat2 - lat1) / 2);
-    const scale: number = 1000000;
+    const scale = 1000000;
     lon = Math.floor(lon * scale) / scale;
     lat = Math.floor(lat * scale) / scale;
 
@@ -66,7 +66,7 @@ const locations2params = (locations: Location[]) => {
         const latitude = center.latitude ?? 0;
         const longitude = center.longitude ?? 0;
         console.log('center: ', center);
-        const d = center.altitude ?? 0;;
+        const d = center.altitude ?? 0;
 
         const zoom = distance2zoom(d);
         console.log('distance: ', d, ', zoom: ', zoom);
@@ -138,13 +138,16 @@ type Props = {
     navigation: StackNavigationProp<MainStackParamList, 'BRouter'>;
 };
 
-export default function BRouterScreen({ route, navigation }: Props) {
+function hasDistanceProperty<T>(obj: T): obj is T & Record<'distance', number> {
+    return Object.prototype.hasOwnProperty.call(obj, 'distance')
+}
+
+export default function BRouterScreen({ route, navigation }: Props): JSX.Element {
     console.log('BRouterScreen constructor');
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const { params }: { params: BRouterScreenParams } = route;
-    const isLongPress = params.isLongPress;
     const locations = noramlizelocations(params.locations);
     const p = locations2params(locations);
     // the query string may change, it reflects the brouter api
@@ -153,8 +156,8 @@ export default function BRouterScreen({ route, navigation }: Props) {
 
     Clipboard.setString(uri);
 
-    const onMessage = (d: any) => {
-        if (d && d?.distance !== '-') {
+    const onMessage = (d: unknown) => {
+        if (hasDistanceProperty(d)) {
             navigation.setOptions({
                 headerTitle: t('BRouterScreen.Route', { locations: locations.length, distance: d.distance })
             });
@@ -179,22 +182,6 @@ export default function BRouterScreen({ route, navigation }: Props) {
         distanceElement.addEventListener('DOMSubtreeModified', contentChanged, false);
     }
     true;
-`;
-
-    const jsCodeObserverDistanceWithTimer = `
-        if (typeof window.brouterdistance === "undefined") {
-            window.brouterdistance = 0;
-            function timeOut() {
-                var distance = document.getElementById('distance').innerHTML;
-                if (window.brouterdistance != distance) {
-                    window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify({distance:distance}));
-                    window.brouterdistance = distance;
-                }
-                setTimeout(timeOut, 1000);
-            }
-            setTimeout(timeOut,1000);
-        }
-        true;
 `;
 
     return (

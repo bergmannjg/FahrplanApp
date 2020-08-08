@@ -16,10 +16,10 @@ type Props = {
     navigation: StackNavigationProp<MainStackParamList, 'Trip'>;
 };
 
-export default function TripScreen({ route, navigation }: Props) {
+export default function TripScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor TripScreen');
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const { params }: { params: TripScreenParams } = route;
     const trip: Trip = params.trip;
@@ -142,7 +142,7 @@ export default function TripScreen({ route, navigation }: Props) {
         )
     }
 
-    const Item = ({ item, first, last }: ItemProps) => {
+    const Item = ({ item }: ItemProps) => {
         return (
             <View style={styles.subtitleView}>
                 <OptionalItemDeparture item={item} />

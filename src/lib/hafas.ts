@@ -23,7 +23,7 @@ import vbnProfile from 'hafas-client/p/vbn';
 import vmtProfile from 'hafas-client/p/vmt';
 import vsnProfile from 'hafas-client/p/vsn';
 
-import { HafasClient, Journey, Leg, Line, Location, Products, Station, Stop, StopOver, Trip, Alternative } from 'hafas-client';
+import { HafasClient, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative } from 'hafas-client';
 
 const choose = (p: string): createClient.Profile => {
     p = p + 'Profile';
@@ -78,7 +78,7 @@ export interface JourneyInfo {
 }
 
 export interface Hafas {
-    journeys: (from: string, to: string, results: number, departure?: Date | undefined, via?: string) => Promise<ReadonlyArray<Journey>>,
+    journeys: (from: string, to: string, results: number, departure?: Date | undefined, via?: string, transferTime?: number) => Promise<ReadonlyArray<Journey>>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
     trip: (tripId: string) => Promise<Trip>,
@@ -160,7 +160,7 @@ export function hafas(profile: string): Hafas {
         let stops: Stop[] = [];
         for (const leg of journey.legs) {
             stops = stops.concat(await stopssOfLeg(leg, modes));
-        };
+        }
         return stops;
     }
 
@@ -172,7 +172,8 @@ export function hafas(profile: string): Hafas {
         return s.type === 'location';
     }
 
-    const journeys = async (from: string, to: string, results: number, departure?: Date, via?: string): Promise<ReadonlyArray<Journey>> => {
+    const journeys = async (from: string, to: string, results: number, departure?: Date, via?: string, transferTime?: number): Promise<ReadonlyArray<Journey>> => {
+        if (!transferTime) transferTime = 10;
         const locationsFrom = await client.locations(from, { results: 1 });
         console.log('from:', locationsFrom[0].id, locationsFrom[0].name);
         const locationsTo = await client.locations(to, { results: 1 });
@@ -187,7 +188,7 @@ export function hafas(profile: string): Hafas {
                 }
             }
             try {
-                const res = await client.journeys(locationsFrom[0].id, locationsTo[0].id, { results, departure, via: viaId });
+                const res = await client.journeys(locationsFrom[0].id, locationsTo[0].id, { results, departure, via: viaId, transferTime });
                 return res.journeys;
             } catch (e) {
                 const error = e as Error;

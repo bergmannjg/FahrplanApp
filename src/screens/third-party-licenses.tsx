@@ -1,33 +1,48 @@
 import React from 'react';
 import { StyleSheet, View, Text, Linking, TouchableOpacity, FlatList, } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
 import { Colors, } from 'react-native/Libraries/NewAppScreen';
 import Data from './data/third-party-licenses.json';
 
-export default function ThirdPartyLicensesScreen({ route, navigation }: any) {
+interface LicenseEntry {
+    licenses: string;
+    repository: string;
+    licenseUrl: string;
+    parents: string;
+}
+
+interface License extends LicenseEntry {
+    key: string;
+    version: string;
+    name: string;
+}
+
+interface Licenses {
+    [index: string]: LicenseEntry
+}
+
+export default function ThirdPartyLicensesScreen(): JSX.Element {
     console.log('constructor TripScreen');
 
-    function sortDataByKey(data: any[], key: string) {
+    function sortDataByKey(data: License[]) {
         data.sort((a, b) => {
-            return a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0;
+            return a.key > b.key ? 1 : b.key > a.key ? -1 : 0;
         });
         return data;
     }
 
-    const allLicenses = Object.keys(Data).map(key => {
-        const { licenses, ...license } = (Data as any)[key];
+    const allLicenses: License[] = Object.keys(Data).map(key => {
+        const entry = (Data as Licenses)[key];
         const [name, version] = key.slice(1).split('@');
+        entry.licenses = entry.licenses.slice(0, 405);
         return {
             key,
             name: key[0] + name,
-            licenses: licenses.slice(0, 405),
             version,
-            ...license,
+            ...entry,
         };
     });
 
-    sortDataByKey(allLicenses, 'key');
+    sortDataByKey(allLicenses);
 
     const renderSeparator = () => {
         return (
@@ -35,7 +50,7 @@ export default function ThirdPartyLicensesScreen({ route, navigation }: any) {
         );
     };
 
-    const Item = ({ item }: any) => {
+    const Item = ({ item }: { item: License }) => {
         return (
             <View style={styles.subtitleView}>
                 <TouchableOpacity style={styles.button} onPress={() => Linking.openURL(item.repository)}>

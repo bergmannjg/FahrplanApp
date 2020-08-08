@@ -9,8 +9,20 @@ import { Location } from 'hafas-client';
 // strategy 2) use date strings and location with func momentAtLocation
 
 // parse ISO 8601 date string
-export function parseDatestring(datestring: string) {
-    const re = /(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})([+-])(\d{2})\:(\d{2})/;
+export function parseDatestring(datestring: string): {
+    datestring: string;
+    year: string;
+    month: string;
+    day: string;
+    hour: string;
+    minute: string;
+    second: string;
+    tz_op: string;
+    tz_hour: string;
+    tz_minute: string;
+    timezoneOffset: number;
+} | undefined {
+    const re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})([+-])(\d{2}):(\d{2})/;
     const found = datestring.match(re);
     if (found && found.length === 10) {
 
@@ -37,11 +49,11 @@ export function parseDatestring(datestring: string) {
 
         return res;
     } else {
-        return null;
+        return undefined;
     }
 }
 
-export function extractTimeOfDatestring(datestring: string) {
+export function extractTimeOfDatestring(datestring: string): string {
     const dt = parseDatestring(datestring);
     if (dt) {
         return dt.hour + ':' + dt.minute;
@@ -65,7 +77,7 @@ export function getTimezoneOfLocation(location: Location): string {
     }
 }
 
-export function momentAtLocation(datestring: string, location: Location) {
+export function momentAtLocation(datestring: string, location: Location): moment.Moment {
     const m = moment(datestring).tz(getTimezoneOfLocation(location));
     return m;
 }

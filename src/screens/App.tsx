@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,7 +22,7 @@ const MainStack = createStackNavigator<MainStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
 
 function MainStackScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <MainStack.Navigator>
       <MainStack.Screen
@@ -73,8 +73,8 @@ function MainStackScreen() {
   );
 }
 
-function RootStackScreen() {
-  const { t, i18n } = useTranslation();
+function RootStackScreen(): JSX.Element {
+  const { t } = useTranslation();
   return (
     <RootStack.Navigator mode="modal">
       <RootStack.Screen
@@ -101,7 +101,7 @@ function RootStackScreen() {
   );
 }
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
     <NavigationContainer>
       <RootStackScreen />

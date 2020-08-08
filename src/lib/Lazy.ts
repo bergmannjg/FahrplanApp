@@ -4,6 +4,10 @@
 
 export type ILazyInitializer<T> = () => T
 
+function hasLengthProperty<T>(obj: T): obj is T & Record<'length', number> {
+    return Object.prototype.hasOwnProperty.call(obj, 'length')
+}
+
 export class Lazy<T> {
     private instance: T | null = null;
     private name: string | undefined = undefined;
@@ -17,8 +21,9 @@ export class Lazy<T> {
     public get value(): T {
         if (this.instance == null) {
             this.instance = this.initializer();
-            if (typeof (this.instance as any).length !== "undefined") {
-                console.log(this.name ?? '', 'length', (this.instance as any).length);
+
+            if (hasLengthProperty(this.instance)) {
+                console.log(this.name ?? '', 'length', this.instance.length);
             }
         }
         return this.instance;

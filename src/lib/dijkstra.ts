@@ -1,8 +1,8 @@
 'use strict';
 
-/** 
- * see https://github.com/tcort/dijkstrajs 
- * 
+/**
+ * see https://github.com/tcort/dijkstrajs
+ *
  * add types
  * use fibonacci-heap
  */
@@ -36,10 +36,10 @@ type Graph = { [index: string]: { [index: string]: number } }
 export type { Graph }
 
 export class Dijkstra {
-  single_source_shortest_paths(graph: Graph, s: string, d: string) {
+  single_source_shortest_paths(graph: Graph, s: string, d: string): { [index: string]: string; } {
     // Predecessor map for each node that has been encountered.
     // node ID => predecessor node ID
-    var predecessors: { [index: string]: string } = {};
+    const predecessors: { [index: string]: string } = {};
 
     // Costs of shortest paths from s to all nodes encountered.
     // node ID => cost
@@ -67,7 +67,7 @@ export class Dijkstra {
       // the cost of the shortest paths to any or all of those nodes as
       // necessary. v is the node across the current edge from u.
       for (const v in adjacent_nodes) {
-        if (adjacent_nodes.hasOwnProperty(v)) {
+        if (adjacent_nodes[v]) {
           // Get the cost of the edge running from u to v.
           const cost_of_e = adjacent_nodes[v];
 
@@ -92,15 +92,16 @@ export class Dijkstra {
     }
 
     if (typeof d !== 'undefined' && typeof costs[d] === 'undefined') {
-      var msg = ['Could not find a path from ', s, ' to ', d, '.'].join('');
+      const msg = ['Could not find a path from ', s, ' to ', d, '.'].join('');
+      console.log(msg);
     }
 
     return predecessors;
   }
 
-  extract_shortest_path_from_predecessor_list(predecessors: { [index: string]: string }, d: string) {
-    var nodes: string[] = [];
-    var u = d;
+  extract_shortest_path_from_predecessor_list(predecessors: { [index: string]: string }, d: string): string[] {
+    const nodes: string[] = [];
+    let u = d;
     while (u) {
       nodes.push(u);
       u = predecessors[u];
@@ -109,12 +110,12 @@ export class Dijkstra {
     return nodes;
   }
 
-  find_path(graph: Graph, s: string, d: string) {
-    var predecessors = this.single_source_shortest_paths(graph, s, d);
+  find_path(graph: Graph, s: string, d: string): string[] {
+    const predecessors = this.single_source_shortest_paths(graph, s, d);
     return this.extract_shortest_path_from_predecessor_list(
       predecessors, d);
   }
-};
+}
 
 interface CostValue {
   cost: number;
@@ -132,7 +133,7 @@ class PriorityQueue {
    * is at the front of the queue.
    */
   push(value: string, cost: number) {
-    var item = { value: value, cost: cost };
+    const item = { value, cost };
     this.heap.insert(cost, item);
   }
 
@@ -148,5 +149,5 @@ class PriorityQueue {
   empty() {
     return this.heap.isEmpty();
   }
-};
+}
 

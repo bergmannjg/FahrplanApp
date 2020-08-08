@@ -15,7 +15,7 @@ type Props = {
     >;
 };
 
-export default function DateTimeScreen({ route, navigation }: Props) {
+export default function DateTimeScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor DateTimeScreen, route: ', route);
 
     const { t, i18n } = useTranslation();

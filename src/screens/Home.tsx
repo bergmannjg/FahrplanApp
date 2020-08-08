@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-community/async-storage';
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, Text, Button, TextInput, Keyboard, ActivityIndicator } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import CustomAutocomplete from './components/CustomAutocomplete';
 import { useTranslation } from 'react-i18next';
-import { hafas, Hafas } from '../lib/hafas';
-import { Station, Stop, Location, Alternative } from 'hafas-client';
-
-import { MainStackParamList, RootStackParamList, DepartureScreenParams } from './ScreenTypes';
+import { hafas } from '../lib/hafas';
+import type { Alternative } from 'hafas-client';
+import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Home'>;
@@ -23,13 +22,14 @@ type LocalData = {
   station2: string;
 }
 
-export default function HomeScreen({ route, navigation }: Props) {
+export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   console.log('home constructor, route: ', route);
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   navigation.setOptions({
     headerTitle: t('HomeScreen.Header'),
+    // eslint-disable-next-line react/display-name
     headerRight: () => (
       <View style={{ backgroundColor: '#F5FCFF' }}>
         <TouchableOpacity onPress={() => { navigateToOptionsScreen(); }}>
@@ -73,7 +73,7 @@ export default function HomeScreen({ route, navigation }: Props) {
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date());
-  const [routeSearch, setRouteSearch] = useState('double');
+  const [transferTime, setTransferTime] = useState(10);
 
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
@@ -88,9 +88,9 @@ export default function HomeScreen({ route, navigation }: Props) {
   }
 
   // route.params from OptionsScreen
-  if (route.params?.routeSearch !== undefined && route.params?.routeSearch !== routeSearch) {
-    setRouteSearch(route.params.routeSearch);
-    route.params.tripDetails = undefined;
+  if (route.params?.transferTime !== undefined && route.params?.transferTime !== transferTime) {
+    setTransferTime(route.params.transferTime);
+    route.params.transferTime = undefined;
   }
 
   // route.params from DateTimeScreen
@@ -115,17 +115,6 @@ export default function HomeScreen({ route, navigation }: Props) {
     saveData({ station1, station2: s });
   }
 
-  const asyncFindBahnhoefe = (query: string, callback: (arr: ReadonlyArray<Station | Stop | Location>) => void) => {
-    if (query.length > 0) {
-      client.locations(query, 1)
-        .then(locations => callback(locations))
-        .catch((error) => {
-          console.log('There has been a problem with your locations operation: ' + error);
-          callback([]);
-        });
-    }
-  }
-
   const asyncFindDepartures = (query: string, callback: (arr: ReadonlyArray<Alternative>) => void) => {
     if (query.length > 0) {
       const onlyLocalProducts = false;
@@ -140,20 +129,8 @@ export default function HomeScreen({ route, navigation }: Props) {
 
   const suchen = () => {
     if (station1 !== '' && station2 !== '') {
-      navigation.navigate('Connections', { client, station1: station1, station2: station2, via: stationVia, date, tripDetails, routeSearch });
+      navigation.navigate('Connections', { client, station1: station1, station2: station2, via: stationVia, date, tripDetails, transferTime });
     }
-  }
-
-  const showmapOfQuery = (query: string) => {
-    asyncFindBahnhoefe(query, (places: ReadonlyArray<Station | Stop | Location>) => {
-      if (places.length > 0) {
-        const place = places[0];
-        const location = client.isStop(place) ? place.location : (client.isLocation(place) ? place : place.location);
-        if (location) {
-          navigation.navigate('OpenStreetMap', { name: places[0].name ?? '', location })
-        }
-      }
-    });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -167,7 +144,7 @@ export default function HomeScreen({ route, navigation }: Props) {
   }
 
   const navigateToOptionsScreen = () => {
-    navigation.navigate('Options', { navigationParams: { profile, tripDetails, routeSearch } });
+    navigation.navigate('Options', { navigationParams: { profile, tripDetails, transferTime } });
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {

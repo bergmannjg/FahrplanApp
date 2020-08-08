@@ -1,4 +1,21 @@
 module.exports = {
   root: true,
-  extends: '@react-native-community',
+  parser: `@typescript-eslint/parser`,
+  parserOptions: {
+    project: `./tsconfig.json`
+  },
+  settings: {
+    react: {
+      version: '16.11.0',
+    },
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  rules: {
+  }
 };

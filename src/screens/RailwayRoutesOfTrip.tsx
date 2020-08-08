@@ -1,56 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
     StyleSheet,
-    ScrollView,
     View,
     Text,
-    StatusBar,
     TouchableOpacity,
     FlatList,
     ActivityIndicator
 } from 'react-native';
 
-import {
-    Header,
-    LearnMoreLinks,
-    Colors,
-    DebugInstructions,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
-import { ListItem, SearchBar, Icon } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 
 import { RailwayRouteOfTrip } from '../lib/db-data-railway-routes';
 import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data-railway-routes';
 import { Stop } from 'hafas-client';
-import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { MainStackParamList, RailwayRoutesOfTripScreenParams, BRouterScreenParams } from './ScreenTypes';
+import { MainStackParamList, RailwayRoutesOfTripScreenParams } from './ScreenTypes';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
     navigation: StackNavigationProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
 };
 
-export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) {
+export default function RailwayRoutesOfTripScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor RailwayRouteOfTrip');
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
     const stops: Stop[] = params.stops;
-    const routeSearch = params.routeSearch;
 
     console.log('stops.length: ', stops.length);
 
     const findRailwayRoutes = (stopsOfRoute: Stop[]) => {
-        return findRailwayRoutesOfTrip(stopsOfRoute.map(s => parseInt(s.id, 10)), true, routeSearch === 'single' ? 'single' : 'double');
+        return findRailwayRoutesOfTrip(stopsOfRoute.map(s => parseInt(s.id, 10)), true);
     }
 
     const [data, setData] = useState([] as RailwayRouteOfTrip[]);
@@ -113,7 +101,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props) 
     }
 
     const normalizeString = (s: string) => {
-        const re = /  /gi;
+        const re = / {2}/gi;
         return s.replace(re, '');
     }
 

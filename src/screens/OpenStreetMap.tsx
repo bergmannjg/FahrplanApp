@@ -9,7 +9,7 @@ type Props = {
   navigation: StackNavigationProp<MainStackParamList, 'OpenStreetMap'>;
 };
 
-export default function OpenStreetMapScreen({ route, navigation }: Props) {
+export default function OpenStreetMapScreen({ route }: Props): JSX.Element {
   console.log('OpenStreetMapScreen constructor');
   const { location } = route.params;
   console.log('location: ', location);

@@ -31,7 +31,7 @@ function ICE73HamburgFreiburg(useCache: boolean) {
         expect(railwayRoutes[8].railwayRouteNr).toBe(4011);
         expect(railwayRoutes[9].railwayRouteNr).toBe(4000);
     }
-};
+}
 
 test('test ICE 73 Hamburg Freiburg', () => {
     ICE73HamburgFreiburg(false);
@@ -72,7 +72,7 @@ function ICE1581HamburgMünchen(useCache: boolean) {
         expect(railwayRoutes[7].railwayRouteNr).toBe(5934);
         expect(railwayRoutes[8].railwayRouteNr).toBe(5501);
     }
-};
+}
 
 test('test ICE 651 Köln Berlin', () => {
     ICE651KölnBerlin(false);
@@ -107,7 +107,7 @@ function ICE651KölnBerlin(useCache: boolean) {
         expect(railwayRoutes[9].railwayRouteNr).toBe(1730);
         expect(railwayRoutes[10].railwayRouteNr).toBe(6107);
     }
-};
+}
 
 test('test Hagen Bielefeld', () => {
     const stops = [8000142, 8000036];
@@ -269,7 +269,7 @@ function FrankfurtKöln(useCache: boolean) {
     expect(railwayRoutes[0].railwayRouteNr).toBe(3520);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2690);
     expect(railwayRoutes[2].railwayRouteNr?.toString()).toMatch(/2630|2616/);
-};
+}
 
 test('test Frankfurt Köln', () => {
     FrankfurtKöln(false);

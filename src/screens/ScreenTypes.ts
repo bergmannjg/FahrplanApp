@@ -5,14 +5,14 @@ export interface HomeScreenParams {
     profile?: string,
     tripDetails?: boolean,
     date?: Date,
-    routeSearch?: string
+    transferTime?: number
 }
 
 export interface OptionScreenParams {
     navigationParams: {
         profile: string,
         tripDetails: boolean,
-        routeSearch: string
+        transferTime: number
     }
 }
 
@@ -26,13 +26,11 @@ export interface DateTimeScreenParams {
 export interface JourneyplanScreenParams {
     journey: JourneyInfo,
     tripDetails: boolean,
-    routeSearch: string,
     client: Hafas
 }
 
 export interface RailwayRoutesOfTripScreenParams {
-    stops: Stop[],
-    routeSearch: string
+    stops: Stop[]
 }
 
 export interface RailwayRouteScreenParams {
@@ -45,7 +43,7 @@ export interface ConnectionsScreenParams {
     station2: string,
     via: string,
     tripDetails: boolean,
-    routeSearch: string,
+    transferTime: number,
     client: Hafas
 }
 

@@ -1,47 +1,35 @@
 import React from 'react';
 import {
-    SafeAreaView,
     StyleSheet,
-    ScrollView,
     View,
     Text,
-    StatusBar,
     TouchableOpacity,
     FlatList,
-    ActivityIndicator,
     Linking
 } from 'react-native';
 
-import {
-    Header,
-    LearnMoreLinks,
-    Colors,
-    DebugInstructions,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
-import { ListItem, SearchBar, Icon } from "react-native-elements";
+import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 
 import { BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition } from '../lib/db-data';
 import { findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr } from '../lib/db-data-railway-routes';
 import { Location } from 'hafas-client';
-import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { MainStackParamList, RailwayRouteScreenParams, BRouterScreenParams } from './ScreenTypes';
+import { MainStackParamList, RailwayRouteScreenParams } from './ScreenTypes';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoute'>;
     navigation: StackNavigationProp<MainStackParamList, 'RailwayRoute'>;
 };
 
-export default function RailwayRouteScreen({ route, navigation }: Props) {
+export default function RailwayRouteScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor RailwayRouteScreen');
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
@@ -50,7 +38,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     const strecke = findRailwayRoute(railwayRouteNr);
     const STRNAME = strecke?.STRNAME || '';
 
-    const showRoute = async (isLongPress: boolean) => {
+    const showRoute = async () => {
         if (data.length > 0) {
             const locations: Location[] = data.filter(s => s.GEOGR_LAENGE > 0 && s.GEOGR_LAENGE > 0).map(s => { return { type: 'location', longitude: s.GEOGR_LAENGE, latitude: s.GEOGR_BREITE } })
             navigation.navigate('BRouter', { isLongPress: false, locations });
@@ -77,7 +65,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     const Item = ({ item }: ItemProps) => {
         return (
             <View style={styles.subtitleView}>
-                <Text style={styles.itemStationText}>{`km: ${item.KM_L} ${item.BEZEICHNUNG}, max: ${item.maxSpeed} km`}</Text>
+                <Text style={styles.itemStationText}>{`km: ${item.KM_L} ${item.BEZEICHNUNG}, max: ${item.maxSpeed ? item.maxSpeed + ' km' : 'unbekannt'}`}</Text>
             </View >
         );
     }
@@ -85,7 +73,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
     return (
         <View style={styles.container}>
             <View >
-                <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                <TouchableOpacity style={styles.button} onPress={() => showRoute()}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')}
                     </Text>
@@ -97,7 +85,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props) {
                 </Text>
                 <Text style={styles.itemLinkText}
                     onPress={() => Linking.openURL('https://www.google.de/search?q=Bahnstrecke+' + railwayRouteNr)}>
-                    Suche nach 'Bahnstrecke {railwayRouteNr}'
+                    Suche nach Bahnstrecke {railwayRouteNr}
                 </Text>
             </View>
             <FlatList
