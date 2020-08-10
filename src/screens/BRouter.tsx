@@ -138,8 +138,8 @@ type Props = {
     navigation: StackNavigationProp<MainStackParamList, 'BRouter'>;
 };
 
-function hasDistanceProperty<T>(obj: T): obj is T & Record<'distance', number> {
-    return Object.prototype.hasOwnProperty.call(obj, 'distance')
+function hasProperty<T, K extends string>(obj: T, prop: K): obj is T & Record<K, number> {
+    return prop in obj;
 }
 
 export default function BRouterScreen({ route, navigation }: Props): JSX.Element {
@@ -157,7 +157,7 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
     Clipboard.setString(uri);
 
     const onMessage = (d: unknown) => {
-        if (hasDistanceProperty(d)) {
+        if (hasProperty(d, "distance")) {
             navigation.setOptions({
                 headerTitle: t('BRouterScreen.Route', { locations: locations.length, distance: d.distance })
             });

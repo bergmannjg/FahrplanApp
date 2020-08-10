@@ -27,18 +27,19 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const { t } = useTranslation();
 
+  const headerRight = () => (
+    <View style={{ backgroundColor: '#F5FCFF' }}>
+      <TouchableOpacity onPress={() => { navigateToOptionsScreen(); }}>
+        <Text style={{ fontSize: 18, marginRight: 10 }} >
+          {t('HomeScreen.Options')}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )
+
   navigation.setOptions({
     headerTitle: t('HomeScreen.Header'),
-    // eslint-disable-next-line react/display-name
-    headerRight: () => (
-      <View style={{ backgroundColor: '#F5FCFF' }}>
-        <TouchableOpacity onPress={() => { navigateToOptionsScreen(); }}>
-          <Text style={{ fontSize: 18, marginRight: 10 }} >
-            {t('HomeScreen.Options')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    ),
+    headerRight: headerRight
   });
 
   const [station1, setStation1] = useState('');

@@ -1,19 +1,23 @@
-import { Lazy } from './Lazy'
-
-import { getSpeed, computeDistanceOfKmI, findBetriebsstellenWithRailwayRoutePositionsForDS100Pattern, findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionsForRailwayRouteNr, findCrossingsOfBetriebsstellenWithRailwayRoutePositionsForDS100, findStopForUicRef, findStreckennutzungForRailwayRouteNr } from './db-data'
-import type { BetriebsstelleWithRailwayRoutePosition, RailwayRoutePosition, StopWithRailwayRoutePositions, BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition } from './db-data'
+import { computeDistanceOfKmI, findBetriebsstellenWithRailwayRoutePositionsForDS100Pattern, findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionsForRailwayRouteNr, findCrossingsOfBetriebsstellenWithRailwayRoutePositionsForDS100, findStopForUicRef } from './db-data'
+import type { RailwayRoutePosition, StopWithRailwayRoutePositions, BetriebsstelleRailwayRoutePosition } from './db-data'
 import { addStopToGraph } from './db-data-graph'
 import { Dijkstra } from './dijkstra'
 import type { Graph } from './dijkstra'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const railwayRouteCache = new Lazy<RailwayRouteCache[]>(() => require('../../db-data/generated/RailwayRouteCache.json') as Array<RailwayRouteCache>, 'railwayRouteCache')
+// import rc from '../../db-data/generated/RailwayRouteCache.json';
+const railwayRouteCache: RailwayRouteCache[] = [];
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const graph = new Lazy<Graph>(() => require('../../db-data/generated/graph.json') as Graph, 'graph')
+import g from '../../db-data/generated/graph.json';
+const graph: Graph = g;
 
 const dijkstra = new Dijkstra();
 const verbose = false;
+
+interface BetriebsstelleWithRailwayRoutePosition {
+    ds100_ref: string;
+    name: string;
+    railwayRoutePosition?: BetriebsstelleRailwayRoutePosition;
+}
 
 interface RailwayRouteOfTrip {
     railwayRouteNr?: number;
@@ -28,24 +32,7 @@ interface RailwayRouteCache {
 }
 
 function findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(RailwayRouteNr: number): BetriebsstelleRailwayRoutePosition[] {
-    const arrBs = findBetriebsstellenWithRailwayRoutePositionsForRailwayRouteNr(RailwayRouteNr);
-    addMoreInfo(RailwayRouteNr, arrBs);
-    return arrBs;
-}
-
-function addMoreInfo(railwayRouteNr: number, arrBs: BetriebsstelleRailwayRoutePosition[]) {
-    const arrStreckennutzung = findStreckennutzungForRailwayRouteNr(railwayRouteNr);
-    if (arrStreckennutzung) {
-        for (const curr of arrStreckennutzung) {
-            const speed = getSpeed(curr.geschwindigkeit);
-            arrBs
-                .filter(b => curr.von_km_i <= b.KM_I && b.KM_I <= curr.bis_km_i)
-                .forEach(bsCurr => {
-                    const bsExCurr = bsCurr as BetriebsstelleRailwayRoutePositionEx;
-                    if ((bsExCurr.maxSpeed ?? 0) < speed) bsExCurr.maxSpeed = speed;
-                });
-        }
-    }
+    return findBetriebsstellenWithRailwayRoutePositionsForRailwayRouteNr(RailwayRouteNr);
 }
 
 function findRailwayRoutePositionForRailwayRoutes(routes: RailwayRouteOfTrip[], allPoints: boolean): RailwayRoutePosition[] {
@@ -147,7 +134,7 @@ interface State {
 }
 
 function findRailwayRoutesFromCache(state: State, hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions): State {
-    const cache = railwayRouteCache.value.find(c => hs_pos_von.uic_ref === c.uicFrom && hs_pos_bis.uic_ref === c.uicTo);
+    const cache = railwayRouteCache.find(c => hs_pos_von.uic_ref === c.uicFrom && hs_pos_bis.uic_ref === c.uicTo);
     if (cache) {
         state.success = true;
         if (verbose) console.log('found cache: ', hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref)
@@ -164,10 +151,10 @@ function findRailwayRoutesFromCache(state: State, hs_pos_von: StopWithRailwayRou
 function findRailwayRoutesFromPath(state: State, hs_pos_von: StopWithRailwayRoutePositions, hs_pos_bis: StopWithRailwayRoutePositions): State {
     hs_pos_von.ds100_ref = getFirstPartOfDS100(hs_pos_von.ds100_ref)
     hs_pos_bis.ds100_ref = getFirstPartOfDS100(hs_pos_bis.ds100_ref)
-    addStopToGraph(graph.value, hs_pos_von);
-    addStopToGraph(graph.value, hs_pos_bis);
+    addStopToGraph(graph, hs_pos_von);
+    addStopToGraph(graph, hs_pos_bis);
 
-    const path = dijkstra.find_path(graph.value, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref);
+    const path = dijkstra.find_path(graph, hs_pos_von.ds100_ref, hs_pos_bis.ds100_ref);
     if (verbose) console.log('hs_pos_von', hs_pos_von.ds100_ref, ', hs_pos_bis', hs_pos_bis.ds100_ref, ', path', path)
     if (path.length === 2) {
         state.success = true;

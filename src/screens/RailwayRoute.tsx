@@ -16,7 +16,7 @@ import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 
-import { BetriebsstelleRailwayRoutePositionEx, BetriebsstelleRailwayRoutePosition } from '../lib/db-data';
+import type { BetriebsstelleRailwayRoutePosition } from '../lib/db-data';
 import { findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr } from '../lib/db-data-railway-routes';
 import { Location } from 'hafas-client';
 import { MainStackParamList, RailwayRouteScreenParams } from './ScreenTypes';
@@ -59,7 +59,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     };
 
     interface ItemProps {
-        item: BetriebsstelleRailwayRoutePositionEx
+        item: BetriebsstelleRailwayRoutePosition
     }
 
     const Item = ({ item }: ItemProps) => {

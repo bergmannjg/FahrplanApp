@@ -8,6 +8,7 @@
         "noEmit": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
+        "resolveJsonModule": true,
         "newLine": "lf",
         "target": "es6",
         "module": "commonjs",

@@ -7,9 +7,6 @@ import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import * as RNLocalize from "react-native-localize";
 
-console.log('RNLocalize.getLocales:', RNLocalize.getLocales());
-console.log('RNLocalize.getTimeZone:', RNLocalize.getTimeZone());
-
 const d = new Date();
 console.log('TimezoneOffset:', d.getTimezoneOffset());
 
@@ -35,7 +32,7 @@ i18next
     .use(initReactI18next)
     .init({
         fallbackLng: 'de',
-        debug: true,
+        debug: false,
         resources: {
             de: {
                 translation: translationDE,

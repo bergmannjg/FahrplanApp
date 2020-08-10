@@ -17,7 +17,7 @@ import { ListItem } from "react-native-elements";
 import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
 
-import { RailwayRouteOfTrip } from '../lib/db-data-railway-routes';
+import type { RailwayRouteOfTrip } from '../lib/db-data-railway-routes';
 import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data-railway-routes';
 import { Stop } from 'hafas-client';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams } from './ScreenTypes';

@@ -1,7 +1,4 @@
 
-console.ignoredYellowBox = ['Warning: Each'];
-console.disableYellowBox = true;
-
 import { AppRegistry } from 'react-native';
 import './src/global';
 import './src/init-i18next';
