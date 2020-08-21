@@ -25,6 +25,11 @@ interface RailwayRouteOfTrip {
     to?: BetriebsstelleWithRailwayRoutePosition;
 }
 
+interface RailwayRouteOfTripResult {
+    railwayRoutes: RailwayRouteOfTrip[];
+    missing: number;
+}
+
 interface RailwayRouteCache {
     uicFrom: number;
     uicTo: number;
@@ -262,6 +267,13 @@ function addToState(state: State, railwayRouteNr: number, from: BetriebsstelleWi
     }
 }
 
+// adhoc method to find substop
+function isSubStop(maybeSubStop: StopWithRailwayRoutePositions, stop: StopWithRailwayRoutePositions) {
+    return maybeSubStop.streckenpositionen.length === 0
+        && stop.streckenpositionen.length > 0
+        && maybeSubStop.ds100_ref.includes(stop.ds100_ref);
+}
+
 /**
  * find railway route numbers for the station codes of a trip,
  * the solution is not unique and there may be others with fewer railway routes.
@@ -275,12 +287,19 @@ function addToState(state: State, railwayRouteNr: number, from: BetriebsstelleWi
  * @param useCache use railwayRoute cache
  * @param routeSearchType search single or double crossings
  */
-function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean): RailwayRouteOfTrip[] {
+function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean): RailwayRouteOfTripResult {
     const hs_pos_list = findStopWithRailwayRoutePositions(removeDuplicates(uic_refs));
     let state: State = { railwayRoutes: [], actualRailwayRoute: undefined, success: false }
+    let missing = 0;
     for (let n = 0; n < hs_pos_list.length - 1; n++) {
-        const hs_pos_from = hs_pos_list[n];
+        let hs_pos_from = hs_pos_list[n];
         const hs_pos_to = hs_pos_list[n + 1];
+        if (n > 0 && isSubStop(hs_pos_from, hs_pos_list[n - 1])) {
+            hs_pos_from = hs_pos_list[n - 1];
+        }
+        if (isSubStop(hs_pos_to, hs_pos_from)) {
+            continue;
+        }
         state.success = false;
         if (!state.success && useCache) {
             state = findRailwayRoutesFromCache(state, hs_pos_from, hs_pos_to);
@@ -292,6 +311,7 @@ function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean): Railwa
             state = findRailwayRoutesFromPath(state, hs_pos_from, hs_pos_to);
         }
         if (!state.success) {
+            missing++;
             if (verbose) console.log('found nothing: ', hs_pos_from.ds100_ref, hs_pos_to.ds100_ref)
         }
     }
@@ -304,7 +324,7 @@ function findRailwayRoutesOfTrip(uic_refs: number[], useCache?: boolean): Railwa
             state.railwayRoutes.push(state.actualRailwayRoute);
         }
     }
-    return state.railwayRoutes;
+    return { railwayRoutes: state.railwayRoutes, missing };
 }
 
 export { verbose, findRailwayRoutesOfTrip, findRailwayRouteText, findRailwayRoute, computeDistanceOfRoutes, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr, findRailwayRoutePositionForRailwayRoutes }

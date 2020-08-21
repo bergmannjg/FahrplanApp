@@ -44,13 +44,15 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const [data, setData] = useState([] as RailwayRouteOfTrip[]);
     const [loading, setLoading] = useState(true);
     const [distance, setDistance] = useState(0);
+    const [missing, setMissing] = useState(0);
 
     useEffect(() => {
         if (loading && data.length === 0) {
-            const routes = findRailwayRoutes(params.stops)
+            const result = findRailwayRoutes(params.stops)
             setLoading(false);
-            setDistance(computeDistanceOfRoutes(routes));
-            setData(routes);
+            setDistance(computeDistanceOfRoutes(result.railwayRoutes));
+            setData(result.railwayRoutes);
+            setMissing(result.missing)
         }
     });
 
@@ -130,6 +132,11 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                 <Text style={styles.itemHeaderText}>
                     km: {distance.toFixed(2)}
                 </Text>
+                {(missing > 0) &&
+                    <Text style={styles.itemHeaderWarningText}>
+                        {`${missing} Verbindungen ohne Strecke`}
+                    </Text>
+                }
             </View>
             <FlatList
                 data={data}
@@ -197,6 +204,14 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         paddingTop: 10,
         backgroundColor: Colors.white,
+    },
+    itemHeaderWarningText: {
+        fontSize: 14,
+        paddingLeft: 35,
+        paddingBottom: 0,
+        paddingTop: 10,
+        backgroundColor: Colors.white,
+        color: 'red'
     },
     itemWarningText: {
         color: 'red',

@@ -86,7 +86,7 @@ function addStopToGraph(g: Graph, bs: StopWithRailwayRoutePositions): void {
     if (g[bs.ds100_ref]) return;
 
     if (bs.streckenpositionen.length !== 1) {
-        console.log('error addStopToGraph, streckenpositionen anzahl ', bs.streckenpositionen.length);
+        console.log('error addStopToGraph, ds100', bs.ds100_ref, ', streckenpositionen anzahl ', bs.streckenpositionen.length);
         return;
     }
 

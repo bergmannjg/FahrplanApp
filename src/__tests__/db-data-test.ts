@@ -6,7 +6,7 @@ test('test Frankfurt Köln witch cache', () => {
 
 function ICE73HamburgFreiburg(useCache: boolean) {
     const stops = [8002549, 8000152, 8000128, 8003200, 8000105, 8000244, 8000191, 8000191, 8000774, 8000290, 8000107];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache).railwayRoutes;
     expect(railwayRoutes.length.toString()).toMatch(/9|10/);
     if (railwayRoutes.length === 9) {
         expect(railwayRoutes[0].railwayRouteNr).toBe(2200);
@@ -47,7 +47,7 @@ test('test ICE 1581 Hamburg München with cache', () => {
 
 function ICE1581HamburgMünchen(useCache: boolean) {
     const stops = [8002549, 8000147, 8000152, 8000128, 8003200, 8000115, 8000260, 8000284, 8000183, 8000261];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache).railwayRoutes;
     expect(railwayRoutes.length.toString()).toMatch(/9|10/);
     if (railwayRoutes.length === 10) {
         expect(railwayRoutes[0].railwayRouteNr).toBe(2200);
@@ -80,7 +80,7 @@ test('test ICE 651 Köln Berlin', () => {
 
 function ICE651KölnBerlin(useCache: boolean) {
     const stops = [8000207, 8000087, 8000266, 8000142, 8000149, 8000036, 8000152, 8006552, 8010404, 8098160];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache).railwayRoutes;
     expect(railwayRoutes.length.toString()).toMatch(/10|11/);
     if (railwayRoutes.length === 10) {
         expect(railwayRoutes[0].railwayRouteNr).toBe(2670);
@@ -111,7 +111,7 @@ function ICE651KölnBerlin(useCache: boolean) {
 
 test('test Hagen Bielefeld', () => {
     const stops = [8000142, 8000036];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(5);
     expect(railwayRoutes[0].railwayRouteNr).toBe(2550);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2840);
@@ -122,7 +122,7 @@ test('test Hagen Bielefeld', () => {
 
 test('test Hagen Hamm', () => {
     const stops = [8000142, 8000149];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(4);
     expect(railwayRoutes[0].railwayRouteNr).toBe(2550);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2840);
@@ -132,7 +132,7 @@ test('test Hagen Hamm', () => {
 
 test('test Hamm Berlin', () => {
     const stops = [8000149, 8000036, 8000152, 8006552, 8010404, 8098160];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(1700);
     expect(railwayRoutes[1].railwayRouteNr).toBe(1730);
@@ -141,7 +141,7 @@ test('test Hamm Berlin', () => {
 
 test('test Lübeck Fehmarn-Burg', () => {
     const stops = [8000237, 8001274];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(1100);
     expect(railwayRoutes[1].railwayRouteNr).toBe(1104)
@@ -164,7 +164,7 @@ test('test x', () => {
 
 test('test Osnabrück Hbf Bielefeld', () => {
     const stops = [8000294, 8003956, 8000059, 8003288, 8002824, 8000162, 8000036];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(2992);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2981);
@@ -173,7 +173,7 @@ test('test Osnabrück Hbf Bielefeld', () => {
 
 test('test Osnabrück Bielefeld', () => {
     const stops = [8000294, 8000059, 8003288, 8002824, 8000162, 8000036];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(2992);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2981);
@@ -182,7 +182,7 @@ test('test Osnabrück Bielefeld', () => {
 
 test('test Hamburg Hannover', () => {
     const stops = [8002549, 8000152];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(2200);
     expect(railwayRoutes[1].railwayRouteNr).toBe(1720);
@@ -191,7 +191,7 @@ test('test Hamburg Hannover', () => {
 
 test('test Frankurt Mannheim', () => {
     const stops = [8000105, 8000244];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length.toString()).toMatch(/3|4/);
     if (railwayRoutes.length === 3) {
         expect(railwayRoutes[0].railwayRouteNr).toBe(3520);
@@ -207,7 +207,7 @@ test('test Frankurt Mannheim', () => {
 
 test('test Würzburg Nürnberg', () => {
     const stops = [8000260, 8000284];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(2);
     expect(railwayRoutes[0].railwayRouteNr).toBe(5910);
     expect(railwayRoutes[1].railwayRouteNr?.toString()).toMatch(/5900|5907/);
@@ -215,7 +215,7 @@ test('test Würzburg Nürnberg', () => {
 
 test('test Hannover Berlin', () => {
     const stops = [8000152, 8098160];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(2);
     expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
@@ -223,7 +223,7 @@ test('test Hannover Berlin', () => {
 
 test('test Hannover Wolfsburg', () => {
     const stops = [8000152, 8006552];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(2);
     expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
@@ -235,7 +235,7 @@ test('test Hannover Wolfsburg', () => {
 
 test('test Nürnberg Ingolstadt shortest path', () => {
     const stops = [8000284, 8000183];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(5850);
     expect(railwayRoutes[1].railwayRouteNr).toBe(5934);
@@ -244,7 +244,7 @@ test('test Nürnberg Ingolstadt shortest path', () => {
 
 test('test Würzburg Nürnberg shortest path', () => {
     const stops = [8000260, 8000284];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(2);
     expect(railwayRoutes[0].railwayRouteNr).toBe(5910);
     expect(railwayRoutes[1].railwayRouteNr?.toString()).toMatch(/5900|5907/);
@@ -252,7 +252,7 @@ test('test Würzburg Nürnberg shortest path', () => {
 
 test('test Hannover Wolfsburg shortest path', () => {
     const stops = [8000152, 8006552];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(2);
     expect(railwayRoutes[0].railwayRouteNr).toBe(1730);
     expect(railwayRoutes[1].railwayRouteNr).toBe(6107)
@@ -264,7 +264,7 @@ test('test Hannover Wolfsburg shortest path', () => {
 
 function FrankfurtKöln(useCache: boolean) {
     const stops = [8000105, 8070003, 8000207];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, useCache).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(3520);
     expect(railwayRoutes[1].railwayRouteNr).toBe(2690);
@@ -277,7 +277,7 @@ test('test Frankfurt Köln', () => {
 
 test('test Nürnberg München', () => {
     const stops = [8000284, 8000261];
-    const railwayRoutes = findRailwayRoutesOfTrip(stops, false);
+    const railwayRoutes = findRailwayRoutesOfTrip(stops, false).railwayRoutes;
     expect(railwayRoutes.length).toBe(3);
     expect(railwayRoutes[0].railwayRouteNr).toBe(5850);
     expect(railwayRoutes[1].railwayRouteNr).toBe(5934);
