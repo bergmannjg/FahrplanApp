@@ -16,8 +16,8 @@ import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 
-import type { BetriebsstelleRailwayRoutePosition } from '../lib/db-data';
-import { findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr } from '../lib/db-data-railway-routes';
+import type { BetriebsstelleRailwayRoutePosition } from 'railwaytrip-to-railwayroute/dist/db-data';
+import { findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { Location } from 'hafas-client';
 import { MainStackParamList, RailwayRouteScreenParams } from './ScreenTypes';
 
@@ -91,10 +91,11 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
-                    <ListItem
-                        title={<Item item={item} />}
-                        containerStyle={{ borderBottomWidth: 0 }}
-                    />
+                    <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                        <ListItem.Content>
+                            <ListItem.Title><Item item={item} /></ListItem.Title>
+                        </ListItem.Content>
+                    </ListItem>
                 )}
                 keyExtractor={item => item.KM_L}
                 ItemSeparatorComponent={renderSeparator}

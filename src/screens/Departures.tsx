@@ -101,16 +101,17 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
                 <FlatList
                     data={data}
                     renderItem={({ item }) => (
-                        <ListItem onPress={() => { goToTrip(item) }}
-                            title={`${title(item)}`}
-                            subtitle={
-                                <View style={styles.subtitleView}>
-                                    {item.line && <Text>{lineName(item.line)}</Text>}
-                                    {item.plannedWhen && <Text>{`${t('DepartureScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })}`}</Text>}
-                                </View>
-                            }
-                            containerStyle={{ borderBottomWidth: 0 }}
-                        />
+                        <ListItem onPress={() => { goToTrip(item) }} containerStyle={{ borderBottomWidth: 0 }} >
+                            <ListItem.Content>
+                                <ListItem.Title>{`${title(item)}`}</ListItem.Title>
+                                <ListItem.Subtitle>
+                                    <View style={styles.subtitleView}>
+                                        {item.line && <Text>{lineName(item.line)}</Text>}
+                                        {item.plannedWhen && <Text>{`${t('DepartureScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })}`}</Text>}
+                                    </View>
+                                </ListItem.Subtitle>
+                            </ListItem.Content>
+                        </ListItem>
                     )}
                     keyExtractor={item => item.tripId + item.stop?.id}
                     ItemSeparatorComponent={renderSeparator}

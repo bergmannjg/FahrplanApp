@@ -17,8 +17,8 @@ import { ListItem } from "react-native-elements";
 import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
 
-import type { RailwayRouteOfTrip } from '../lib/db-data-railway-routes';
-import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from '../lib/db-data-railway-routes';
+import type { RailwayRouteOfTrip } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
+import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { Stop } from 'hafas-client';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams } from './ScreenTypes';
 
@@ -103,8 +103,9 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     }
 
     const normalizeString = (s: string) => {
-        const re = / {2}/gi;
-        return s.replace(re, '');
+        // const re = / {2}/gi;
+        // return s.replace(re, '');
+        return s;
     }
 
     const Item = ({ item }: ItemProps) => {
@@ -141,10 +142,11 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
-                    <ListItem
-                        title={<Item item={item} />}
-                        containerStyle={{ borderBottomWidth: 0 }}
-                    />
+                    <ListItem containerStyle={{ borderBottomWidth: 0 }} >
+                        <ListItem.Content>
+                            <ListItem.Title><Item item={item} /></ListItem.Title>
+                        </ListItem.Content>
+                    </ListItem>
                 )}
                 keyExtractor={item => item.railwayRouteNr ? item.railwayRouteNr.toString() : ''}
                 ItemSeparatorComponent={renderSeparator}

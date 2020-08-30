@@ -224,10 +224,11 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             <FlatList
                 data={legs}
                 renderItem={({ item }) => (
-                    <ListItem
-                        title={<Item item={item} />}
-                        containerStyle={{ borderBottomWidth: 0 }}
-                    />
+                    <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                        <ListItem.Content>
+                            <ListItem.Title><Item item={item} /></ListItem.Title>
+                        </ListItem.Content>
+                    </ListItem>
                 )}
                 keyExtractor={item => item.origin.name + item.destination.name}
                 ItemSeparatorComponent={renderSeparator}

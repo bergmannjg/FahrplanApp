@@ -79,25 +79,21 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
     setProfile(route.params.profile);
-    route.params.profile = undefined;
   }
 
   // route.params from OptionsScreen
   if (route.params?.tripDetails !== undefined && route.params?.tripDetails !== tripDetails) {
     setTripDetails(route.params.tripDetails);
-    route.params.tripDetails = undefined;
   }
 
   // route.params from OptionsScreen
   if (route.params?.transferTime !== undefined && route.params?.transferTime !== transferTime) {
     setTransferTime(route.params.transferTime);
-    route.params.transferTime = undefined;
   }
 
   // route.params from DateTimeScreen
   if (route.params?.date !== undefined && route.params?.date !== date) {
     setDate(route.params.date);
-    route.params.date = undefined;
   }
 
   console.log('profile: ', profile);

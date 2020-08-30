@@ -110,6 +110,11 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             return null;
     }
 
+    const cancelledInfo = (item: StopOver): string => {
+        const cancelled = (item as any).cancelled; // wait for version 5.7
+        return cancelled ? "entfällt" : "";
+    }
+
     const OptionalItemBetween = ({ item }: { item: StopOver }) => {
         if (item.plannedArrival && item.plannedDeparture)
             return (
@@ -117,6 +122,9 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                     <TouchableOpacity onPress={() => showDepartures(item.stop.name, item.plannedArrival ?? '')}>
                         <Text style={styles.itemDetailsText}>
                             {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop.name}`}
+                            <Text style={styles.itemWarningText}>
+                                {` ${cancelledInfo(item)}`}
+                            </Text>
                         </Text>
                     </TouchableOpacity>
                     <OptionalItemDelay item={item} />
@@ -228,7 +236,7 @@ const styles = StyleSheet.create({
     },
     itemWarningText: {
         color: 'red',
-        paddingLeft: 50,
+        paddingLeft: 10,
     },
     itemDelayText: {
         paddingLeft: 50,

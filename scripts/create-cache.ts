@@ -30,13 +30,13 @@ const stopsForCache = [
 
 stopsForCache.forEach(s => {
     if (s.length == 2) {
-        cache.push({ uicFrom: s[0], uicTo: s[1], railwayRoutes: findRailwayRoutesOfTrip(s, false) });
+        cache.push({ uicFrom: s[0], uicTo: s[1], railwayRoutes: findRailwayRoutesOfTrip(s, false).railwayRoutes });
         s.reverse();
-        cache.push({ uicFrom: s[0], uicTo: s[1], railwayRoutes: findRailwayRoutesOfTrip(s, false) });
+        cache.push({ uicFrom: s[0], uicTo: s[1], railwayRoutes: findRailwayRoutesOfTrip(s, false).railwayRoutes });
     } else if (s.length == 3) {
-        cache.push({ uicFrom: s[0], uicTo: s[2], railwayRoutes: findRailwayRoutesOfTrip(s, false) });
+        cache.push({ uicFrom: s[0], uicTo: s[2], railwayRoutes: findRailwayRoutesOfTrip(s, false).railwayRoutes });
         s.reverse();
-        cache.push({ uicFrom: s[0], uicTo: s[2], railwayRoutes: findRailwayRoutesOfTrip(s, false) });
+        cache.push({ uicFrom: s[0], uicTo: s[2], railwayRoutes: findRailwayRoutesOfTrip(s, false).railwayRoutes });
     }
 })
 

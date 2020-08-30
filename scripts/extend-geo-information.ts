@@ -137,11 +137,15 @@ function splitStreckekurzname(streckekurzname: string) {
     }
 }
 
+function checkBahnstellenart(typ: string) {
+    return typ === "Bf" || typ === "Bft" || typ === "Hp" || typ === "Bft Abzw";
+}
+
 function findBetriebsstelleForStreckekurzname(streckekurzname: string) {
     const split = splitStreckekurzname(streckekurzname);
     if (split.length === 2) {
-        const from = betriebsstellen.find(b => b.Name === split[0] || b.Kurzname === split[0]);
-        const to = betriebsstellen.find(b => b.Name === split[1] || b.Kurzname === split[1]);
+        const from = betriebsstellen.find(b => checkBahnstellenart(b.Typ) && (b.Name === split[0] || b.Kurzname === split[0]));
+        const to = betriebsstellen.find(b => checkBahnstellenart(b.Typ) && (b.Name === split[1] || b.Kurzname === split[1]));
         return [from, to];
     } else {
         return [undefined, undefined];

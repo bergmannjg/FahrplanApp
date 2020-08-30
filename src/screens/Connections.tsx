@@ -164,17 +164,18 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
         <FlatList
           data={data}
           renderItem={({ item }) => (
-            <ListItem onPress={() => { goToView(item) }}
-              title={`${item.originName} ${t('ConnectionsScreen.DirectionTo')} ${item.destinationName}`}
-              subtitle={
-                <View style={styles.subtitleView}>
-                  <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes')}: ${item.changes}`}</Text>
-                  {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
-                  {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
-                </View>
-              }
-              containerStyle={{ borderBottomWidth: 0 }}
-            />
+            <ListItem onPress={() => { goToView(item) }} containerStyle={{ borderBottomWidth: 0 }} >
+              <ListItem.Content>
+                <ListItem.Title>{`${item.originName} ${t('ConnectionsScreen.DirectionTo')} ${item.destinationName}`}</ListItem.Title>
+                <ListItem.Subtitle>
+                  <View style={styles.subtitleView}>
+                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes')}: ${item.changes}`}</Text>
+                    {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
+                    {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
+                  </View>
+                </ListItem.Subtitle>
+              </ListItem.Content>
+            </ListItem>
           )}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={renderSeparator}
