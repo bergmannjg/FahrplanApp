@@ -111,10 +111,11 @@ it('renders ConnectionsScreen correctly', async () => {
         expect(tree).toMatchSnapshot()
         const instance = testRenderer.root;
         const texts = instance.findAllByType("Text");
-        expect(texts.length).toBe(7);
+        expect(texts.length).toBe(9);
+ 
         expect(texts[3].children).toEqual(['Hannover Hbf nach Bielefeld Hbf']);
-        expect(texts[4].children).toEqual(['ab: 11:38, an: 11:52, Dauer: 0:14, Umstiege: 0']);
-        expect(texts[5].children).toEqual(['Hannover Hbf nach Bielefeld Hbf']);
-        expect(texts[6].children).toEqual(['ab: 23:58, an: 00:12(+1 Tag), Dauer: 0:14, Umstiege: 0']);
+        expect(texts[5].children).toEqual(['ab: 11:38, an: 11:52, Dauer: 0:14, Umstiege: 0']);
+        expect(texts[6].children).toEqual(['Hannover Hbf nach Bielefeld Hbf']);
+        expect(texts[8].children).toEqual(['ab: 23:58, an: 00:12(+1 Tag), Dauer: 0:14, Umstiege: 0']);
     }
 });

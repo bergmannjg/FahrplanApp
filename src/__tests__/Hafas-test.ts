@@ -62,7 +62,7 @@ jest.mock('hafas-client', () => (profile: any, clientName: string) => {
 
     const locations = (query: string) => {
         console.log('mocked locations:', query);
-        const stops = stopovers.filter(so => so.stop.name.startsWith(query)).map(so => so.stop);
+        const stops = stopovers.filter(so => so.stop.name?.startsWith(query)).map(so => so.stop);
         return Promise.resolve(stops);
     }
     const journeys = (from: string, to: string) => {

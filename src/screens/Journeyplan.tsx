@@ -139,18 +139,18 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             <View style={styles.subtitleView}>
                 {item.cancelled ?
                     <View>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.origin.name}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin.name}`}</Text>
                         <Text> </Text>
                         <TouchableOpacity onPress={() => goToTrip(item)}>
                             <Text style={styles.itemDetailsText}>{legLineName(item)}</Text>
                         </TouchableOpacity>
                         <Text style={styles.itemWarningText}>{`${t('JourneyplanScreen.TripCancled')}`}</Text>
                         <Text> </Text>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival) })} ${item.destination.name}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination.name}`}</Text>
                     </View>
                     :
                     <View>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.origin.name} ${platform(item.departurePlatform)}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin.name} ${platform(item.departurePlatform)}`}</Text>
 
                         {item.departure && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0) ?
                             <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.departure) })}`}</Text>
@@ -175,7 +175,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                             <Text style={styles.itemDetailsText}>{`${t('JourneyplanScreen.LoadFactor')}: ${loadFactor2Text(item.loadFactor)}`}</Text>
                         }
 
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival) })} ${item.destination.name} ${platform(item.arrivalPlatform)}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination.name} ${platform(item.arrivalPlatform)}`}</Text>
                         {
                             (item.arrival && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0)) ?
                                 <View>
@@ -230,7 +230,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.origin.name + item.destination.name}
+                keyExtractor={item => item.origin.name ?? "" + item.destination.name}
                 ItemSeparatorComponent={renderSeparator}
                 onEndReachedThreshold={50}
             />

@@ -26,14 +26,14 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const client: Hafas = params.client;
     console.log('trip', trip);
 
-    const data = trip.stopovers
-    const firstStop = trip.stopovers[0];
-    const lastStop = trip.stopovers[trip.stopovers.length - 1];
+    const data = trip.stopovers ?? []
+    const firstStop = trip.stopovers && trip.stopovers.length > 0 ? trip.stopovers[0] : undefined;
+    const lastStop = trip.stopovers && trip.stopovers.length > 0 ? trip.stopovers[trip.stopovers.length - 1] : undefined;
     const operatorName = trip.line?.operator?.name ?? '';
 
     const showRoute = (isLongPress: boolean) => {
         const locations = [] as Location[];
-        trip.stopovers.forEach(stopover => {
+        trip.stopovers?.forEach(stopover => {
             if (stopover.stop.location) {
                 locations.push(stopover.stop.location);
             }
@@ -111,7 +111,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     }
 
     const cancelledInfo = (item: StopOver): string => {
-        const cancelled = (item as any).cancelled; // wait for version 5.7
+        const cancelled = item.cancelled;
         return cancelled ? "entfällt" : "";
     }
 
@@ -119,7 +119,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         if (item.plannedArrival && item.plannedDeparture)
             return (
                 <View>
-                    <TouchableOpacity onPress={() => showDepartures(item.stop.name, item.plannedArrival ?? '')}>
+                    <TouchableOpacity onPress={() => showDepartures(item.stop.name ?? "", item.plannedArrival ?? '')}>
                         <Text style={styles.itemDetailsText}>
                             {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop.name}`}
                             <Text style={styles.itemWarningText}>
@@ -171,16 +171,18 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             </View>
             <View >
                 <Text style={styles.itemHeaderText}>
-                    {trip.line?.name ?? ''} ({operatorName}) {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival)).valueOf() - (new Date(trip.plannedDeparture)).valueOf()) })}
+                    {trip.line?.name ?? ''} ({operatorName}) {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
                 </Text>
             </View>
-            <FlatList
-                data={data}
-                renderItem={({ item }) => <Item item={item} first={firstStop} last={lastStop} />}
-                keyExtractor={item => item.stop.name}
-                ItemSeparatorComponent={renderSeparator}
-                onEndReachedThreshold={50}
-            />
+            {firstStop && lastStop &&
+                < FlatList
+                    data={data}
+                    renderItem={({ item }) => <Item item={item} first={firstStop} last={lastStop} />}
+                    keyExtractor={item => item.stop.name ?? ""}
+                    ItemSeparatorComponent={renderSeparator}
+                    onEndReachedThreshold={50}
+                />
+            }
         </View>
     );
 }

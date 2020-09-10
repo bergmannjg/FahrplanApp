@@ -47,13 +47,14 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   const client: Hafas = params.client;
   const tripDetails = params.tripDetails;
   const transferTime = params.transferTime;
+  const modes = ["train", "watercraft"]; // todo: as params
 
   const makeRemoteRequest = () => {
     console.log('makeRemoteRequest, loading:', loading);
     if (loading) return;
     setLoading(true);
 
-    client.journeys(query1, query2, 3, date, queryVia, transferTime)
+    client.journeys(query1, query2, 3, date, queryVia, transferTime, modes)
       .then(journeys => {
         console.log('journeys', journeys);
         const infos = [] as JourneyInfo[];
