@@ -19,6 +19,7 @@ import moment from 'moment';
 import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { Hafas, JourneyInfo } from '../lib/hafas';
 import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
+import { hafas } from '../lib/hafas';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
@@ -35,7 +36,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   const { t } = useTranslation();
 
   const [data, setData] = useState([] as JourneyInfo[]);
-  const [date, setDate] = useState(params.date);
+  const [date, setDate] = useState(new Date(params.date));
   const [loading, setLoading] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -44,7 +45,8 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   const query1 = params.station1;
   const query2 = params.station2;
   const queryVia = params.via;
-  const client: Hafas = params.client;
+  const profile = params.profile;
+  const client: Hafas = hafas(profile);
   const tripDetails = params.tripDetails;
   const transferTime = params.transferTime;
   const modes = ["train", "watercraft"]; // todo: as params
@@ -93,7 +95,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
   const goToView = (item: JourneyInfo) => {
     console.log('Navigation router run to Journeyplan');
-    navigation.navigate('Journeyplan', { journey: item, client, tripDetails })
+    navigation.navigate('Journeyplan', { journey: item, profile, tripDetails })
   };
 
   const showIncr = (hours: number) => {
@@ -170,7 +172,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
                 <ListItem.Title>{`${item.originName} ${t('ConnectionsScreen.DirectionTo')} ${item.destinationName}`}</ListItem.Title>
                 <ListItem.Subtitle>
                   <View style={styles.subtitleView}>
-                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes')}: ${item.changes}`}</Text>
+                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes')}: ${item.changes}, ${item.distance} km`}</Text>
                     {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
                     {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
                   </View>

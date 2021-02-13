@@ -37,10 +37,13 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     </View>
   )
 
-  navigation.setOptions({
-    headerTitle: t('HomeScreen.Header'),
-    headerRight: headerRight
-  });
+  React.useLayoutEffect(() => {
+    console.log('navigation.setOptions')
+    navigation.setOptions({
+      headerTitle: t('HomeScreen.Header'),
+      headerRight: headerRight
+    });
+  }, [navigation]);
 
   const [station1, setStation1] = useState('');
   const [station2, setStation2] = useState('');
@@ -73,7 +76,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(Date.now()));
   const [transferTime, setTransferTime] = useState(10);
 
   // route.params from OptionsScreen
@@ -92,8 +95,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   // route.params from DateTimeScreen
-  if (route.params?.date !== undefined && route.params?.date !== date) {
-    setDate(route.params.date);
+  if (route.params?.date !== undefined && route.params?.date !== date.valueOf()) {
+    setDate(new Date(route.params.date));
   }
 
   console.log('profile: ', profile);
@@ -126,14 +129,14 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const suchen = () => {
     if (station1 !== '' && station2 !== '') {
-      navigation.navigate('Connections', { client, station1: station1, station2: station2, via: stationVia, date, tripDetails, transferTime });
+      navigation.navigate('Connections', { profile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime });
     }
   }
 
   const showDeparturesQuery = (query: string) => {
     asyncFindDepartures(query, (alternatives: ReadonlyArray<Alternative>) => {
       if (alternatives.length > 0) {
-        navigation.navigate('Departures', { station: query, alternatives, client })
+        navigation.navigate('Departures', { station: query, alternatives, profile })
       } else {
         console.log('no departures from ', query)
       }
@@ -145,11 +148,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {
-    navigation.navigate('DateTime', { navigationParams: { date, mode } });
+    navigation.navigate('DateTime', { navigationParams: { date: date.valueOf(), mode } });
   }
 
   const setDateNow = () => {
-    setDate(new Date());
+    setDate(new Date(Date.now()));
   }
 
   const searchEnabled = station1.length > 0 && station2.length > 0;

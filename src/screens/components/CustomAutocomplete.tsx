@@ -44,7 +44,6 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
         }
     }, [count]);
 
-
     const comp = (a: string, b: string) => a.toLowerCase().trim() === b.toLowerCase().trim();
 
     const getdata = (): Array<Station | Stop | Location> => {
@@ -58,9 +57,6 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
             data={getdata()}
             value={query}
             onChangeText={text => {
-                if (text.length === 0) {
-                    onPress('');
-                }
                 setQuery(text);
                 setCount(count + 1);
             }}

@@ -20,6 +20,7 @@ import { Hafas, JourneyInfo } from '../lib/hafas';
 import { Location, Leg } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams } from './ScreenTypes';
+import { hafas } from '../lib/hafas';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Journeyplan'>;
@@ -34,7 +35,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const { params }: { params: JourneyplanScreenParams } = route;
     const journeyInfo: JourneyInfo = params.journey;
     const legs = journeyInfo.legs;
-    const client: Hafas = params.client;
+    const profile = params.profile;
+    const client: Hafas = hafas(profile);
     const tripDetails = params.tripDetails;
 
     console.log('legs.length: ', legs.length);
@@ -81,7 +83,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         if (leg?.line && leg?.tripId) {
             client.trip(leg.tripId)
                 .then(trip => {
-                    navigation.navigate('Trip', { trip, client })
+                    navigation.navigate('Trip', { trip, profile })
                 })
                 .catch((error) => {
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error.message);

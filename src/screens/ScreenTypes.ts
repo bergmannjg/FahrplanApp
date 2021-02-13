@@ -1,10 +1,10 @@
-import { Hafas, JourneyInfo } from '../lib/hafas';
+import { JourneyInfo } from '../lib/hafas';
 import { Location, Trip, Alternative, Stop } from 'hafas-client';
 
 export interface HomeScreenParams {
     profile?: string,
     tripDetails?: boolean,
-    date?: Date,
+    date?: number,
     transferTime?: number
 }
 
@@ -18,7 +18,7 @@ export interface OptionScreenParams {
 
 export interface DateTimeScreenParams {
     navigationParams: {
-        date: Date,
+        date: number,
         mode: 'date' | 'time' | 'datetime',
     }
 }
@@ -26,7 +26,7 @@ export interface DateTimeScreenParams {
 export interface JourneyplanScreenParams {
     journey: JourneyInfo,
     tripDetails: boolean,
-    client: Hafas
+    profile: string
 }
 
 export interface RailwayRoutesOfTripScreenParams {
@@ -38,13 +38,13 @@ export interface RailwayRouteScreenParams {
 }
 
 export interface ConnectionsScreenParams {
-    date: Date,
+    date: number,
     station1: string,
     station2: string,
     via: string,
     tripDetails: boolean,
     transferTime: number,
-    client: Hafas
+    profile: string
 }
 
 export interface BRouterScreenParams {
@@ -55,12 +55,12 @@ export interface BRouterScreenParams {
 export interface DepartureScreenParams {
     station: string,
     alternatives: ReadonlyArray<Alternative>,
-    client: Hafas
+    profile: string
 }
 
 export interface TripScreenParams {
     trip: Trip,
-    client: Hafas
+    profile: string
 }
 
 export interface OpenStreetMapParams {

@@ -74,7 +74,8 @@ export interface JourneyInfo {
     plannedArrival: string,
     reachable?: boolean,
     cancelled?: boolean,
-    changes: number
+    changes: number,
+    distance: number
 }
 
 export interface Hafas {
@@ -85,7 +86,8 @@ export interface Hafas {
     stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>) => Promise<Stop[]>,
     journeyInfo: (journey: Journey) => JourneyInfo,
     isStop: (s: Station | Stop | Location) => s is Stop,
-    isLocation: (s: Station | Stop | Location) => s is Location
+    isLocation: (s: Station | Stop | Location) => s is Location,
+    distanceOfJourney: (j: Journey) => number
 }
 
 export function hafas(profileName: string): Hafas {
@@ -119,7 +121,7 @@ export function hafas(profileName: string): Hafas {
             destination, destinationName, destinationArrival, destinationLocation,
             countLegs: journey.legs.length,
             plannedDeparture, plannedArrival,
-            reachable, cancelled, changes
+            reachable, cancelled, changes, distance: distanceOfJourney(journey)
         };
     }
 
@@ -202,7 +204,7 @@ export function hafas(profileName: string): Hafas {
             }
             try {
                 const products = getProducts(modes ?? []);
-                const res = await client.journeys(locationsFrom[0].id, locationsTo[0].id, { products, results, departure, via: viaId, transferTime });
+                const res = await client.journeys(locationsFrom[0].id, locationsTo[0].id, { products, results, departure, via: viaId, transferTime, polylines: true });
                 return res.journeys ?? [];
             } catch (e) {
                 const error = e as Error;
@@ -254,5 +256,44 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    return { journeys, locations, departures, trip, stopssOfJourney, journeyInfo, isStop, isLocation };
+    function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+        const R = 6371; // Radius of the earth in km
+        const dLat = deg2rad(lat2 - lat1);  // deg2rad below
+        const dLon = deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+            ;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        return d;
+    }
+
+    function deg2rad(deg: number) {
+        return deg * (Math.PI / 180)
+    }
+
+    function distanceOfFeatureCollection(fc: createClient.FeatureCollection): number {
+        const latLonPoints =
+            fc.features.map(f => { return { lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] }; })
+
+        return latLonPoints.map((v, i) => {
+            if (i > 0) {
+                const prev = latLonPoints[i - 1]
+                const curr = latLonPoints[i]
+                return getDistanceFromLatLonInKm(prev.lat, prev.lon, curr.lat, curr.lon);
+            }
+            else {
+                return 0.0;
+            }
+        }).reduce((a, b) => a + b, 0);
+    }
+
+    function distanceOfJourney(j: Journey): number {
+        const dist = j.legs.map(l => l.polyline ? distanceOfFeatureCollection(l.polyline) : 0.0).reduce((a, b) => a + b, 0);
+        return parseFloat(dist.toFixed(0));
+    }
+
+    return { journeys, locations, departures, trip, stopssOfJourney, journeyInfo, isStop, isLocation, distanceOfJourney };
 }

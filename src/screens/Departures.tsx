@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, DepartureScreenParams } from './ScreenTypes';
 import { Alternative, Line } from 'hafas-client';
+import { hafas } from '../lib/hafas';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Departures'>;
@@ -33,7 +34,8 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
     const { t } = useTranslation();
 
     const data = params.alternatives;
-    const client = params.client;
+    const profile = params.profile;
+    const client = hafas(profile);
 
     const renderSeparator = () => {
         return (
@@ -54,7 +56,7 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
         if (item.tripId) {
             client.trip(item.tripId)
                 .then(trip => {
-                    navigation.navigate('Trip', { trip, client })
+                    navigation.navigate('Trip', { trip, profile })
                 })
                 .catch((error) => {
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error.message);

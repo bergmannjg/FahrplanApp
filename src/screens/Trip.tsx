@@ -10,6 +10,7 @@ import { Location, Trip, StopOver, Alternative } from 'hafas-client';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams } from './ScreenTypes';
 import moment from 'moment-timezone';
+import { hafas } from '../lib/hafas';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Trip'>;
@@ -23,7 +24,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const { params }: { params: TripScreenParams } = route;
     const trip: Trip = params.trip;
-    const client: Hafas = params.client;
+    const profile = params.profile;
+    const client: Hafas = hafas(profile);
     console.log('trip', trip);
 
     const data = trip.stopovers ?? []
@@ -57,7 +59,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const showDepartures = (query: string, date: string) => {
         asyncFindDepartures(query, new Date(Date.parse(date)), (alternatives: ReadonlyArray<Alternative>) => {
             if (alternatives.length > 0) {
-                navigation.navigate('Departures', { station: query, alternatives, client })
+                navigation.navigate('Departures', { station: query, alternatives, profile })
             } else {
                 console.log('no departures from ', query)
             }

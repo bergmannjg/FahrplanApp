@@ -30,7 +30,7 @@ export default function DateTimeScreen({ route, navigation }: Props): JSX.Elemen
 
     const goback = () => {
         console.log('goback DateTimeScreen', date);
-        navigation.navigate('Home', { date });
+        navigation.navigate('Home', { date : date.valueOf()});
     }
 
     const d = new Date();
@@ -44,10 +44,10 @@ export default function DateTimeScreen({ route, navigation }: Props): JSX.Elemen
                     minimumDate={new Date(today.getFullYear(), 0)}
                     maximumDate={new Date(today.getFullYear(), 11)}
                     minuteInterval={5}
-                    date={date}
+                    date={new Date(date)}
                     locale={i18n.language}
                     mode={mode}
-                    onDateChange={dateParam => setDate(dateParam)}
+                    onDateChange={dateParam => setDate(dateParam.valueOf())}
                     timeZoneOffsetInMinutes={timezoneOffset}
                 />
             </View>
