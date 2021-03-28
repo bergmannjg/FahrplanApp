@@ -23,7 +23,8 @@ import vbnProfile from 'hafas-client/p/vbn';
 import vmtProfile from 'hafas-client/p/vmt';
 import vsnProfile from 'hafas-client/p/vsn';
 
-import { HafasClient, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products } from 'hafas-client';
+import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products } from 'hafas-client';
+import { fshafas } from "fs-hafas-client";
 
 const choose = (p: string): createClient.Profile => {
     p = p + 'Profile';
@@ -92,8 +93,12 @@ export interface Hafas {
 
 export function hafas(profileName: string): Hafas {
     console.log('createClient, profile: ', profileName);
-    const profile = choose(profileName);
-    const client: HafasClient = createClient(profile, 'my-awesome-program')
+    const profile = profileName === 'db-fsharp' ? fshafas.getProfile('db') : choose(profileName);
+    const client = profileName === 'db-fsharp' ? fshafas.createClient('db') : createClient(profile, 'agent')
+
+    if (__DEV__ && profileName === 'db-fsharp') {
+        fshafas.setDebug();
+    }
 
     const journeyInfo = (journey: Journey): JourneyInfo => {
         const defaultDate = new Date();
@@ -153,7 +158,7 @@ export function hafas(profileName: string): Hafas {
 
     const stopssOfLeg = async (leg: Leg, modes: ReadonlyArray<string>) => {
         const t = await tripOfLeg(leg);
-        if (t.line && modes.findIndex(m => m === t.line?.mode?.toString()) >= 0) {
+        if (t.line && modes.findIndex(m => m === t.line?.mode?.toString().toLowerCase()) >= 0) {
             return stopoversOnLeg(t, leg.origin, leg.destination)
                 .filter(stopover => isStop(stopover.stop))
                 .map<Stop>(stopover => stopover.stop as Stop);
@@ -232,7 +237,7 @@ export function hafas(profileName: string): Hafas {
     }
 
     const filterLine = (line: Line, modes: ReadonlyArray<string>, onlyLocalProducts: boolean) => {
-        return modes.findIndex(m => m === line?.mode?.toString()) >= 0
+        return modes.findIndex(m => m.toLocaleLowerCase() === line?.mode?.toString().toLocaleLowerCase()) >= 0
             && (isLocalProduct(line.product) ? onlyLocalProducts : !onlyLocalProducts);
     }
 

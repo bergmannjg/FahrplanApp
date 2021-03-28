@@ -27,6 +27,15 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const { t } = useTranslation();
 
+  const [station1, setStation1] = useState('');
+  const [station2, setStation2] = useState('');
+  const [stationVia, setStationVia] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState('db-fsharp');
+  const [tripDetails, setTripDetails] = useState(true);
+  const [date, setDate] = useState(new Date(Date.now()));
+  const [transferTime, setTransferTime] = useState(8);
+
   const headerRight = () => (
     <View style={{ backgroundColor: '#F5FCFF' }}>
       <TouchableOpacity onPress={() => { navigateToOptionsScreen(); }}>
@@ -37,18 +46,13 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     </View>
   )
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     console.log('navigation.setOptions')
     navigation.setOptions({
       headerTitle: t('HomeScreen.Header'),
       headerRight: headerRight
     });
-  }, [navigation]);
-
-  const [station1, setStation1] = useState('');
-  const [station2, setStation2] = useState('');
-  const [stationVia, setStationVia] = useState('');
-  const [loading, setLoading] = useState(true);
+  }, [navigation, profile, transferTime, tripDetails]);
 
   useEffect(() => {
     const retrieveData = async () => {
@@ -73,11 +77,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     console.log('saveData:', localData)
     await AsyncStorage.setItem('user', JSON.stringify(localData));
   };
-
-  const [profile, setProfile] = useState('db');
-  const [tripDetails, setTripDetails] = useState(true);
-  const [date, setDate] = useState(new Date(Date.now()));
-  const [transferTime, setTransferTime] = useState(10);
 
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
@@ -127,8 +126,9 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     }
   }
 
-  const suchen = () => {
+  const searchConnections = () => {
     if (station1 !== '' && station2 !== '') {
+      console.log('searchConnections. profile:', profile);
       navigation.navigate('Connections', { profile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime });
     }
   }
@@ -144,7 +144,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const navigateToOptionsScreen = () => {
-    navigation.navigate('Options', { navigationParams: { profile, tripDetails, transferTime } });
+    console.log('navigateToOptionsScreen. profile:', profile);
+    navigation.navigate('Options', { navigationParams: { profile: profile, tripDetails, transferTime } });
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {
@@ -198,7 +199,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       </View>
 
       <View style={styles.containerSearch}>
-        <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => suchen()}>
+        <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => searchConnections()}>
           <Text style={styles.itemText}>
             {t('HomeScreen.SearchConnections')}
           </Text>

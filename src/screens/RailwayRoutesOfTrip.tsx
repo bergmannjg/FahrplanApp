@@ -38,7 +38,15 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     console.log('stops.length: ', stops.length);
 
     const findRailwayRoutes = (stopsOfRoute: Stop[]) => {
-        return findRailwayRoutesOfTrip(stopsOfRoute.map(s => parseInt(s.id || "0", 10)));
+        try {
+            return findRailwayRoutesOfTrip(stopsOfRoute.map(s => parseInt(s.id || "0", 10)))
+        } catch (ex) {
+            console.error("findRailwayRoutesOfTrip", ex.message);
+            return {
+                railwayRoutes: [],
+                missing: 0
+            };
+        }
     }
 
     const [data, setData] = useState([] as RailwayRouteOfTrip[]);

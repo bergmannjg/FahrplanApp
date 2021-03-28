@@ -86,7 +86,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     navigation.navigate('Trip', { trip, profile })
                 })
                 .catch((error) => {
-                    console.log('There has been a problem with your tripsOfJourney operation: ' + error.message);
+                    console.log('There has been a problem with your tripsOfJourney operation: ' + error);
                 });
         }
     }

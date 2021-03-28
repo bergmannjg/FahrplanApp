@@ -37,3 +37,5 @@ android/.settings
 android/app/.classpath
 android/app/.settings
 android/.project
+
+private_modules

@@ -58,7 +58,6 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
     client.journeys(query1, query2, 3, date, queryVia, transferTime, modes)
       .then(journeys => {
-        console.log('journeys', journeys);
         const infos = [] as JourneyInfo[];
         journeys.forEach(journey => {
           const info = client.journeyInfo(journey);
@@ -69,7 +68,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
         setData(infos);
       })
       .catch((error) => {
-        console.log('There has been a problem with your locations operation: ' + error);
+        console.log('There has been a problem with your journeys operation: ' + error);
         console.log(error.stack);
         setLoading(false);
         setData([]);
@@ -172,7 +171,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
                 <ListItem.Title>{`${item.originName} ${t('ConnectionsScreen.DirectionTo')} ${item.destinationName}`}</ListItem.Title>
                 <ListItem.Subtitle>
                   <View style={styles.subtitleView}>
-                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes')}: ${item.changes}, ${item.distance} km`}</Text>
+                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes', { changes: item.changes})}, ${item.distance} km`}</Text>
                     {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
                     {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
                   </View>

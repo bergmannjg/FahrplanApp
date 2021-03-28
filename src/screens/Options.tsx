@@ -25,10 +25,11 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     const { t, i18n } = useTranslation();
 
     const radioProps = [
+        { label: 'Deutsche Bahn (DB) F#', value: 'db-fsharp' },
         { label: 'Deutsche Bahn (DB)', value: 'db' },
         { label: 'Österreichische Bundesbahnen (ÖBB)', value: 'oebb' },
         // { label: 'Verbund Berlin-Brandenburg (BVG)', value: 'bvg' },
-        { label: 'Luxembourg National Railway Company (CFL)', value: 'cfl' }
+        // { label: 'Luxembourg National Railway Company (CFL)', value: 'cfl' }
     ];
 
     const radioTripDetailsProps = [
@@ -56,6 +57,8 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     const initialTripDetails = radioTripDetailsProps.findIndex(p => p.value === tripDetails);
     const initialLanguage = radioLanguageProps.findIndex(p => p.value === i18n.language);
     const initialtransferTime = radioTransferTimeProps.findIndex(p => p.value === transferTime);
+
+    console.log('initialProfile: ', initialProfile, ', navigationParams: ', params.navigationParams);
 
     const goback = () => {
         console.log('goback OptionsScreen', profile, tripDetails);

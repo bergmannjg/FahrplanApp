@@ -19,7 +19,7 @@
         "Language": "Sprache",
         "German": "deutsch",
         "English": "englisch",
-        "Search": "Streckensuche",
+        "Search": "Umsteigezeit",
         "SingleStage": "einstufig",
         "DoubleStage": "zweistufig"
     },
@@ -31,10 +31,10 @@
         "DirectionTo": "nach",
         "TimeFrom": "ab: {{date, HH:mm}}",
         "TimeTo": "an: {{date, HH:mm}}",
-        "DaysDifference": "(+{{count}} Tag)",
-        "DaysDifference_plural": "(+{{count}} Tage)",
-        "Duration": "Dauer: {{duration, HH:mm}}",
-        "Changes": "Umstiege",
+        "DaysDifference": "(+{{count}})",
+        "DaysDifference_plural": "(+{{count}})",
+        "Duration": "{{duration, HH:mm}} Std.",
+        "Changes": "{{changes}} Umst.",
         "ConnectionNotAccessible": "Anschluss vsl. nicht erreichbar",
         "TripCancled": "Fahrt fällt aus"
     },
