@@ -7,6 +7,7 @@
         "ShortDate": "{{date, DD.MM.YY}}",
         "Time": "{{date, HH:mm}}",
         "SearchConnections": "Verbindungen suchen",
+        "Nearby": "Haltestellen suchen",
         "WhereIs": "Wo liegt {{station}}",
         "Departures": "Abfahrtsplan {{station}}"
     },
@@ -37,6 +38,11 @@
         "Changes": "{{changes}} Umst.",
         "ConnectionNotAccessible": "Anschluss vsl. nicht erreichbar",
         "TripCancled": "Fahrt fällt aus"
+    },
+    "NearbyScreen": {
+        "Title": "Stationen in der Nähe",
+        "IncrDistance": "Entfernung erweitern",
+        "Distance": "Entfernung" 
     },
     "JourneyplanScreen": {
         "Title": "Reiseplan",

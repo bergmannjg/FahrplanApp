@@ -36,7 +36,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const showRoute = (isLongPress: boolean) => {
         const locations = [] as Location[];
         trip.stopovers?.forEach(stopover => {
-            if (stopover.stop.location) {
+            if (stopover.stop?.location) {
                 locations.push(stopover.stop.location);
             }
         });
@@ -85,14 +85,14 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const OptionalItemDeparture = ({ item }: { item: StopOver }) => {
         let departure: MomentWithTimezone = { hasTimezone: false, moment: moment() };
-        if (!item.plannedArrival && item.plannedDeparture && item.stop.location) {
-            departure = momentWithTimezone(item.plannedDeparture, item.stop.location);
+        if (!item.plannedArrival && item.plannedDeparture && item.stop?.location) {
+            departure = momentWithTimezone(item.plannedDeparture, item.stop?.location);
         }
 
         return (
             !item.plannedArrival && item.plannedDeparture ?
                 <Text style={styles.itemStationText}>
-                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${departure.hasTimezone ? t('TripScreen.Timezone', { date: departure.moment }) : ''} ${item.stop.name}`}
+                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${departure.hasTimezone ? t('TripScreen.Timezone', { date: departure.moment }) : ''} ${item.stop?.name}`}
                 </Text>
                 :
                 null
@@ -121,9 +121,9 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         if (item.plannedArrival && item.plannedDeparture)
             return (
                 <View>
-                    <TouchableOpacity onPress={() => showDepartures(item.stop.name ?? "", item.plannedArrival ?? '')}>
+                    <TouchableOpacity onPress={() => showDepartures(item.stop?.name ?? "", item.plannedArrival ?? '')}>
                         <Text style={styles.itemDetailsText}>
-                            {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop.name}`}
+                            {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop?.name}`}
                             <Text style={styles.itemWarningText}>
                                 {` ${cancelledInfo(item)}`}
                             </Text>
@@ -138,14 +138,14 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const OptionalItemArrival = ({ item }: { item: StopOver }) => {
         let arrival: MomentWithTimezone = { hasTimezone: false, moment: moment() };
-        if (item.plannedArrival && !item.plannedDeparture && item.stop.location) {
-            arrival = momentWithTimezone(item.plannedArrival, item.stop.location);
+        if (item.plannedArrival && !item.plannedDeparture && item.stop?.location) {
+            arrival = momentWithTimezone(item.plannedArrival, item.stop?.location);
         }
 
         return (
             item.plannedArrival && !item.plannedDeparture ?
                 <Text style={styles.itemStationText}>
-                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival) })} ${arrival.hasTimezone ? t('TripScreen.Timezone', { date: arrival.moment }) : ''} ${item.stop.name}`}
+                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival) })} ${arrival.hasTimezone ? t('TripScreen.Timezone', { date: arrival.moment }) : ''} ${item.stop?.name}`}
                 </Text>
                 :
                 null
@@ -180,7 +180,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                 < FlatList
                     data={data}
                     renderItem={({ item }) => <Item item={item} first={firstStop} last={lastStop} />}
-                    keyExtractor={item => item.stop.name ?? ""}
+                    keyExtractor={item => item.stop?.name ?? ""}
                     ItemSeparatorComponent={renderSeparator}
                     onEndReachedThreshold={50}
                 />

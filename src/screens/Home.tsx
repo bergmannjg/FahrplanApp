@@ -6,7 +6,7 @@ import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import CustomAutocomplete from './components/CustomAutocomplete';
 import { useTranslation } from 'react-i18next';
 import { hafas } from '../lib/hafas';
-import type { Alternative } from 'hafas-client';
+import type { Alternative, Location } from 'hafas-client';
 import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
 
 type Props = {
@@ -27,7 +27,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const { t } = useTranslation();
 
-  const [station1, setStation1] = useState('');
+  const [station1, setStation1] = useState<string | Location>('');
   const [station2, setStation2] = useState('');
   const [stationVia, setStationVia] = useState('');
   const [loading, setLoading] = useState(true);
@@ -98,6 +98,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setDate(new Date(route.params.date));
   }
 
+  // route.params from NearbyScreen
+  if (route.params?.station !== undefined && route.params?.station !== station1) {
+    setStation1(route.params.station);
+  }
+
   console.log('profile: ', profile);
   console.log('tripDetails: ', tripDetails);
   console.log('date: ', date);
@@ -111,7 +116,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const setAndSaveStation2 = (s: string) => {
     setStation2(s)
-    saveData({ station1, station2: s });
+    const s1 = 'string' === typeof station1 ? station1 : '';
+    saveData({ station1: s1, station2: s });
   }
 
   const asyncFindDepartures = (query: string, callback: (arr: ReadonlyArray<Alternative>) => void) => {
@@ -131,6 +137,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       console.log('searchConnections. profile:', profile);
       navigation.navigate('Connections', { profile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime });
     }
+  }
+
+  const searchNearby = () => {
+    console.log('searchNearby. profile:', profile);
+    navigation.navigate('Nearby', { profile, distance: 2000, searchBusStops: false });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -156,7 +167,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setDate(new Date(Date.now()));
   }
 
-  const searchEnabled = station1.length > 0 && station2.length > 0;
+  const searchEnabled = (client.isLocation(station1) || station1.length > 0) && station2.length > 0;
 
   const A1 = ({ s }: { s: string }) => {
     return (
@@ -177,7 +188,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   return (
     <View>
       <View style={styles.autocompleteContainerFrom}>
-        <A1 s={station1} />
+        <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
       </View>
       <View style={styles.autocompleteContainerVia}>
         <CustomAutocomplete client={client} placeholder="via" query={stationVia} onPress={(name) => { setStationVia(name); }} />
@@ -205,7 +216,14 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
           </Text>
         </TouchableOpacity>
       </View>
-      {station1.length > 0 &&
+      <View style={styles.nearby}>
+        <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => searchNearby()}>
+          <Text style={styles.itemText}>
+            {t('HomeScreen.Nearby')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {'string' === typeof station1 && station1.length > 0 &&
         <View style={styles.containerDepFrom}>
           <TouchableOpacity style={styles.button} onPress={() => showDeparturesQuery(station1)}>
             <Text style={styles.itemText}>
@@ -258,7 +276,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 270,
   },
-  containerDepFrom: {
+  nearby: {
     backgroundColor: '#F5FCFF',
     flex: 1,
     left: 0,
@@ -266,13 +284,21 @@ const styles = StyleSheet.create({
     right: 0,
     top: 330,
   },
-  containerDepTo: {
+  containerDepFrom: {
     backgroundColor: '#F5FCFF',
     flex: 1,
     left: 0,
     position: 'absolute',
     right: 0,
     top: 400,
+  },
+  containerDepTo: {
+    backgroundColor: '#F5FCFF',
+    flex: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 470,
   },
   autocompleteContainerFrom: {
     flex: 1,

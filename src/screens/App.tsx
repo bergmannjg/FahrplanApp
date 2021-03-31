@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import HomeScreen from './Home';
 import DepartureScreen from './Departures';
 import ConnectionsScreen from './Connections';
+import NearbyScreen from './Nearby';
 import JourneyplanScreen from './Journeyplan';
 import RailwayRoutesOfTripScreen from './RailwayRoutesOfTrip';
 import RailwayRoute from './RailwayRoute';
@@ -33,6 +34,11 @@ function MainStackScreen() {
         name="Connections"
         component={ConnectionsScreen}
         options={{ title: t('ConnectionsScreen.Title') }}
+      />
+      <MainStack.Screen
+        name="Nearby"
+        component={NearbyScreen}
+        options={{ title: t('NearbyScreen.Title') }}
       />
       <MainStack.Screen
         name="Departures"

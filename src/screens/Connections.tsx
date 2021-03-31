@@ -49,7 +49,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   const client: Hafas = hafas(profile);
   const tripDetails = params.tripDetails;
   const transferTime = params.transferTime;
-  const modes = ["train", "watercraft"]; // todo: as params
+  const modes = ["train", "watercraft", "bus"];
 
   const makeRemoteRequest = () => {
     console.log('makeRemoteRequest, loading:', loading);

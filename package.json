@@ -46,6 +46,7 @@
     "react-native-device-info": "^8.0.1",
     "react-native-elements": "^3.2.0",
     "react-native-gesture-handler": "^1.10.1",
+    "react-native-get-location": "^2.1.0",
     "react-native-localize": "^2.0.1",
     "react-native-randombytes": "^3.6.0",
     "react-native-safe-area-context": "^3.1.9",

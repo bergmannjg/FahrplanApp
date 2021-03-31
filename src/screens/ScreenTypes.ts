@@ -5,7 +5,8 @@ export interface HomeScreenParams {
     profile?: string,
     tripDetails?: boolean,
     date?: number,
-    transferTime?: number
+    transferTime?: number,
+    station?: string | Location
 }
 
 export interface OptionScreenParams {
@@ -39,11 +40,17 @@ export interface RailwayRouteScreenParams {
 
 export interface ConnectionsScreenParams {
     date: number,
-    station1: string,
+    station1: string | Location,
     station2: string,
     via: string,
     tripDetails: boolean,
     transferTime: number,
+    profile: string
+}
+
+export interface NearbyScreenParams {
+    distance: number,
+    searchBusStops: boolean,
     profile: string
 }
 
@@ -71,6 +78,7 @@ export interface OpenStreetMapParams {
 export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
+    Nearby: NearbyScreenParams;
     Journeyplan: JourneyplanScreenParams;
     RailwayRoutesOfTrip: RailwayRoutesOfTripScreenParams;
     RailwayRoute: RailwayRouteScreenParams;

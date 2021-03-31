@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
 import { Hafas, JourneyInfo } from '../lib/hafas';
-import { Location, Leg } from 'hafas-client';
+import { Location, Leg, Stop } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
@@ -38,13 +38,15 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const tripDetails = params.tripDetails;
+    const modes = ["train", "watercraft", "bus"];
+    const trainModes = ["train", "watercraft"];
 
     console.log('legs.length: ', legs.length);
     console.log('legs: ', legs);
 
     const showRailwayRoutes = async () => {
         console.log('showRailwayRoutes');
-        const stops = await client.stopssOfJourney(journeyInfo, ['train', 'watercraft']);
+        const stops = await client.stopssOfJourney(journeyInfo, trainModes);
         if (stops.length > 0) {
             navigation.navigate('RailwayRoutesOfTrip', { stops });
         }
@@ -54,7 +56,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         console.log('showRoute.tripDetails: ', tripDetails);
 
         if (tripDetails) {
-            const stops = await client.stopssOfJourney(journeyInfo, ['train', 'watercraft']);
+            const stops = await client.stopssOfJourney(journeyInfo, modes);
             const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
             console.log('locations: ', locations.length);
             if (locations && locations.length > 0) {
@@ -63,8 +65,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         }
         else {
             if (legs.length > 0) {
-                const locations = legs.filter(leg => leg.origin.location).map(leg => leg.origin.location) as Location[];
-                const location = legs[legs.length - 1].destination.location;
+                const locations = legs.map(leg => client.getLocation(leg.origin)).filter(l => !!l) as Location[];
+                const location = (legs[legs.length - 1].destination as Stop)?.location;
                 if (location) {
                     locations.push(location);
                 }
@@ -141,18 +143,18 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             <View style={styles.subtitleView}>
                 {item.cancelled ?
                     <View>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin.name}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name}`}</Text>
                         <Text> </Text>
                         <TouchableOpacity onPress={() => goToTrip(item)}>
                             <Text style={styles.itemDetailsText}>{legLineName(item)}</Text>
                         </TouchableOpacity>
                         <Text style={styles.itemWarningText}>{`${t('JourneyplanScreen.TripCancled')}`}</Text>
                         <Text> </Text>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination.name}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name}`}</Text>
                     </View>
                     :
                     <View>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin.name} ${platform(item.departurePlatform)}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name} ${platform(item.departurePlatform)}`}</Text>
 
                         {item.departure && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0) ?
                             <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.departure) })}`}</Text>
@@ -177,7 +179,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                             <Text style={styles.itemDetailsText}>{`${t('JourneyplanScreen.LoadFactor')}: ${loadFactor2Text(item.loadFactor)}`}</Text>
                         }
 
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination.name} ${platform(item.arrivalPlatform)}`}</Text>
+                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name} ${platform(item.arrivalPlatform)}`}</Text>
                         {
                             (item.arrival && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0)) ?
                                 <View>
@@ -232,7 +234,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.origin.name ?? "" + item.destination.name}
+                keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
                 ItemSeparatorComponent={renderSeparator}
                 onEndReachedThreshold={50}
             />
