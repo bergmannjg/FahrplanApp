@@ -2,6 +2,7 @@ import React from 'react';
 import {
     StyleSheet,
     View,
+    ScrollView,
     Text,
     TouchableOpacity,
     FlatList
@@ -225,24 +226,58 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
                 </Text>
             </View>
-            <FlatList
-                data={legs}
-                renderItem={({ item }) => (
-                    <ListItem containerStyle={{ borderBottomWidth: 0 }}>
-                        <ListItem.Content>
-                            <ListItem.Title><Item item={item} /></ListItem.Title>
-                        </ListItem.Content>
-                    </ListItem>
-                )}
-                keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
-                ItemSeparatorComponent={renderSeparator}
-                onEndReachedThreshold={50}
-            />
+            <ScrollView >
+                <FlatList
+                    data={legs}
+                    renderItem={({ item }) => (
+                        <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                            <ListItem.Content>
+                                <ListItem.Title><Item item={item} /></ListItem.Title>
+                            </ListItem.Content>
+                        </ListItem>
+                    )}
+                    keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
+                    ItemSeparatorComponent={renderSeparator}
+                    onEndReachedThreshold={50}
+                />
+                <View style={{ paddingLeft: 20 }}>
+                    <FlatList
+                        data={journeyInfo.statusRemarks}
+                        renderItem={({ item }) => (
+                            <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                                <ListItem.Content>
+                                    <ListItem.Title>
+                                        <Text style={styles.summaryText}>
+                                            {item.summary}
+                                        </Text>
+                                    </ListItem.Title>
+                                    <ListItem.Subtitle>
+                                        <Text style={styles.contentText}>
+                                            {item.text}
+                                        </Text>
+                                    </ListItem.Subtitle>
+                                </ListItem.Content>
+                            </ListItem>
+                        )}
+                        keyExtractor={item => item.summary ?? ''}
+                        ItemSeparatorComponent={renderSeparator}
+                        onEndReachedThreshold={50}
+                    />
+                </View>
+            </ScrollView>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    summaryText: {
+        fontWeight: 'bold',
+        fontSize: 14,
+        paddingLeft: 20,
+    },
+    contentText: {
+        paddingLeft: 20,
+    },
     subtitleView: {
         flexDirection: 'column',
         paddingLeft: 20,

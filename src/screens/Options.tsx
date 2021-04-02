@@ -25,34 +25,40 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     const { t, i18n } = useTranslation();
 
     const radioProps = [
-        { label: 'Deutsche Bahn (DB) F#', value: 'db-fsharp' },
         { label: 'Deutsche Bahn (DB)', value: 'db' },
         { label: 'Österreichische Bundesbahnen (ÖBB)', value: 'oebb' },
-        // { label: 'Verbund Berlin-Brandenburg (BVG)', value: 'bvg' },
-        // { label: 'Luxembourg National Railway Company (CFL)', value: 'cfl' }
+        { label: 'Verbund Berlin-Brandenburg (BVG)', value: 'bvg' },
+        { label: 'Luxembourg National Railway Company (CFL)', value: 'cfl' }
+    ];
+
+    const radioClientLib = [
+        { label: 'F#  ', value: 'fs-hafas-client' },
+        { label: 'JS', value: 'hafas-client' }
     ];
 
     const radioTripDetailsProps = [
-        { label: t('OptionsScreen.allStations'), value: true },
+        { label: t('OptionsScreen.allStations') + '  ', value: true },
         { label: t('OptionsScreen.onlyTransfers'), value: false },
     ];
 
     const radioLanguageProps = [
-        { label: t('OptionsScreen.German'), value: 'de' },
+        { label: t('OptionsScreen.German') + '  ', value: 'de' },
         { label: t('OptionsScreen.English'), value: 'en' },
     ];
 
     const radioTransferTimeProps = [
-        { label: '8 min.', value: 8 },
+        { label: '8 min.  ', value: 8 },
         { label: '30 min.', value: 30 },
     ];
 
     const { params } = route;
 
+    const [clientLib, setClientLib] = useState(params.navigationParams.clientLib);
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
     const [transferTime, setTransferTime] = useState(params.navigationParams.transferTime);
 
+    const initialClientLib = radioClientLib.findIndex(p => p.value === clientLib);
     const initialProfile = radioProps.findIndex(p => p.value === profile);
     const initialTripDetails = radioTripDetailsProps.findIndex(p => p.value === tripDetails);
     const initialLanguage = radioLanguageProps.findIndex(p => p.value === i18n.language);
@@ -62,7 +68,7 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
 
     const goback = () => {
         console.log('goback OptionsScreen', profile, tripDetails);
-        navigation.navigate('Home', { profile, tripDetails, transferTime });
+        navigation.navigate('Home', { clientLib, profile, tripDetails, transferTime });
     }
 
     const showLicences = () => {
@@ -72,38 +78,50 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     return (
         <View style={styles.container}>
             <Text style={styles.itemText1}>{t('OptionsScreen.InformationSystem')}</Text>
-            <View style={styles.radio}>
+            <View style={styles.radioView}>
                 <RadioForm
                     radio_props={radioProps}
                     initial={initialProfile}
                     onPress={(value: string) => { setProfile(value) }}
                 />
             </View>
-            <Text style={styles.itemText1}>Tripdetails Router</Text>
-            <View style={styles.radio}>
+            <Text style={styles.itemText1}>Client Library</Text>
+            <View style={styles.radioView}>
                 <RadioForm
+                    formHorizontal={true}
+                    radio_props={radioClientLib}
+                    initial={initialClientLib}
+                    onPress={(value: string) => { setClientLib(value) }}
+                />
+            </View>
+            <Text style={styles.itemText1}>Tripdetails Router</Text>
+            <View style={styles.radioView}>
+                <RadioForm
+                    formHorizontal={true}
                     radio_props={radioTripDetailsProps}
                     initial={initialTripDetails}
                     onPress={(value: boolean) => { setTripDetails(value) }}
                 />
             </View>
-            <Text style={styles.itemText1}>{t('OptionsScreen.Language')}</Text>
-            <View style={styles.radio}>
+            <Text style={styles.itemText1}>{t('OptionsScreen.Search')}</Text>
+            <View style={styles.radioView}>
                 <RadioForm
+                    formHorizontal={true}
+                    radio_props={radioTransferTimeProps}
+                    initial={initialtransferTime}
+                    onPress={(value: number) => { setTransferTime(value); }}
+                />
+            </View>
+            <Text style={styles.itemText1}>{t('OptionsScreen.Language')}</Text>
+            <View style={styles.radioView}>
+                <RadioForm
+                    formHorizontal={true}
                     radio_props={radioLanguageProps}
                     initial={initialLanguage}
                     onPress={(value: string) => {
                         i18n.changeLanguage(value);
                         moment.locale(value);
                     }}
-                />
-            </View>
-            <Text style={styles.itemText1}>{t('OptionsScreen.Search')}</Text>
-            <View style={styles.radio}>
-                <RadioForm
-                    radio_props={radioTransferTimeProps}
-                    initial={initialtransferTime}
-                    onPress={(value: number) => { setTransferTime(value); }}
                 />
             </View>
             <View style={styles.container3}>
@@ -130,10 +148,11 @@ const styles = StyleSheet.create({
         paddingTop: 22,
         flexDirection: 'column',
     },
-    radio: {
+    radioView: {
         fontSize: 10,
         paddingLeft: 22,
         paddingTop: 10,
+        marginRight: 5
     },
     container3: {
         backgroundColor: '#F5FCFF',

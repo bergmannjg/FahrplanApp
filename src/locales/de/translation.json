@@ -7,7 +7,7 @@
         "ShortDate": "{{date, DD.MM.YY}}",
         "Time": "{{date, HH:mm}}",
         "SearchConnections": "Verbindungen suchen",
-        "Nearby": "Haltestellen suchen",
+        "Nearby": "Haltestellen in der Nähe suchen",
         "WhereIs": "Wo liegt {{station}}",
         "Departures": "Abfahrtsplan {{station}}"
     },

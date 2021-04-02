@@ -23,37 +23,47 @@ import vbnProfile from 'hafas-client/p/vbn';
 import vmtProfile from 'hafas-client/p/vmt';
 import vsnProfile from 'hafas-client/p/vsn';
 
-import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products } from 'hafas-client';
+import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
 
 import GetLocation from 'react-native-get-location'
 require('isomorphic-fetch');
 
-const choose = (p: string): createClient.Profile => {
-    p = p + 'Profile';
+const chooseClient = (p: string, profile: createClient.Profile) => {
     switch (p) {
-        case 'bvgProfile': return bvgProfile;
-        case 'cflProfile': return cflProfile;
-        case 'cmtaProfile': return cmtaProfile;
-        case 'dbProfile': return dbProfile;
-        case 'dbbusradarnrwProfile': return dbbusradarnrwProfile;
-        case 'hvvProfile': return hvvProfile;
-        case 'insaProfile': return insaProfile;
-        case 'invgProfile': return invgProfile;
-        case 'nahshProfile': return nahshProfile;
-        case 'nvvProfile': return nvvProfile;
-        case 'oebbProfile': return oebbProfile;
-        case 'pkpProfile': return pkpProfile;
-        case 'rmvProfile': return rmvProfile;
-        case 'rsagProfile': return rsagProfile;
-        case 'saarfahrplanProfile': return saarfahrplanProfile;
-        case 'sbahnmuenchenProfile': return sbahnmuenchenProfile;
-        // case 'sncbProfile': return sncbProfile;
-        case 'svvProfile': return svvProfile;
-        case 'vbbProfile': return vbbProfile;
-        case 'vbnProfile': return vbnProfile;
-        case 'vmtProfile': return vmtProfile;
-        case 'vsnProfile': return vsnProfile;
+        case 'bvg-fsharp': return fshafas.createClient('bvg');
+        case 'db-fsharp': return fshafas.createClient('db');
+        default: {
+            return createClient(profile, 'agent');
+        }
+    }
+}
+
+const chooseProfile = (p: string): createClient.Profile => {
+    switch (p) {
+        case 'bvg': return bvgProfile;
+        case 'cfl': return cflProfile;
+        case 'cmta': return cmtaProfile;
+        case 'db': return dbProfile;
+        case 'dbbusradarnrw': return dbbusradarnrwProfile;
+        case 'hvv': return hvvProfile;
+        case 'insa': return insaProfile;
+        case 'invg': return invgProfile;
+        case 'nahsh': return nahshProfile;
+        case 'nvv': return nvvProfile;
+        case 'oebb': return oebbProfile;
+        case 'pkp': return pkpProfile;
+        case 'rmv': return rmvProfile;
+        case 'rsag': return rsagProfile;
+        case 'saarfahrplan': return saarfahrplanProfile;
+        case 'sbahnmuenchen': return sbahnmuenchenProfile;
+        case 'svv': return svvProfile;
+        case 'vbb': return vbbProfile;
+        case 'vbn': return vbnProfile;
+        case 'vmt': return vmtProfile;
+        case 'vsn': return vsnProfile;
+        case 'bvg-fsharp': return fshafas.getProfile('bvg');
+        case 'db-fsharp': return fshafas.getProfile('db');
         default: {
             console.log('choose default');
             return dbProfile;
@@ -78,11 +88,13 @@ export interface JourneyInfo {
     plannedArrival: string,
     reachable?: boolean,
     cancelled?: boolean,
+    informationAvailable: boolean,
+    statusRemarks: Status[],
     changes: number,
     distance: number
 }
 
-const getAddress = (latitude: number, longitude: number): Promise<string> => {
+const getAddress = (latitude: number, longitude: number): Promise<string | undefined> => {
 
     const promise = fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + latitude + '&lon=' + longitude)
         .then(function (response) {
@@ -93,9 +105,15 @@ const getAddress = (latitude: number, longitude: number): Promise<string> => {
         })
         .then(function (response) {
             console.log('getAddress: ', response);
-
-            return response.address.road + ' ' + response.address.house_number + ', ' + response.address.town as string;
-        })
+            if (response.address && response.address.road && response.address.town) {
+                if (response.address.house_number) return response.address.road + ' ' + response.address.house_number + ', ' + response.address.town as string;
+                else return response.address.road + ', ' + response.address.town as string;
+            }
+        }).catch(error => {
+            const { code, message } = error;
+            console.warn(code, message);
+            return undefined;
+        });
 
     return promise;
 }
@@ -117,8 +135,10 @@ export function getCurrentPosition(): Promise<Location> {
 
         const promise = getAddress(location.latitude, location.longitude)
             .then(address => {
-                currLoc.name = address;
-                currLoc.address = address;
+                if (address) {
+                    currLoc.name = address;
+                    currLoc.address = address;
+                }
                 return currLoc
             }).catch(error => {
                 const { code, message } = error;
@@ -142,15 +162,15 @@ export interface Hafas {
     stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>) => Promise<Stop[]>,
     journeyInfo: (journey: Journey) => JourneyInfo,
     isStop: (s: Station | Stop | Location | undefined) => s is Stop,
-    isLocation: (s: string | Station | Stop | Location| undefined) => s is Location,
+    isLocation: (s: string | Station | Stop | Location | undefined) => s is Location,
     getLocation: (s: Station | Stop | Location | undefined) => Location | undefined,
     distanceOfJourney: (j: Journey) => number
 }
 
 export function hafas(profileName: string): Hafas {
     console.log('createClient, profile: ', profileName);
-    const profile = profileName === 'db-fsharp' ? fshafas.getProfile('db') : choose(profileName);
-    const client = profileName === 'db-fsharp' ? fshafas.createClient('db') : createClient(profile, 'agent')
+    const profile = chooseProfile(profileName);
+    const client = chooseClient(profileName, profile)
 
     if (__DEV__ && profileName === 'db-fsharp') {
         fshafas.setDebug();
@@ -185,13 +205,17 @@ export function hafas(profileName: string): Hafas {
 
         const originName = journey.legs[indexFrom].origin?.name ?? "";
 
+        const statusRemarks = legs[indexTo].remarks?.filter(r => r.type === 'status' && r.summary) as Status[] | undefined;
+
         return {
             type: 'journeyinfo', legs, id: originName + '+' + destinationName + '+' + originDeparture + '+' + destinationArrival,
             origin, originName, originDeparture, originLocation,
             destination, destinationName, destinationArrival, destinationLocation,
             countLegs: journey.legs.length,
             plannedDeparture, plannedArrival,
-            reachable, cancelled, changes, distance: distanceOfJourney(journey)
+            reachable, cancelled,
+            informationAvailable: statusRemarks && statusRemarks.length > 0 ? true : false, statusRemarks: statusRemarks ? statusRemarks : [],
+            changes, distance: distanceOfJourney(journey)
         };
     }
 

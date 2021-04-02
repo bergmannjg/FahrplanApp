@@ -27,11 +27,14 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const { t } = useTranslation();
 
+  const [nearbyStation, setNearbyStation] = useState<string | Location>('');
   const [station1, setStation1] = useState<string | Location>('');
   const [station2, setStation2] = useState('');
   const [stationVia, setStationVia] = useState('');
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState('db-fsharp');
+  const [clientLib, setClientLib] = useState('fs-hafas-client');
+  const [profile, setProfile] = useState('db');
+  const [clientProfile, setClientProfile] = useState('db-fsharp');
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date(Date.now()));
   const [transferTime, setTransferTime] = useState(8);
@@ -52,7 +55,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       headerTitle: t('HomeScreen.Header'),
       headerRight: headerRight
     });
-  }, [navigation, profile, transferTime, tripDetails]);
+  }, [navigation, clientLib, profile, transferTime, tripDetails]);
 
   useEffect(() => {
     const retrieveData = async () => {
@@ -78,9 +81,20 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     await AsyncStorage.setItem('user', JSON.stringify(localData));
   };
 
+  const resetClientProfile = () => {
+    setClientProfile(profile + (clientLib === 'fs-hafas-client' ? '-fsharp' : ''));
+  }
+
+  // route.params from OptionsScreen
+  if (route.params?.clientLib !== undefined && route.params?.clientLib !== clientLib) {
+    setClientLib(route.params.clientLib);
+    resetClientProfile();
+  }
+
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
     setProfile(route.params.profile);
+    resetClientProfile();
   }
 
   // route.params from OptionsScreen
@@ -99,15 +113,17 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   // route.params from NearbyScreen
-  if (route.params?.station !== undefined && route.params?.station !== station1) {
+  if (route.params?.station !== undefined && route.params?.station !== nearbyStation) {
+    setNearbyStation(route.params.station);
     setStation1(route.params.station);
   }
 
+  console.log('clientLib: ', clientLib);
   console.log('profile: ', profile);
   console.log('tripDetails: ', tripDetails);
   console.log('date: ', date);
 
-  const client = hafas(profile);
+  const client = hafas(clientProfile);
 
   const setAndSaveStation1 = (s: string) => {
     setStation1(s);
@@ -135,19 +151,19 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const searchConnections = () => {
     if (station1 !== '' && station2 !== '') {
       console.log('searchConnections. profile:', profile);
-      navigation.navigate('Connections', { profile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime });
+      navigation.navigate('Connections', { profile: clientProfile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime });
     }
   }
 
   const searchNearby = () => {
     console.log('searchNearby. profile:', profile);
-    navigation.navigate('Nearby', { profile, distance: 2000, searchBusStops: false });
+    navigation.navigate('Nearby', { profile: clientProfile, distance: 2000, searchBusStops: false });
   }
 
   const showDeparturesQuery = (query: string) => {
     asyncFindDepartures(query, (alternatives: ReadonlyArray<Alternative>) => {
       if (alternatives.length > 0) {
-        navigation.navigate('Departures', { station: query, alternatives, profile })
+        navigation.navigate('Departures', { station: query, alternatives, profile: clientProfile })
       } else {
         console.log('no departures from ', query)
       }
@@ -156,7 +172,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const navigateToOptionsScreen = () => {
     console.log('navigateToOptionsScreen. profile:', profile);
-    navigation.navigate('Options', { navigationParams: { profile: profile, tripDetails, transferTime } });
+    navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails, transferTime } });
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {

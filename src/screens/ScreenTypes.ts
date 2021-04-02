@@ -2,6 +2,7 @@ import { JourneyInfo } from '../lib/hafas';
 import { Location, Trip, Alternative, Stop } from 'hafas-client';
 
 export interface HomeScreenParams {
+    clientLib?: string;
     profile?: string,
     tripDetails?: boolean,
     date?: number,
@@ -11,6 +12,7 @@ export interface HomeScreenParams {
 
 export interface OptionScreenParams {
     navigationParams: {
+        clientLib: string,
         profile: string,
         tripDetails: boolean,
         transferTime: number
