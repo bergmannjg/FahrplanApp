@@ -23,8 +23,11 @@ import vbnProfile from 'hafas-client/p/vbn';
 import vmtProfile from 'hafas-client/p/vmt';
 import vsnProfile from 'hafas-client/p/vsn';
 
-import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status } from 'hafas-client';
+import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const geolib = require('geolib');
 
 import GetLocation from 'react-native-get-location'
 require('isomorphic-fetch');
@@ -133,6 +136,27 @@ export function getCurrentPosition(): Promise<Location> {
             distance: 0
         } as Location;
 
+        return currLoc;
+    });
+
+    return promise;
+}
+
+export function getCurrentAddress(): Promise<Location> {
+    const promise = GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 3000,
+    }).then(location => {
+        console.log('getCurrentPosition:', location);
+        const currLoc = {
+            type: 'location',
+            name: 'aktuelle Postion',
+            address: 'unused',
+            latitude: location.latitude,
+            longitude: location.longitude,
+            distance: 0
+        } as Location;
+
         const promise = getAddress(location.latitude, location.longitude)
             .then(address => {
                 if (address) {
@@ -152,7 +176,6 @@ export function getCurrentPosition(): Promise<Location> {
     return promise;
 }
 
-
 export interface Hafas {
     journeys: (from: string | Location, to: string | Location, results: number, departure?: Date | undefined, via?: string, transferTime?: number, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
@@ -160,11 +183,13 @@ export interface Hafas {
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
     trip: (tripId: string) => Promise<Trip>,
     stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>) => Promise<Stop[]>,
+    radar: (loc: Location) => Promise<ReadonlyArray<Movement>>,
     journeyInfo: (journey: Journey) => JourneyInfo,
     isStop: (s: Station | Stop | Location | undefined) => s is Stop,
     isLocation: (s: string | Station | Stop | Location | undefined) => s is Location,
     getLocation: (s: Station | Stop | Location | undefined) => Location | undefined,
-    distanceOfJourney: (j: Journey) => number
+    distanceOfJourney: (j: Journey) => number,
+    distanceOfLeg: (l: Leg) => number
 }
 
 export function hafas(profileName: string): Hafas {
@@ -196,11 +221,21 @@ export function hafas(profileName: string): Hafas {
         changes = changes > 0 ? changes - 1 : 0;
 
         // guess missing name
-        if (legs.length > 0 && legs[0].walking && legs[0].origin && !legs[0].origin.name) {
-            if (isLocation(legs[0].origin)
-                && legs[0].origin.address
-                && legs[0].origin.address !== 'unused') legs[0].origin.name = legs[0].origin.address;
-            else legs[0].origin.name = 'aktuelle Position';
+        const guessName = (stop?: Station | Stop | Location) => {
+            if (stop && !stop.name) {
+                if (isLocation(stop)
+                    && stop.address
+                    && stop.address !== 'unused') stop.name = stop.address;
+                else stop.name = 'aktuelle Position';
+            }
+        }
+
+        if (legs.length > 0 && legs[indexFrom].walking) {
+            guessName(legs[indexFrom].origin);
+        }
+
+        if (legs.length > 0 && legs[indexTo].walking) {
+            guessName(legs[indexTo].destination);
         }
 
         const originName = journey.legs[indexFrom].origin?.name ?? "";
@@ -258,6 +293,12 @@ export function hafas(profileName: string): Hafas {
 
     }
 
+    const unionToString = (x?: string | unknown): string | undefined => {
+        if (x && typeof x === "object") return x.toString().toLowerCase();
+        else if (x && typeof x === "string") return x.toLowerCase();
+        else return undefined;
+    }
+
     const stopssOfJourney = async (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>) => {
         let stops: Stop[] = [];
         for (const leg of journey.legs) {
@@ -283,7 +324,7 @@ export function hafas(profileName: string): Hafas {
     function getProducts(modes: string[]): Products {
         const products: Products = {}
         profile.products.forEach(p => {
-            products[p.id] = modes.length === 0 || modes.find(m => p.mode.toString().toLowerCase() === m.toLowerCase()) !== undefined;
+            products[p.id] = modes.length === 0 || modes.find(m => unionToString(p.mode) === m.toLowerCase()) !== undefined;
         })
         return products;
     }
@@ -330,6 +371,24 @@ export function hafas(profileName: string): Hafas {
 
     const locations = async (from: string, results: number): Promise<ReadonlyArray<Station | Stop | Location>> => {
         return await client.locations(from, { results });
+    }
+
+    const radar = async (loc: Location): Promise<ReadonlyArray<Movement>> => {
+        if (client.radar && loc.latitude && loc.longitude) {
+            const [southwest, northeast] = geolib.getBoundsOfDistance(
+                { latitude: loc.latitude, longitude: loc.longitude },
+                2000
+            );
+            console.log('southwest:', southwest, ', northeast:', northeast);
+            return await client.radar({
+                north: northeast.latitude,
+                west: southwest.longitude,
+                south: southwest.latitude,
+                east: northeast.longitude
+            }, { results: 20, duration: 600 });
+        } else {
+            return Promise.reject();
+        }
     }
 
     const nearby = async (latitude: number, longitude: number, distance: number, modes?: string[]): Promise<ReadonlyArray<Station | Stop | Location>> => {
@@ -404,10 +463,15 @@ export function hafas(profileName: string): Hafas {
         }).reduce((a, b) => a + b, 0);
     }
 
-    function distanceOfJourney(j: Journey): number {
-        const dist = j.legs.map(l => l.polyline ? distanceOfFeatureCollection(l.polyline) : 0.0).reduce((a, b) => a + b, 0);
+    function distanceOfLeg(l: Leg): number {
+        const dist = l.polyline ? distanceOfFeatureCollection(l.polyline) : 0.0;
         return parseFloat(dist.toFixed(0));
     }
 
-    return { journeys, locations, nearby, departures, trip, stopssOfJourney, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney };
+    function distanceOfJourney(j: Journey): number {
+        const dist = j.legs.map(distanceOfLeg).reduce((a, b) => a + b, 0);
+        return parseFloat(dist.toFixed(0));
+    }
+
+    return { journeys, locations, nearby, departures, trip, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
 }

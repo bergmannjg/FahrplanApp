@@ -8,6 +8,7 @@
         "Time": "{{date, HH:mm}}",
         "SearchConnections": "Verbindungen suchen",
         "Nearby": "Haltestellen in der Nähe suchen",
+        "Radar": "Busse und Bahnen in der Nähe suchen",
         "WhereIs": "Wo liegt {{station}}",
         "Departures": "Abfahrtsplan {{station}}"
     },
@@ -43,6 +44,11 @@
         "Title": "Stationen in der Nähe",
         "IncrDistance": "Entfernung erweitern",
         "Distance": "Entfernung" 
+    },
+    "RadarScreen": {
+        "Title": "Busse und Bahnen in der Nähe",
+        "DirectionTo": "nach",
+        "NextStop": "nächster Halt"
     },
     "JourneyplanScreen": {
         "Title": "Reiseplan",

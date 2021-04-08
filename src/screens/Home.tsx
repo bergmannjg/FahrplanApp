@@ -29,7 +29,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const [nearbyStation, setNearbyStation] = useState<string | Location>('');
   const [station1, setStation1] = useState<string | Location>('');
-  const [station2, setStation2] = useState('');
+  const [station2, setStation2] = useState<string | Location>('');
   const [stationVia, setStationVia] = useState('');
   const [loading, setLoading] = useState(true);
   const [clientLib, setClientLib] = useState('fs-hafas-client');
@@ -127,7 +127,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const setAndSaveStation1 = (s: string) => {
     setStation1(s);
-    saveData({ station1: s, station2 });
+    const s2 = 'string' === typeof station2 ? station2 : '';
+    saveData({ station1: s, station2: s2 });
   }
 
   const setAndSaveStation2 = (s: string) => {
@@ -156,8 +157,13 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const searchNearby = () => {
-    console.log('searchNearby. profile:', profile);
+    console.log('searchNearby, profile:', profile);
     navigation.navigate('Nearby', { profile: clientProfile, distance: 2000, searchBusStops: false });
+  }
+
+  const searchRadar = () => {
+    console.log('searchRadar, profile:', profile);
+    navigation.navigate('Radar', { profile: clientProfile });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -183,7 +189,13 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setDate(new Date(Date.now()));
   }
 
-  const searchEnabled = (client.isLocation(station1) || station1.length > 0) && station2.length > 0;
+  const switchStations = () => {
+    const tmp = station1;
+    setStation1(station2);
+    setStation2(tmp);
+  }
+
+  const searchEnabled = (client.isLocation(station1) || station1.length > 0) && (client.isLocation(station2) || station2.length > 0);
 
   const A1 = ({ s }: { s: string }) => {
     return (
@@ -205,12 +217,33 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     <View>
       <View style={styles.autocompleteContainerFrom}>
         <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
+        <View style={styles.switchbutton}>
+          <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station1 ? station1 : '')} disabled={!('string' === typeof station1 && station1.length > 0)} >
+            <Text style={styles.switchText}>
+              &#8614;
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.autocompleteContainerVia}>
         <CustomAutocomplete client={client} placeholder="via" query={stationVia} onPress={(name) => { setStationVia(name); }} />
+        <View style={styles.switchbutton}>
+          <TouchableOpacity onPress={() => switchStations()} >
+            <Text style={styles.switchText}>
+              &#8645;
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.autocompleteContainerTo}>
-        <A2 s={station2} />
+        <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
+        <View style={styles.switchbutton}>
+          <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
+            <Text style={styles.switchText}>
+              &#8614;
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.containerDateTime}>
@@ -233,30 +266,19 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </TouchableOpacity>
       </View>
       <View style={styles.nearby}>
-        <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => searchNearby()}>
+        <TouchableOpacity style={styles.button} onPress={() => searchNearby()}>
           <Text style={styles.itemText}>
             {t('HomeScreen.Nearby')}
           </Text>
         </TouchableOpacity>
       </View>
-      {'string' === typeof station1 && station1.length > 0 &&
-        <View style={styles.containerDepFrom}>
-          <TouchableOpacity style={styles.button} onPress={() => showDeparturesQuery(station1)}>
-            <Text style={styles.itemText}>
-              {t('HomeScreen.Departures', { station: station1 })}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      }
-      {station2.length > 0 &&
-        <View style={styles.containerDepTo}>
-          <TouchableOpacity style={styles.button} onPress={() => showDeparturesQuery(station2)}>
-            <Text style={styles.itemText}>
-              {t('HomeScreen.Departures', { station: station2 })}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      }
+      <View style={styles.radar}>
+        <TouchableOpacity style={styles.button}  onPress={() => searchRadar()}>
+          <Text style={styles.itemText}>
+            {t('HomeScreen.Radar')}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -300,6 +322,14 @@ const styles = StyleSheet.create({
     right: 0,
     top: 330,
   },
+  radar: {
+    backgroundColor: '#F5FCFF',
+    flex: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 390,
+  },
   containerDepFrom: {
     backgroundColor: '#F5FCFF',
     flex: 1,
@@ -317,6 +347,7 @@ const styles = StyleSheet.create({
     top: 470,
   },
   autocompleteContainerFrom: {
+    flexDirection: 'row',
     flex: 1,
     left: 0,
     position: 'absolute',
@@ -325,6 +356,7 @@ const styles = StyleSheet.create({
     zIndex: 3
   },
   autocompleteContainerVia: {
+    flexDirection: 'row',
     flex: 1,
     left: 0,
     position: 'absolute',
@@ -333,12 +365,17 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   autocompleteContainerTo: {
+    flexDirection: 'row',
     flex: 1,
     left: 0,
     position: 'absolute',
     right: 0,
     top: 130,
     zIndex: 1
+  },
+  switchText: {
+    fontSize: 18,
+    margin: 2
   },
   itemText: {
     fontSize: 18,
@@ -373,6 +410,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10
+  },
+  switchbutton: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    width: 40
   },
   button2: {
     alignItems: 'center',

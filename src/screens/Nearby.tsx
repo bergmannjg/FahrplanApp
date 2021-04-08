@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Hafas } from '../lib/hafas';
 import { Stop, Location, Station } from 'hafas-client';
 import { MainStackParamList, NearbyScreenParams } from './ScreenTypes';
-import { hafas, getCurrentPosition } from '../lib/hafas';
+import { hafas, getCurrentAddress } from '../lib/hafas';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Nearby'>;
@@ -46,7 +46,7 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
         if (loading) return;
         setLoading(true);
 
-        getCurrentPosition()
+        getCurrentAddress()
             .then(location => {
                 console.log(location);
                 if (location.latitude && location.longitude) {

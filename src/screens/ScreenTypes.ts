@@ -43,10 +43,14 @@ export interface RailwayRouteScreenParams {
 export interface ConnectionsScreenParams {
     date: number,
     station1: string | Location,
-    station2: string,
+    station2: string | Location,
     via: string,
     tripDetails: boolean,
     transferTime: number,
+    profile: string
+}
+
+export interface RadarScreenParams {
     profile: string
 }
 
@@ -57,6 +61,8 @@ export interface NearbyScreenParams {
 }
 
 export interface BRouterScreenParams {
+    titleSuffix?: string;
+    isCar?: boolean;
     locations: Location[];
     isLongPress: boolean
 }
@@ -80,6 +86,7 @@ export interface OpenStreetMapParams {
 export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
+    Radar: RadarScreenParams;
     Nearby: NearbyScreenParams;
     Journeyplan: JourneyplanScreenParams;
     RailwayRoutesOfTrip: RailwayRoutesOfTripScreenParams;

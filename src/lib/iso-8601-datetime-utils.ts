@@ -11,6 +11,7 @@ import { Location } from 'hafas-client';
 // parse ISO 8601 date string
 export function parseDatestring(datestring: string): {
     datestring: string;
+    dt: Date,
     year: string;
     month: string;
     day: string;
@@ -33,8 +34,11 @@ export function parseDatestring(datestring: string): {
             return factor * parsed * 60;
         }
 
+        const dt = new Date(datestring)
+
         const res = {
             datestring,
+            dt: dt,
             year: found[1],
             month: found[2],
             day: found[3],
