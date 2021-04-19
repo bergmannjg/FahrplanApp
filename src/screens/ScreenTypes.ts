@@ -40,6 +40,16 @@ export interface RailwayRouteScreenParams {
     railwayRouteNr: number
 }
 
+export interface TrainformationScreenParams {
+    fahrtNr: string;
+    date: string;
+}
+
+export interface WagonimageScreenParams {
+    title: string;
+    image: string;
+}
+
 export interface ConnectionsScreenParams {
     date: number,
     station1: string | Location,
@@ -89,6 +99,8 @@ export type MainStackParamList = {
     Radar: RadarScreenParams;
     Nearby: NearbyScreenParams;
     Journeyplan: JourneyplanScreenParams;
+    Trainformation: TrainformationScreenParams;
+    Wagonimage: WagonimageScreenParams;
     RailwayRoutesOfTrip: RailwayRoutesOfTripScreenParams;
     RailwayRoute: RailwayRouteScreenParams;
     BRouter: BRouterScreenParams;

@@ -22,6 +22,9 @@
       ],
       "js-cache": [
         "types/js-cache"
+      ],
+      "react-native-image-transformer": [
+        "types/react-native-image-transformer"
       ]
     }
   },

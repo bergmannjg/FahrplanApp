@@ -3,6 +3,7 @@
   "version": "1.4.0",
   "private": true,
   "scripts": {
+    "update-fs-hafas-client": "rm package-lock.json && rm -rf node_modules/fs-hafas-client/ && npm install",
     "android-debug": "react-native run-android --variant=debug --deviceId process.env.deviceId",
     "android-release": "react-native run-android --variant=release --deviceId process.env.deviceId",
     "start": "react-native start --host 0.0.0.0",
@@ -47,6 +48,7 @@
     "react-native-elements": "^3.2.0",
     "react-native-gesture-handler": "^1.10.1",
     "react-native-get-location": "^2.1.0",
+    "react-native-image-transformer": "^1.5.1",
     "react-native-localize": "^2.0.1",
     "react-native-randombytes": "^3.6.0",
     "react-native-safe-area-context": "^3.1.9",

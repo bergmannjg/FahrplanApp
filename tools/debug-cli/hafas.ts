@@ -1,27 +1,27 @@
-import createClient from 'hafas-client';
+import createClient = require('hafas-client');
 
-import bvgProfile from 'hafas-client/p/bvg';
-import cflProfile from 'hafas-client/p/cfl';
-import cmtaProfile from 'hafas-client/p/cmta';
-import dbProfile from 'hafas-client/p/db';
-import dbbusradarnrwProfile from 'hafas-client/p/db-busradar-nrw';
-import hvvProfile from 'hafas-client/p/hvv';
-import insaProfile from 'hafas-client/p/insa';
-import invgProfile from 'hafas-client/p/invg';
-import nahshProfile from 'hafas-client/p/nahsh';
-import nvvProfile from 'hafas-client/p/nvv';
-import oebbProfile from 'hafas-client/p/oebb';
-import pkpProfile from 'hafas-client/p/pkp';
-import rmvProfile from 'hafas-client/p/rmv';
-import rsagProfile from 'hafas-client/p/rsag';
-import saarfahrplanProfile from 'hafas-client/p/saarfahrplan';
-import sbahnmuenchenProfile from 'hafas-client/p/sbahn-muenchen';
-// import sncbProfile from 'hafas-client/p/sncb';
-import svvProfile from 'hafas-client/p/svv';
-import vbbProfile from 'hafas-client/p/vbb';
-import vbnProfile from 'hafas-client/p/vbn';
-import vmtProfile from 'hafas-client/p/vmt';
-import vsnProfile from 'hafas-client/p/vsn';
+import bvgProfile = require('hafas-client/p/bvg');
+import cflProfile = require('hafas-client/p/cfl');
+import cmtaProfile = require('hafas-client/p/cmta');
+import dbProfile = require('hafas-client/p/db');
+import dbbusradarnrwProfile = require('hafas-client/p/db-busradar-nrw');
+import hvvProfile = require('hafas-client/p/hvv');
+import insaProfile = require('hafas-client/p/insa');
+import invgProfile = require('hafas-client/p/invg');
+import nahshProfile = require('hafas-client/p/nahsh');
+import nvvProfile = require('hafas-client/p/nvv');
+import oebbProfile = require('hafas-client/p/oebb');
+import pkpProfile = require('hafas-client/p/pkp');
+import rmvProfile = require('hafas-client/p/rmv');
+import rsagProfile = require('hafas-client/p/rsag');
+import saarfahrplanProfile = require('hafas-client/p/saarfahrplan');
+import sbahnmuenchenProfile = require('hafas-client/p/sbahn-muenchen');
+import sncbProfile = require('hafas-client/p/sncb');
+import svvProfile = require('hafas-client/p/svv');
+import vbbProfile = require('hafas-client/p/vbb');
+import vbnProfile = require('hafas-client/p/vbn');
+import vmtProfile = require('hafas-client/p/vmt');
+import vsnProfile = require('hafas-client/p/vsn');
 
 import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
@@ -111,6 +111,8 @@ export interface Hafas {
     distanceOfJourney: (j: Journey) => number,
     distanceOfLeg: (l: Leg) => number
 }
+
+const __DEV__ = false;
 
 export function hafas(profileName: string): Hafas {
     console.log('createClient, profile: ', profileName);

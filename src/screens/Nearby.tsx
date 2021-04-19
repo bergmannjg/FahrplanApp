@@ -18,7 +18,8 @@ import { useTranslation } from 'react-i18next';
 import { Hafas } from '../lib/hafas';
 import { Stop, Location, Station } from 'hafas-client';
 import { MainStackParamList, NearbyScreenParams } from './ScreenTypes';
-import { hafas, getCurrentAddress } from '../lib/hafas';
+import { hafas } from '../lib/hafas';
+import { getCurrentAddress } from '../lib/location';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Nearby'>;

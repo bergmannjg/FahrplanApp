@@ -50,6 +50,10 @@
         "DirectionTo": "nach",
         "NextStop": "nächster Halt"
     },
+    "TrainformationScreen": {
+        "Title": "Wagenreihung",
+        "Date": "Datum: {{date, HH:mm}}"
+    },
     "JourneyplanScreen": {
         "Title": "Reiseplan",
         "ShowRoute": "Route anzeigen",

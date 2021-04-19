@@ -16,7 +16,8 @@ import { ListItem } from "react-native-elements";
 import { parseDatestring, extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, RadarScreenParams } from './ScreenTypes';
-import { hafas, getCurrentPosition } from '../lib/hafas';
+import { hafas } from '../lib/hafas';
+import { getCurrentPosition } from '../lib/location';
 import { Movement, StopOver, Location } from 'hafas-client';
 
 type Props = {

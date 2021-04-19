@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
 import { Hafas, JourneyInfo } from '../lib/hafas';
-import { Location, Leg, Stop } from 'hafas-client';
+import { Location, Leg, Stop, Line } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
@@ -91,6 +91,18 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                 .catch((error) => {
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error);
                 });
+        }
+    }
+
+    const hasTrainformation = (line?: Line) => {
+        return line?.product === 'nationalExpress' || line?.name?.startsWith('IC');
+    }
+
+    const goToWagenreihung = (leg: Leg) => {
+        console.log('Navigation router run to Wagenreihung');
+        console.log('fahrtNr: ', leg.line?.fahrtNr, ', plannedDeparture:', leg.plannedDeparture);
+        if (leg?.line?.fahrtNr && leg?.plannedDeparture) {
+            navigation.navigate('Trainformation', { fahrtNr: leg?.line?.fahrtNr, date: leg?.plannedDeparture })
         }
     }
 
@@ -175,6 +187,12 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         <TouchableOpacity onPress={() => goToTrip(item)}>
                             <Text style={styles.itemDetailsText}>{legLineName(item)}</Text>
                         </TouchableOpacity>
+
+                        {hasTrainformation(item.line) &&
+                            <TouchableOpacity onPress={() => goToWagenreihung(item)}>
+                                <Text style={styles.itemDetailsText}>Wagenreihung</Text>
+                            </TouchableOpacity>
+                        }
 
                         {item.arrival && item.departure &&
                             <Text style={styles.itemDetailsText}>{t('JourneyplanScreen.Duration', { duration: moment.duration((new Date(item.arrival)).valueOf() - (new Date(item.departure)).valueOf()) })}</Text>
