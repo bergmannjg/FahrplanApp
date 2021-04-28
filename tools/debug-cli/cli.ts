@@ -26,7 +26,7 @@ const journeys = () => {
         .then(result => {
             result.forEach(j => {
                 j.legs.forEach(l => {
-                    console.log('leg: ', l.origin?.name, l.destination?.name, l.line?.product, l.plannedDeparture)
+                    console.log('leg: ', l.origin?.name, l.destination?.name, l.line?.product, l.line?.fahrtNr, l.plannedDeparture)
                 });
             });
         })

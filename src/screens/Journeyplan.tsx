@@ -20,8 +20,9 @@ import moment from 'moment';
 import { Hafas, JourneyInfo } from '../lib/hafas';
 import { Location, Leg, Stop, Line } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { MainStackParamList, JourneyplanScreenParams } from './ScreenTypes';
+import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
+import { useOrientation } from './useOrientation';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Journeyplan'>;
@@ -41,6 +42,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const tripDetails = params.tripDetails;
     const modes = ["train", "watercraft", "bus"];
     const trainModes = ["train", "watercraft"];
+
+    const orientation = useOrientation();
 
     console.log('legs.length: ', legs.length);
     console.log('legs: ', legs);
@@ -86,7 +89,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         if (leg?.line && leg?.tripId) {
             client.trip(leg.tripId)
                 .then(trip => {
-                    navigation.navigate('Trip', { trip, profile })
+                    navigation.navigate('Trip', { trip, line: leg.line, profile })
                 })
                 .catch((error) => {
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error);
@@ -143,6 +146,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         return name;
     }
 
+    const railwayCar = '\uD83D\uDE83'; // surrogate pair of U+1F683
+
     const platform = (p?: string) => {
         if (p) {
             return 'Gl. ' + p;
@@ -158,7 +163,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
     const Item = ({ item }: ItemProps) => {
         return (
-            <View style={styles.subtitleView}>
+            <View style={styles.itemView}>
                 {item.cancelled ?
                     <View>
                         <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name}`}</Text>
@@ -172,7 +177,15 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     </View>
                     :
                     <View>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name} ${platform(item.departurePlatform)}`}</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name} ${platform(item.departurePlatform)}`}</Text>
+
+                            {hasTrainformation(item.line) &&
+                                <TouchableOpacity onPress={() => goToWagenreihung(item)}>
+                                    <Text style={styles.itemDetailsText}>{asLinkText(railwayCar)}</Text>
+                                </TouchableOpacity>
+                            }
+                        </View>
 
                         {item.departure && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0) ?
                             <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.departure) })}`}</Text>
@@ -185,29 +198,23 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         }
 
                         <TouchableOpacity onPress={() => goToTrip(item)}>
-                            <Text style={styles.itemDetailsText}>{legLineName(item)}</Text>
+                            <Text style={styles.itemDetailsText}>{asLinkText(legLineName(item))}</Text>
                         </TouchableOpacity>
-
-                        {hasTrainformation(item.line) &&
-                            <TouchableOpacity onPress={() => goToWagenreihung(item)}>
-                                <Text style={styles.itemDetailsText}>Wagenreihung</Text>
-                            </TouchableOpacity>
-                        }
 
                         {item.arrival && item.departure &&
                             <Text style={styles.itemDetailsText}>{t('JourneyplanScreen.Duration', { duration: moment.duration((new Date(item.arrival)).valueOf() - (new Date(item.departure)).valueOf()) })}</Text>
                         }
-                        <Text> </Text>
+
                         {
                             (item?.loadFactor) &&
                             <Text style={styles.itemDetailsText}>{`${t('JourneyplanScreen.LoadFactor')}: ${loadFactor2Text(item.loadFactor)}`}</Text>
                         }
 
+                        <Text> </Text>
                         <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name} ${platform(item.arrivalPlatform)}`}</Text>
                         {
                             (item.arrival && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0)) ?
                                 <View>
-                                    <Text> </Text>
                                     <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.arrival) })}`}</Text>
                                 </View>
                                 :
@@ -224,7 +231,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
     return (
         <View style={styles.container}>
-            <View >
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
                 <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')}
@@ -236,7 +243,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     </Text>
                 </TouchableOpacity>
             </View>
-            <View >
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
                 <Text style={styles.itemHeaderText}>
                     {journeyInfo.originName} {t('JourneyplanScreen.DirectionTo')} {journeyInfo.destinationName}
                 </Text>
@@ -249,15 +256,11 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
                 </Text>
             </View>
-            <ScrollView >
+            <ScrollView>
                 <FlatList
                     data={legs}
                     renderItem={({ item }) => (
-                        <ListItem containerStyle={{ borderBottomWidth: 0 }}>
-                            <ListItem.Content>
-                                <ListItem.Title><Item item={item} /></ListItem.Title>
-                            </ListItem.Content>
-                        </ListItem>
+                        <Item item={item} />
                     )}
                     keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
                     ItemSeparatorComponent={renderSeparator}
@@ -292,6 +295,19 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     );
 }
 
+const stylesPortrait = StyleSheet.create({
+    containerButtons: {
+        flexDirection: 'column',
+    }
+});
+
+const stylesLandscape = StyleSheet.create({
+    containerButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+});
+
 const styles = StyleSheet.create({
     summaryText: {
         fontWeight: 'bold',
@@ -301,17 +317,19 @@ const styles = StyleSheet.create({
     contentText: {
         paddingLeft: 20,
     },
-    subtitleView: {
+    itemView: {
         flexDirection: 'column',
-        paddingLeft: 20,
-        paddingTop: 0,
+        paddingLeft: 35,
+        paddingTop: 10,
         paddingBottom: 0,
-        margin: 0
+        margin: 0,
+        width: '100%',
+        backgroundColor: Colors.white
     },
     container: {
         flex: 1,
         flexDirection: 'column',
-        paddingTop: 22
+        paddingTop: 0
     },
     scrollView: {
         backgroundColor: Colors.lighter,
@@ -345,6 +363,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     itemHeaderText: {
+        flexGrow: 1,
         fontSize: 14,
         paddingLeft: 35,
         paddingBottom: 0,
@@ -373,10 +392,12 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
     button: {
+        flexGrow: 1,
         alignItems: 'center',
         backgroundColor: '#DDDDDD',
         padding: 8,
         margin: 2,
+        minWidth: 200
     },
     itemButtonText: {
         fontSize: 18,

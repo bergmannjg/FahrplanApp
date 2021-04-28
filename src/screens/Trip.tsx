@@ -6,9 +6,9 @@ import { RouteProp } from '@react-navigation/native';
 import { Colors, } from 'react-native/Libraries/NewAppScreen';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { Location, Trip, StopOver, Alternative } from 'hafas-client';
+import { Location, Trip, StopOver, Alternative, Line } from 'hafas-client';
 import { Hafas } from '../lib/hafas';
-import { MainStackParamList, TripScreenParams } from './ScreenTypes';
+import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
 import { hafas } from '../lib/hafas';
 
@@ -24,6 +24,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const { params }: { params: TripScreenParams } = route;
     const trip: Trip = params.trip;
+    const line: Line = params.line;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     console.log('trip', trip);
@@ -64,6 +65,20 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                 console.log('no departures from ', query)
             }
         });
+    }
+
+    const railwayCar = '\uD83D\uDE83'; // surrogate pair of U+1F683
+
+    const hasTrainformation = (line: Line) => {
+        return line?.product === 'nationalExpress' || line?.name?.startsWith('IC');
+    }
+
+    const goToWagenreihung = (line: Line, plannedDeparture?: string) => {
+        console.log('Navigation router run to Wagenreihung');
+        console.log('fahrtNr: ', line?.fahrtNr, ', plannedDeparture:', plannedDeparture);
+        if (line?.fahrtNr && plannedDeparture) {
+            navigation.navigate('Trainformation', { fahrtNr: line?.fahrtNr, date: plannedDeparture })
+        }
     }
 
     const renderSeparator = () => {
@@ -121,14 +136,21 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         if (item.plannedArrival && item.plannedDeparture)
             return (
                 <View>
-                    <TouchableOpacity onPress={() => showDepartures(item.stop?.name ?? "", item.plannedArrival ?? '')}>
-                        <Text style={styles.itemDetailsText}>
-                            {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${item.stop?.name}`}
-                            <Text style={styles.itemWarningText}>
-                                {` ${cancelledInfo(item)}`}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <TouchableOpacity onPress={() => showDepartures(item.stop?.name ?? "", item.plannedArrival ?? '')}>
+                            <Text style={styles.itemDetailsText}>
+                                {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${asLinkText(item.stop?.name ?? '')}`}
+                                <Text style={styles.itemWarningText}>
+                                    {` ${cancelledInfo(item)}`}
+                                </Text>
                             </Text>
-                        </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                        {hasTrainformation(line) && item.plannedDeparture &&
+                            <TouchableOpacity onPress={() => goToWagenreihung(line, item.plannedDeparture)}>
+                                <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
+                            </TouchableOpacity>
+                        }
+                    </View>
                     <OptionalItemDelay item={item} />
                 </View>
             )
@@ -194,12 +216,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingLeft: 10,
         paddingTop: 5,
-        margin: 10
+        margin: 10,
+        width: '100%'
     },
     container: {
         flex: 1,
-        flexDirection: 'column',
-        paddingTop: 22
+        flexDirection: 'column'
     },
     scrollView: {
         backgroundColor: Colors.lighter,
@@ -251,6 +273,7 @@ const styles = StyleSheet.create({
     },
     itemDetailsText: {
         paddingLeft: 50,
+        paddingRight: 5
     },
     footer: {
         color: Colors.dark,

@@ -31,6 +31,7 @@ type NextStop = {
     direction: string | undefined;
     tripId: string | undefined;
     location?: Location;
+    distance: number;
     plannedDeparture: string;
     stop: string;
 }
@@ -63,19 +64,47 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
         else return undefined;
     }
 
-    const filterNextStops = (movements: readonly Movement[], dt: Date): NextStop[] => {
+    const distance = (lat1: number, lon1: number, lat2: number, lon2: number, unit: string) => {
+        if ((lat1 === lat2) && (lon1 === lon2)) {
+            return 0;
+        }
+        else {
+            const radlat1 = Math.PI * lat1 / 180;
+            const radlat2 = Math.PI * lat2 / 180;
+            const theta = lon1 - lon2;
+            const radtheta = Math.PI * theta / 180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit === "K") { dist = dist * 1.609344 }
+            if (unit === "N") { dist = dist * 0.8684 }
+            return dist;
+        }
+    }
+
+    const stripName = (s: string | undefined) => {
+        if (s && s.length > 40) return s.substr(0, 40);
+        else return s;
+    }
+
+    const filterNextStops = (movements: readonly Movement[], location: Location, dt: Date): NextStop[] => {
         return movements.map(m => {
             const nextStopover = m.nextStopovers?.find(s => findNextStopover(s, dt));
             const line = m.line?.name;
             const mode = unionToString(m.line?.mode);
             const plannedDeparture = nextStopover?.plannedDeparture ? extractTimeOfDatestring(nextStopover?.plannedDeparture) : undefined;
-            const stop = nextStopover?.stop?.name;
+            const stop = stripName(nextStopover?.stop?.name);
+            const dist = m.location && m.location.latitude && m.location.longitude && location.latitude && location.longitude ? distance(m.location.latitude, m.location.longitude, location.latitude, location.longitude, 'K') : -1;
             const nextStop =
                 line && plannedDeparture && stop
-                    ? { line: line, mode: mode, tripId: m.tripId, direction: m.direction, location: m.location, plannedDeparture: plannedDeparture, stop: stop }
+                    ? { line: line, mode: mode, tripId: m.tripId, distance: dist, direction: m.direction, location: m.location, plannedDeparture: plannedDeparture, stop: stop }
                     : undefined;
             return nextStop;
-        }).filter(x => !!x) as NextStop[];
+        }).filter(x => !!x && x.distance > 0) as NextStop[];
     }
 
     const makeRemoteRequest = () => {
@@ -91,10 +120,10 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                     .then(movements => {
                         console.log('movements', movements.length);
                         const dt = new Date();
-                        const nextStops = filterNextStops(movements, dt)
+                        const nextStops = filterNextStops(movements, location, dt)
                         console.log('nextStops', nextStops.length, ', dt: ', dt);
                         setLoading(false);
-                        setData(nextStops);
+                        setData(nextStops.sort((a, b) => a.distance - b.distance));
                     })
                     .catch((error: Error) => {
                         console.log('There has been a problem with your radar operation: ' + error.message);
@@ -181,7 +210,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                                         </TouchableOpacity>
                                         <Text>&#32;</Text>
                                         <TouchableOpacity onPress={() => goToTrip(item.tripId)}>
-                                            <Text>{`${item.plannedDeparture} ${item.stop}`}</Text>
+                                            <Text>{`${item.plannedDeparture} ${item.stop} ${item.distance.toFixed(1)} km`}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </ListItem.Subtitle>

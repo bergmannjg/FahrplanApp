@@ -20,6 +20,7 @@ import { Stop, Location, Station } from 'hafas-client';
 import { MainStackParamList, NearbyScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { getCurrentAddress } from '../lib/location';
+import { useOrientation } from './useOrientation';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Nearby'>;
@@ -78,6 +79,8 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
             })
     };
 
+    const orientation = useOrientation();
+
     useEffect(() => {
         makeRemoteRequest();
     }, [count]);
@@ -111,6 +114,14 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
         );
     };
 
+    const showLocation = async (item: Stop | Station | Location) => {
+        const loc = client.getLocation(item);
+        if (loc) {
+            console.log('showLocation: ', loc);
+            navigation.navigate('BRouter', { isLongPress: false, locations: [loc], titleSuffix: item.name });
+        }
+    }
+
     const goToView = (item: Stop | Station | Location): void => {
         console.log('Navigation router', item.name);
         setCount(count + 1);
@@ -129,19 +140,15 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
 
     return (
         <View style={styles.container}>
-            <View >
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
                 <Text style={styles.itemHeaderText}>
                     {`${t('NearbyScreen.Distance')} ${distance} m`}
                 </Text>
-            </View>
-            <View >
                 <TouchableOpacity style={styles.button} onPress={() => incrDistance()} disabled={distance > 20000}>
                     <Text style={styles.itemButtonText}>
                         {t('NearbyScreen.IncrDistance')}
                     </Text>
                 </TouchableOpacity>
-            </View>
-            <View >
                 <TouchableOpacity style={styles.button} onPress={() => switchMode()}>
                     <Text style={styles.itemButtonText}>
                         {`${searchBusStops ? 'auch Bushaltestellen anzeigen' : 'keine Bushaltestellen anzeigen'}`}
@@ -151,9 +158,19 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
-                    <ListItem onPress={() => { goToView(item) }} containerStyle={{ borderBottomWidth: 0 }} >
+                    <ListItem containerStyle={{ borderBottomWidth: 0 }} >
                         <ListItem.Content>
-                            <ListItem.Title>{`${item.name} ${item.distance} m`}</ListItem.Title>
+                            <ListItem.Title>
+                                <View style={styles.titleView} >
+                                    <TouchableOpacity onPress={() => showLocation(item)}>
+                                        <Text style={{ width: 20 }}>&#8982;</Text>
+                                    </TouchableOpacity>
+                                    <Text>&#32;</Text>
+                                    <TouchableOpacity onPress={() => goToView(item)}>
+                                        <Text>{`${item.name} ${item.distance} m`}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </ListItem.Title>
                         </ListItem.Content>
                     </ListItem>
                 )}
@@ -166,58 +183,27 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
     );
 }
 
+const stylesPortrait = StyleSheet.create({
+    containerButtons: {
+        flexDirection: 'column',
+    }
+});
+
+const stylesLandscape = StyleSheet.create({
+    containerButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 10
+    },
+});
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        paddingTop: 10
     },
-    containerButtons: {
-
-    },
-    container2: {
-        flex: 1,
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    subtitleView: {
-        flexDirection: 'column',
-        paddingLeft: 10,
-        paddingTop: 5
+    titleView: {
+        flexDirection: 'row'
     },
     itemWarningText: {
         color: 'red',
@@ -236,6 +222,7 @@ const styles = StyleSheet.create({
     itemHeaderText: {
         fontSize: 15,
         padding: 10,
+        paddingTop: 15,
         paddingLeft: 15,
     },
 });

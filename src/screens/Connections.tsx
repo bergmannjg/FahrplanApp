@@ -20,6 +20,7 @@ import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { Hafas, JourneyInfo } from '../lib/hafas';
 import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
+import { useOrientation } from './useOrientation';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
@@ -74,6 +75,8 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
         setData([]);
       });
   };
+
+  const orientation = useOrientation();
 
   useEffect(() => {
     makeRemoteRequest();
@@ -140,7 +143,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerButtons} >
+      <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
         <TouchableOpacity style={styles.button} onPress={() => showPrev()}>
           <Text style={styles.itemButtonText}>
             {t('ConnectionsScreen.Earlier')}
@@ -151,8 +154,6 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
             {t('ConnectionsScreen.Later')}
           </Text>
         </TouchableOpacity>
-      </View>
-      <View >
         <Text style={styles.itemHeaderText}>
           {t('ConnectionsScreen.Date', { date })}
         </Text>
@@ -171,7 +172,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
                 <ListItem.Title>{`${item.originName} ${t('ConnectionsScreen.DirectionTo')} ${item.destinationName}`}</ListItem.Title>
                 <ListItem.Subtitle>
                   <View style={styles.subtitleView}>
-                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes', { changes: item.changes})}, ${item.distance} km`}</Text>
+                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.distance} km`}</Text>
                     {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
                     {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
                     {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
@@ -190,17 +191,25 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   );
 }
 
+const stylesPortrait = StyleSheet.create({
+  containerButtons: {
+    flexDirection: 'column',
+  }
+});
+
+const stylesLandscape = StyleSheet.create({
+  containerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 10
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    paddingTop: 10
-  },
-  containerButtons: {
-
-  },
-  container2: {
-    flex: 1,
+    paddingTop: 0
   },
   scrollView: {
     backgroundColor: Colors.lighter,
@@ -247,19 +256,21 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   button: {
+    flexGrow: 1,
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10,
     margin: 2,
+    minWidth: 200
   },
   itemButtonText: {
     fontSize: 18,
-    margin: 2,
     textAlign: 'center',
   },
   itemHeaderText: {
     fontSize: 15,
     padding: 10,
+    paddingTop: 12,
     paddingLeft: 15,
   },
 });

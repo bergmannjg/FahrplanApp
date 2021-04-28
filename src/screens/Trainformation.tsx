@@ -16,9 +16,10 @@ import moment from 'moment';
 
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
-import { MainStackParamList, TrainformationScreenParams } from './ScreenTypes';
+import { MainStackParamList, TrainformationScreenParams, asLinkText } from './ScreenTypes';
 import { Fahrzeug, Halt, trainformation } from '../lib/trainformation';
 import { fahrzeuginfo, Fahrzeuginfo } from '../lib/fahrzeuginfo';
+import { useOrientation } from './useOrientation';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Trainformation'>;
@@ -34,6 +35,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
 
     const { t } = useTranslation();
 
+    const [baureihe, setBaureihe] = useState('');
     const [data, setData] = useState([] as Fahrzeug[]);
     const [halt, setHalt] = useState<Halt | undefined>(undefined);
     const [zuggattung, setZuggattung] = useState<string | undefined>(undefined);
@@ -50,18 +52,30 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
 
         trainformation(fahrtNr, date)
             .then(trainformation => {
+                let _data = [] as Fahrzeug[];
                 const allFahrzeuggruppe = trainformation?.data?.istformation?.allFahrzeuggruppe;
                 if (allFahrzeuggruppe && allFahrzeuggruppe.length === 1) {
                     const allFahrzeug = allFahrzeuggruppe[0].allFahrzeug;
-                    if (allFahrzeug) setData(allFahrzeug);
+                    if (allFahrzeug) {
+                        _data = allFahrzeug;
+                        setData(_data);
+                    }
                 }
                 else if (allFahrzeuggruppe && allFahrzeuggruppe.length === 2) {
                     const allFahrzeug1 = allFahrzeuggruppe[0].allFahrzeug;
                     const allFahrzeug2 = allFahrzeuggruppe[1].allFahrzeug;
-                    if (allFahrzeug1 && allFahrzeug2) setData(allFahrzeug1.concat(allFahrzeug2));
+                    if (allFahrzeug1 && allFahrzeug2) {
+                        _data = allFahrzeug1.concat(allFahrzeug2);
+                        setData(_data);
+                    }
                 }
                 setHalt(trainformation?.data?.istformation?.halt);
-                setZuggattung(trainformation?.data?.istformation?.zuggattung);
+                const _zuggattung = trainformation?.data?.istformation?.zuggattung;
+                setZuggattung(_zuggattung);
+                if (_data.length > 0) {
+                    const fi = _zuggattung ? fahrzeuginfo(_data[0], _zuggattung) : undefined;
+                    setBaureihe(fi?.name ?? '')
+                }
                 setLoading(false);
             })
             .catch((error) => {
@@ -71,6 +85,8 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
                 setData([]);
             });
     };
+
+    const orientation = useOrientation();
 
     useEffect(() => {
         makeRemoteRequest();
@@ -113,7 +129,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
         console.log('showRoute.Wagonimage: ', fi?.image);
 
         if (fi?.image) {
-            navigation.navigate('Wagonimage', { title: fi.name ?? '', image: fi.image });
+            navigation.navigate('Wagonimage', { title: (fi.fahrzeugtyp ?? '') + ' ' + (fi?.BRWagen ?? ''), image: fi.image });
         }
     }
 
@@ -126,8 +142,9 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
         return (
             <View style={styles.subtitleView}>
                 <Text>{`Kategorie ${item.kategorie}`}</Text>
+                <Text>{`Fahrzeugnummer ${item.fahrzeugnummer}`}</Text>
                 <TouchableOpacity onPress={() => showImage(fi)} disabled={fi?.image === undefined}>
-                    <Text>{`Baureihe ${fi?.name}`}</Text>
+                    <Text>{`Baureihe ${item.fahrzeugtyp} ${asLinkText(fi?.BRWagen ?? '')}`}</Text>
                 </TouchableOpacity>
                 <Text>{`Sektor ${item.fahrzeugsektor}, Start ${item.positionamhalt?.startmeter} m, Ende ${item.positionamhalt?.endemeter} m`}</Text>
             </View>
@@ -145,12 +162,15 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
                 }
                 {
                     halt &&
-                    <View >
+                    <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerInfo : stylesLandscape.containerInfo}>
                         <Text style={styles.itemHeaderText}>
                             {`Bahnhof ${halt.bahnhofsname}, Gleis ${halt.gleisbezeichnung}`}
                         </Text>
                         <Text style={styles.itemHeaderText}>
                             {`Ankunft ${showTime(halt.ankunftszeit)}, Abfahrt ${showTime(halt.abfahrtszeit)}`}
+                        </Text>
+                        <Text style={styles.itemHeaderText}>
+                            {`Baureihe ${baureihe}`}
                         </Text>
                     </View>
                 }
@@ -176,14 +196,24 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
     );
 }
 
+const stylesPortrait = StyleSheet.create({
+    containerInfo: {
+        flexDirection: 'column',
+    },
+});
+
+const stylesLandscape = StyleSheet.create({
+    containerInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+});
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
         paddingTop: 10
-    },
-    containerButtons: {
-
     },
     container2: {
         flex: 1,
@@ -245,7 +275,7 @@ const styles = StyleSheet.create({
     },
     itemHeaderText: {
         fontSize: 15,
-        padding: 10,
+        padding: 2,
         paddingLeft: 15,
     },
 });

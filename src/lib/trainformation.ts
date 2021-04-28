@@ -100,18 +100,24 @@ function extractDateString(s: string) {
     } else return undefined;
 }
 
-export function trainformation(id: string, date: string): Promise<Trainformation | undefined> {
+const wrUrl1 = 'https://www.apps-bahn.de/wr/wagenreihung/1.0/';
+const wrUrl2 = 'https://ist-wr.noncd.db.de/wagenreihung/1.0/';
+
+export function trainformation(id: string, date: string, retry = 2): Promise<Trainformation | undefined> {
     const dt = extractDateString(date);
     if (dt) {
-        const url = 'https://www.apps-bahn.de/wr/wagenreihung/1.0/' + id + '/' + dt
-        console.log(url);
+        const url = (retry === 2 ? wrUrl1 : wrUrl2) + id + '/' + dt
+        console.log('request: ', url);
         return fetch(url)
             .then(function (response) {
-                if (response.status >= 300) {
-                    console.warn(response.status, response.statusText);
-                    throw new Error("Bad response from server");
+                console.log('response: ', response.status);
+                if (retry > 0 && response.status >= 300) {
+                    return trainformation(id, date, retry - 1);
+                } else if (response.status >= 300) {
+                    return undefined;
+                } else {
+                    return response.json();
                 }
-                return response.json()
             }).catch(error => {
                 console.warn(error);
                 return undefined;

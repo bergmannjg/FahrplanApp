@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { hafas } from '../lib/hafas';
 import type { Alternative, Location } from 'hafas-client';
 import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
+import { useOrientation } from './useOrientation';
+import RadioForm from 'react-native-simple-radio-button';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Home'>;
@@ -38,6 +40,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date(Date.now()));
   const [transferTime, setTransferTime] = useState(8);
+  const [searchType, setSearchType] = useState('Verbindungen');
 
   const headerRight = () => (
     <View style={{ backgroundColor: '#F5FCFF' }}>
@@ -56,6 +59,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       headerRight: headerRight
     });
   }, [navigation, clientLib, profile, transferTime, tripDetails]);
+
+  const orientation = useOrientation();
 
   useEffect(() => {
     const retrieveData = async () => {
@@ -195,6 +200,18 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setStation2(tmp);
   }
 
+  const radioProps = [
+    { label: 'Verbindungen ', value: 'Verbindungen' },
+    { label: 'Haltestellen in der Nähe ', value: 'Haltestellen' },
+    { label: 'Busse und Bahnen in der Nähe', value: 'BusseBahnen' }
+  ];
+
+  const search = () => {
+    if (searchType === 'Verbindungen') searchConnections();
+    else if (searchType === 'Haltestellen') searchNearby();
+    else if (searchType === 'BusseBahnen') searchRadar();
+  }
+
   const searchEnabled = (client.isLocation(station1) || station1.length > 0) && (client.isLocation(station2) || station2.length > 0);
 
   const A1 = ({ s }: { s: string }) => {
@@ -214,37 +231,49 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   return (
-    <View>
-      <View style={styles.autocompleteContainerFrom}>
-        <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
-        <View style={styles.switchbutton}>
-          <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station1 ? station1 : '')} disabled={!('string' === typeof station1 && station1.length > 0)} >
-            <Text style={styles.switchText}>
-              &#8614;
+    <View style={styles.container}>
+
+      { orientation === 'PORTRAIT' &&
+        <View style={stylesPortrait.containerButtons} >
+          <View style={styles.autocompleteContainerFrom}>
+            <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
+            <View style={styles.switchbutton}>
+              <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station1 ? station1 : '')} disabled={!('string' === typeof station1 && station1.length > 0)} >
+                <Text style={styles.switchText}>
+                  &#8614;
             </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.autocompleteContainerVia}>
-        <CustomAutocomplete client={client} placeholder="via" query={stationVia} onPress={(name) => { setStationVia(name); }} />
-        <View style={styles.switchbutton}>
-          <TouchableOpacity onPress={() => switchStations()} >
-            <Text style={styles.switchText}>
-              &#8645;
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.autocompleteContainerVia}>
+            <CustomAutocomplete client={client} placeholder="via" query={stationVia} onPress={(name) => { setStationVia(name); }} />
+            <View style={styles.switchbutton}>
+              <TouchableOpacity onPress={() => switchStations()} >
+                <Text style={styles.switchText}>
+                  &#8645;
             </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.autocompleteContainerTo}>
-        <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
-        <View style={styles.switchbutton}>
-          <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
-            <Text style={styles.switchText}>
-              &#8614;
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.autocompleteContainerTo}>
+            <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
+            <View style={styles.switchbutton}>
+              <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
+                <Text style={styles.switchText}>
+                  &#8614;
             </Text>
-          </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
+      }
+
+      { orientation === 'LANDSCAPE' &&
+        <View style={stylesLandscape.containerButtons} >
+          <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
+          <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
+        </View>
+      }
 
       <View style={styles.containerDateTime}>
         <View style={styles.button2}>
@@ -258,120 +287,106 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       </View>
 
-      <View style={styles.containerSearch}>
-        <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => searchConnections()}>
-          <Text style={styles.itemText}>
-            {t('HomeScreen.SearchConnections')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.nearby}>
-        <TouchableOpacity style={styles.button} onPress={() => searchNearby()}>
-          <Text style={styles.itemText}>
-            {t('HomeScreen.Nearby')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.radar}>
-        <TouchableOpacity style={styles.button}  onPress={() => searchRadar()}>
-          <Text style={styles.itemText}>
-            {t('HomeScreen.Radar')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      { orientation === 'PORTRAIT' &&
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => searchConnections()}>
+            <Text style={styles.itemText}>
+              {t('HomeScreen.SearchConnections')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+      { orientation === 'PORTRAIT' &&
+        <View style={styles.nearby}>
+          <TouchableOpacity style={styles.button} onPress={() => searchNearby()}>
+            <Text style={styles.itemText}>
+              {t('HomeScreen.Nearby')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+      { orientation === 'PORTRAIT' &&
+        <View style={styles.radar}>
+          <TouchableOpacity style={styles.button} onPress={() => searchRadar()}>
+            <Text style={styles.itemText}>
+              {t('HomeScreen.Radar')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+
+      { orientation === 'LANDSCAPE' &&
+        <View style={styles.containerSearch}>
+          <RadioForm
+            formHorizontal={true}
+            radio_props={radioProps}
+            initial={0}
+            onPress={(value: string) => { setSearchType(value) }}
+          />
+        </View>
+      }
+      { orientation === 'LANDSCAPE' &&
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.button} onPress={() => search()}>
+            <Text style={styles.itemText}>
+              {t('HomeScreen.Search')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container1: {
-    backgroundColor: '#F5FCFF',
-    flex: 1,
-    paddingTop: 25
+const stylesPortrait = StyleSheet.create({
+  containerButtons: {
+    flexDirection: 'column',
+    padding: 10,
+  }
+});
+
+const stylesLandscape = StyleSheet.create({
+  containerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10
   },
-  container2: {
-    backgroundColor: '#F5FCFF',
+});
+
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 120,
+    flexDirection: 'column',
   },
   containerDateTime: {
+    alignSelf: 'stretch',
+    minWidth: 200,
+    padding: 10,
     backgroundColor: '#F5FCFF',
-    flex: 1,
     flexDirection: 'row',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 190,
+    justifyContent: 'space-between',
   },
   containerSearch: {
+    padding: 10,
     backgroundColor: '#F5FCFF',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 270,
   },
   nearby: {
+    padding: 10,
     backgroundColor: '#F5FCFF',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 330,
   },
   radar: {
+    padding: 10,
     backgroundColor: '#F5FCFF',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 390,
-  },
-  containerDepFrom: {
-    backgroundColor: '#F5FCFF',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 400,
-  },
-  containerDepTo: {
-    backgroundColor: '#F5FCFF',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 470,
   },
   autocompleteContainerFrom: {
     flexDirection: 'row',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 10,
-    zIndex: 3
   },
   autocompleteContainerVia: {
     flexDirection: 'row',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 70,
-    zIndex: 2
   },
   autocompleteContainerTo: {
     flexDirection: 'row',
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 130,
-    zIndex: 1
   },
   switchText: {
     fontSize: 18,
@@ -418,9 +433,8 @@ const styles = StyleSheet.create({
     width: 40
   },
   button2: {
-    alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10,
-    flex: 4,
+    flexGrow: 1
   },
 });

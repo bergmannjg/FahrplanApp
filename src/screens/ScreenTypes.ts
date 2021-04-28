@@ -1,5 +1,11 @@
 import { JourneyInfo } from '../lib/hafas';
-import { Location, Trip, Alternative, Stop } from 'hafas-client';
+import { Location, Trip, Alternative, Stop, Line } from 'hafas-client';
+
+const nortEastArrow = '\u2197';
+
+export function asLinkText(s: string): string {
+    return s + ' ' + nortEastArrow;
+}
 
 export interface HomeScreenParams {
     clientLib?: string;
@@ -85,6 +91,7 @@ export interface DepartureScreenParams {
 
 export interface TripScreenParams {
     trip: Trip,
+    line?: Line;
     profile: string
 }
 

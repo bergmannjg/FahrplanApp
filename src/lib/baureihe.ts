@@ -5,6 +5,7 @@ import type { Fahrzeug } from './trainformation';
 export interface BRInfo {
     name: string;
     BR?: string;
+    BRWagen?: string;
     identifier?: string;
     noPdf?: boolean;
     country?: 'DE' | 'AT';
@@ -57,6 +58,7 @@ const getDEBR = (
             return {
                 identifier,
                 BR: '412',
+                BRWagen: code.substr(1, 3) + '.' + uicOrdnungsnummer.substr(0, 1),
                 noPdf: fahrzeuge.length !== 12,
             };
         }
@@ -80,6 +82,7 @@ const getDEBR = (
             return {
                 identifier,
                 BR: '401',
+                BRWagen: code.substr(1, 3) + '.' + uicOrdnungsnummer.substr(0, 1),
                 noPdf,
             };
         }
@@ -90,6 +93,7 @@ const getDEBR = (
         case '5808':
             return {
                 BR: '402',
+                BRWagen: code.substr(1, 3) + '.' + uicOrdnungsnummer.substr(0, 1),
                 identifier: '402',
             };
         case '5403':
@@ -117,6 +121,7 @@ const getDEBR = (
         case '5411':
             return {
                 BR: '411',
+                BRWagen: code.substr(1, 3) + '.' + uicOrdnungsnummer.substr(0, 1),
                 identifier: `411.S${Number.parseInt(uicOrdnungsnummer, 10) <= 32 ? '1' : '2'
                     }`,
             };

@@ -10,7 +10,8 @@
         "Nearby": "Haltestellen in der Nähe suchen",
         "Radar": "Busse und Bahnen in der Nähe suchen",
         "WhereIs": "Wo liegt {{station}}",
-        "Departures": "Abfahrtsplan {{station}}"
+        "Departures": "Abfahrtsplan {{station}}",
+        "Search": "suchen"
     },
     "OptionsScreen": {
         "Title": "Optionen",
