@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -21,6 +10,7 @@ import { Hafas, JourneyInfo } from '../lib/hafas';
 import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
@@ -57,7 +47,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     if (loading) return;
     setLoading(true);
 
-    client.journeys(query1, query2, 3, date, queryVia, transferTime, modes)
+    client.journeys(query1, query2, 5, date, queryVia, transferTime, modes)
       .then(journeys => {
         const infos = [] as JourneyInfo[];
         journeys.forEach(journey => {
@@ -119,8 +109,6 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   }
 
   const showDiffDays = (from: Date, to: Date) => {
-    // console.log('from.dayOfYear', moment(from).dayOfYear());
-    // console.log('to.dayOfYear', moment(to).dayOfYear());
     const diffDays = to.getFullYear() === from.getFullYear() ? moment(to).dayOfYear() - moment(from).dayOfYear() : 0;
     return diffDays > 0 ? t('ConnectionsScreen.DaysDifference', { count: diffDays }) : '';
   }
@@ -131,12 +119,14 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     return (
       <View
         style={{
+          flex: 1,
+          justifyContent: "center",
           paddingVertical: 20,
           borderTopWidth: 1,
           borderColor: "#CED0CE"
         }}
       >
-        <ActivityIndicator animating size="large" />
+        <ActivityIndicator size="small" color="#0000ff" />
       </View>
     );
   };
@@ -144,16 +134,21 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   return (
     <View style={styles.container}>
       <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
-        <TouchableOpacity style={styles.button} onPress={() => showPrev()}>
+        <TouchableOpacity style={styles.buttonConnection} onPress={() => showPrev()}>
           <Text style={styles.itemButtonText}>
             {t('ConnectionsScreen.Earlier')}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => showNext()}>
+        <TouchableOpacity style={styles.buttonConnection} onPress={() => showNext()}>
           <Text style={styles.itemButtonText}>
             {t('ConnectionsScreen.Later')}
           </Text>
         </TouchableOpacity>
+      </View>
+      <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+        <Text style={styles.itemHeaderText}>
+          {query1} {t('JourneyplanScreen.DirectionTo')} {query2}
+        </Text>
         <Text style={styles.itemHeaderText}>
           {t('ConnectionsScreen.Date', { date })}
         </Text>
@@ -169,10 +164,12 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
           renderItem={({ item }) => (
             <ListItem onPress={() => { goToView(item) }} containerStyle={{ borderBottomWidth: 0 }} >
               <ListItem.Content>
-                <ListItem.Title>{`${item.originName} ${t('ConnectionsScreen.DirectionTo')} ${item.destinationName}`}</ListItem.Title>
+                <ListItem.Title>
+                  <Text style={styles.summaryText}>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${item.distance} km`}</Text>
+                </ListItem.Title>
                 <ListItem.Subtitle>
-                  <View style={styles.subtitleView}>
-                    <Text>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.distance} km`}</Text>
+                  <View style={styles.subtitleViewColumn}>
+                    <Text>{`${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.lineNames}`}</Text>
                     {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
                     {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
                     {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
@@ -190,88 +187,3 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     </View>
   );
 }
-
-const stylesPortrait = StyleSheet.create({
-  containerButtons: {
-    flexDirection: 'column',
-  }
-});
-
-const stylesLandscape = StyleSheet.create({
-  containerButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft: 10
-  },
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    paddingTop: 0
-  },
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-  subtitleView: {
-    flexDirection: 'column',
-    paddingLeft: 10,
-    paddingTop: 5
-  },
-  itemWarningText: {
-    color: 'red',
-  },
-  button: {
-    flexGrow: 1,
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    margin: 2,
-    minWidth: 200
-  },
-  itemButtonText: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  itemHeaderText: {
-    fontSize: 15,
-    padding: 10,
-    paddingTop: 12,
-    paddingLeft: 15,
-  },
-});
-

@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    FlatList,
-    TouchableOpacity,
-    ActivityIndicator
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
@@ -19,6 +9,7 @@ import { MainStackParamList, RadarScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { getCurrentPosition } from '../lib/location';
 import { Movement, StopOver, Location } from 'hafas-client';
+import { styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Radar'>;
@@ -168,7 +159,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                     borderColor: "#CED0CE"
                 }}
             >
-                <ActivityIndicator animating size="large" />
+                <ActivityIndicator size="small" color="#0000ff" />
             </View>
         );
     };
@@ -204,7 +195,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                             <ListItem.Content>
                                 <ListItem.Title>{`${item.line} ${item.direction ? '-> ' + item.direction : ''}`}</ListItem.Title>
                                 <ListItem.Subtitle>
-                                    <View style={styles.subtitleView}>
+                                    <View style={styles.subtitleViewRow}>
                                         <TouchableOpacity onPress={() => showLocation(item.line, item.mode, item.location)}>
                                             <Text style={{ width: 20 }}>&#8982;</Text>
                                         </TouchableOpacity>
@@ -226,78 +217,3 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingTop: 10
-    },
-    containerButtons: {
-
-    },
-    container2: {
-        flex: 1,
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    subtitleView: {
-        flexDirection: 'row',
-        paddingLeft: 10,
-        paddingTop: 5
-    },
-    itemWarningText: {
-        color: 'red',
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-        margin: 2,
-    },
-    itemButtonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center',
-    },
-    itemHeaderText: {
-        fontSize: 15,
-        padding: 10,
-        paddingLeft: 15,
-    },
-});
-

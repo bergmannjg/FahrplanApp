@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, Text, TextInput, Keyboard } from "react-native";
+import { TouchableOpacity, Text, TextInput, Keyboard } from "react-native";
 import Autocomplete from 'react-native-autocomplete-input';
 import useDebounce from './use-debounce';
 import { Hafas } from '../../lib/hafas';
 import { Station, Stop, Location } from 'hafas-client';
+import { styles } from '../styles';
 
 export interface CustomAutocompleteProps {
     placeholder: string,
@@ -82,10 +83,3 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
         />
     );
 }
-
-const styles = StyleSheet.create({
-    itemText: {
-        fontSize: 18,
-        margin: 2
-    },
-});

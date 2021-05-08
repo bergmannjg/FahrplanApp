@@ -39,6 +39,8 @@ export interface JourneyplanScreenParams {
 }
 
 export interface RailwayRoutesOfTripScreenParams {
+    originName: string;
+    destinationName: string;
     stops: Stop[]
 }
 
@@ -49,6 +51,7 @@ export interface RailwayRouteScreenParams {
 export interface TrainformationScreenParams {
     fahrtNr: string;
     date: string;
+    location?: Location
 }
 
 export interface WagonimageScreenParams {
@@ -83,9 +86,14 @@ export interface BRouterScreenParams {
     isLongPress: boolean
 }
 
+export interface WebViewScreenParams {
+    url: string;
+    title: string;
+}
+
 export interface DepartureScreenParams {
     station: string,
-    alternatives: ReadonlyArray<Alternative>,
+    date: number;
     profile: string
 }
 
@@ -113,6 +121,7 @@ export type MainStackParamList = {
     BRouter: BRouterScreenParams;
     Departures: DepartureScreenParams;
     Trip: TripScreenParams;
+    WebView: WebViewScreenParams;
     OpenStreetMap: OpenStreetMapParams
 };
 

@@ -1,28 +1,17 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    FlatList
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import { View, ScrollView, Text, TouchableOpacity, FlatList } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-
 import { Hafas, JourneyInfo } from '../lib/hafas';
 import { Location, Leg, Stop, Line } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Journeyplan'>;
@@ -52,7 +41,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         console.log('showRailwayRoutes');
         const stops = await client.stopssOfJourney(journeyInfo, trainModes);
         if (stops.length > 0) {
-            navigation.navigate('RailwayRoutesOfTrip', { stops });
+            navigation.navigate('RailwayRoutesOfTrip', { originName: journeyInfo.originName, destinationName: journeyInfo.destinationName, stops });
         }
     }
 
@@ -105,7 +94,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         console.log('Navigation router run to Wagenreihung');
         console.log('fahrtNr: ', leg.line?.fahrtNr, ', plannedDeparture:', leg.plannedDeparture);
         if (leg?.line?.fahrtNr && leg?.plannedDeparture) {
-            navigation.navigate('Trainformation', { fahrtNr: leg?.line?.fahrtNr, date: leg?.plannedDeparture })
+            const loc = client.getLocation(leg.origin);
+            navigation.navigate('Trainformation', { fahrtNr: leg?.line?.fahrtNr, date: leg?.plannedDeparture, location: loc })
         }
     }
 
@@ -171,7 +161,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         <TouchableOpacity onPress={() => goToTrip(item)}>
                             <Text style={styles.itemDetailsText}>{legLineName(item)}</Text>
                         </TouchableOpacity>
-                        <Text style={styles.itemWarningText}>{`${t('JourneyplanScreen.TripCancled')}`}</Text>
+                        <Text style={styles.itemWarningTextJourneyPlan}>{`${t('JourneyplanScreen.TripCancled')}`}</Text>
                         <Text> </Text>
                         <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name}`}</Text>
                     </View>
@@ -194,7 +184,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         }
 
                         {!item.reachable && !item.walking &&
-                            <Text style={styles.itemWarningText}>{`${t('JourneyplanScreen.ConnectionNotAccessible')}`}</Text>
+                            <Text style={styles.itemWarningTextJourneyPlan}>{`${t('JourneyplanScreen.ConnectionNotAccessible')}`}</Text>
                         }
 
                         <TouchableOpacity onPress={() => goToTrip(item)}>
@@ -232,18 +222,18 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     return (
         <View style={styles.container}>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
-                <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => showRailwayRoutes()}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes()}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRailwayRoutes')}
                     </Text>
                 </TouchableOpacity>
             </View>
-            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
                 <Text style={styles.itemHeaderText}>
                     {journeyInfo.originName} {t('JourneyplanScreen.DirectionTo')} {journeyInfo.destinationName}
                 </Text>
@@ -294,115 +284,3 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         </View>
     );
 }
-
-const stylesPortrait = StyleSheet.create({
-    containerButtons: {
-        flexDirection: 'column',
-    }
-});
-
-const stylesLandscape = StyleSheet.create({
-    containerButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-});
-
-const styles = StyleSheet.create({
-    summaryText: {
-        fontWeight: 'bold',
-        fontSize: 14,
-        paddingLeft: 20,
-    },
-    contentText: {
-        paddingLeft: 20,
-    },
-    itemView: {
-        flexDirection: 'column',
-        paddingLeft: 35,
-        paddingTop: 10,
-        paddingBottom: 0,
-        margin: 0,
-        width: '100%',
-        backgroundColor: Colors.white
-    },
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingTop: 0
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    activity: {
-        backgroundColor: Colors.white,
-    },
-    itemHeaderText: {
-        flexGrow: 1,
-        fontSize: 14,
-        paddingLeft: 35,
-        paddingBottom: 0,
-        paddingTop: 10,
-        backgroundColor: Colors.white,
-    },
-    itemWarningText: {
-        color: 'red',
-        paddingLeft: 50,
-    },
-    itemDelayText: {
-        color: 'green',
-    },
-    itemStationText: {
-        fontWeight: 'bold',
-    },
-    itemDetailsText: {
-        paddingLeft: 50,
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    button: {
-        flexGrow: 1,
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 8,
-        margin: 2,
-        minWidth: 200
-    },
-    itemButtonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center'
-    },
-});
-

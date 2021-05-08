@@ -1,23 +1,14 @@
-import React from 'react';
-import {
-    StyleSheet,
-    Text,
-    FlatList,
-    ActivityIndicator,
-    View
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import React, { useState, useEffect } from 'react';
+import { Text, FlatList, ActivityIndicator, View } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, DepartureScreenParams } from './ScreenTypes';
 import { Alternative, Line } from 'hafas-client';
 import { hafas } from '../lib/hafas';
+import { styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Departures'>;
@@ -28,14 +19,41 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
     const { params }: { params: DepartureScreenParams } = route;
 
     if (__DEV__) {
-        console.log('constructor DepartureScreen, params.alternatives.length: ', params.alternatives.length);
+        console.log('constructor DepartureScreen, params.station: ', params.station);
     }
 
     const { t } = useTranslation();
 
-    const data = params.alternatives;
     const profile = params.profile;
+    const station = params.station;
+    const date = new Date(params.date);
     const client = hafas(profile);
+
+    const [data, setData] = useState([] as readonly Alternative[]);
+    const [loading, setLoading] = useState(false);
+    const [count] = useState(0);
+
+    const makeRemoteRequest = () => {
+        console.log('makeRemoteRequest, loading:', loading);
+        if (loading) return;
+        setLoading(true);
+        const onlyLocalProducts = false;
+        client.departures(station, ['train', 'watercraft'], new Date(date), onlyLocalProducts)
+            .then(alternatives => {
+                setLoading(false);
+                setData(alternatives);
+            })
+            .catch((error) => {
+                console.log('There has been a problem with your departures operation: ' + error);
+                console.log(error.stack);
+                setLoading(false);
+                setData([]);
+            });
+    };
+
+    useEffect(() => {
+        makeRemoteRequest();
+    }, [count]);
 
     const renderSeparator = () => {
         return (
@@ -65,6 +83,8 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
     }
 
     const renderFooter = () => {
+        if (!loading) return null;
+
         return (
             <View
                 style={{
@@ -73,7 +93,7 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
                     borderColor: "#CED0CE"
                 }}
             >
-                <ActivityIndicator animating size="large" />
+                <ActivityIndicator size="small" color="#0000ff" />
             </View>
         );
     };
@@ -105,9 +125,13 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
                     renderItem={({ item }) => (
                         <ListItem onPress={() => { goToTrip(item) }} containerStyle={{ borderBottomWidth: 0 }} >
                             <ListItem.Content>
-                                <ListItem.Title>{`${title(item)}`}</ListItem.Title>
+                                <ListItem.Title>
+                                    <Text style={styles.summaryText}>
+                                        {`${title(item)}`}
+                                    </Text>
+                                </ListItem.Title>
                                 <ListItem.Subtitle>
-                                    <View style={styles.subtitleView}>
+                                    <View style={styles.contentText}>
                                         {item.line && <Text>{lineName(item.line)}</Text>}
                                         {item.plannedWhen && <Text>{`${t('DepartureScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })}`}</Text>}
                                     </View>
@@ -124,78 +148,3 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingTop: 10
-    },
-    containerButtons: {
-
-    },
-    container2: {
-        flex: 1,
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    subtitleView: {
-        flexDirection: 'column',
-        paddingLeft: 10,
-        paddingTop: 5
-    },
-    itemWarningText: {
-        color: 'red',
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-        margin: 2,
-    },
-    itemButtonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center',
-    },
-    itemHeaderText: {
-        fontSize: 15,
-        padding: 10,
-        paddingLeft: 15,
-    },
-});
-

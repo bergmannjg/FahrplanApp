@@ -19,6 +19,7 @@ import OptionsScreen from './Options';
 import BRouterScreen from './BRouter';
 import DateTimeScreen from './DateTime';
 import TripScreen from './Trip';
+import WebViewScreen from './WebView';
 import ThirdPartyLicensesScreen from './third-party-licenses';
 import { MainStackParamList, RootStackParamList } from './ScreenTypes';
 
@@ -87,6 +88,11 @@ function MainStackScreen() {
         name="OpenStreetMap"
         component={OpenStreetMapScreen}
         options={({ route }) => ({ title: route.params.name })}
+      />
+      <MainStack.Screen
+        name="WebView"
+        component={WebViewScreen}
+        options={({ route }) => ({ title: route.params.title })}
       />
       <MainStack.Screen
         name="BRouter"

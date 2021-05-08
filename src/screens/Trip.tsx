@@ -1,21 +1,32 @@
 
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { Colors, } from 'react-native/Libraries/NewAppScreen';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { Location, Trip, StopOver, Alternative, Line } from 'hafas-client';
+import { Location, Trip, StopOver, Alternative, Line, Stop, Station } from 'hafas-client';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
 import { hafas } from '../lib/hafas';
+import { styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Trip'>;
     navigation: StackNavigationProp<MainStackParamList, 'Trip'>;
 };
+
+enum PositionKind {
+    Departure,
+    Stop,
+    Arrival
+}
+
+interface ItemType {
+    s: StopOver;
+    p: PositionKind;
+}
 
 export default function TripScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor TripScreen');
@@ -24,14 +35,18 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const { params }: { params: TripScreenParams } = route;
     const trip: Trip = params.trip;
-    const line: Line = params.line;
+    const line = params.line;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     console.log('trip', trip);
 
-    const data = trip.stopovers ?? []
-    const firstStop = trip.stopovers && trip.stopovers.length > 0 ? trip.stopovers[0] : undefined;
-    const lastStop = trip.stopovers && trip.stopovers.length > 0 ? trip.stopovers[trip.stopovers.length - 1] : undefined;
+    const length = trip.stopovers?.length ?? 0;
+    const getPositionKind = (i: number) => {
+        if (i == 0) return PositionKind.Departure;
+        else if (i == length - 1) return PositionKind.Arrival;
+        else return PositionKind.Stop;
+    }
+    const data = trip.stopovers?.map((s, i): ItemType => { return { s: s, p: getPositionKind(i) } })
     const operatorName = trip.line?.operator?.name ?? '';
 
     const showRoute = (isLongPress: boolean) => {
@@ -45,26 +60,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         navigation.navigate('BRouter', { isLongPress, locations });
     }
 
-    const asyncFindDepartures = (query: string, date: Date, callback: (arr: ReadonlyArray<Alternative>) => void) => {
-        if (query.length > 0) {
-            const onlyLocalProducts = false;
-            client.departures(query, ['train', 'watercraft'], date, onlyLocalProducts)
-                .then(alternatives => callback(alternatives))
-                .catch((error) => {
-                    console.log('There has been a problem with your locations operation: ' + error);
-                    callback([]);
-                });
-        }
-    }
-
     const showDepartures = (query: string, date: string) => {
-        asyncFindDepartures(query, new Date(Date.parse(date)), (alternatives: ReadonlyArray<Alternative>) => {
-            if (alternatives.length > 0) {
-                navigation.navigate('Departures', { station: query, alternatives, profile })
-            } else {
-                console.log('no departures from ', query)
-            }
-        });
+        navigation.navigate('Departures', { station: query, date: new Date(Date.parse(date)).valueOf(), profile })
     }
 
     const railwayCar = '\uD83D\uDE83'; // surrogate pair of U+1F683
@@ -73,11 +70,12 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         return line?.product === 'nationalExpress' || line?.name?.startsWith('IC');
     }
 
-    const goToWagenreihung = (line: Line, plannedDeparture?: string) => {
+    const goToWagenreihung = (line: Line, plannedDeparture?: string, stop?: Stop | Station) => {
         console.log('Navigation router run to Wagenreihung');
         console.log('fahrtNr: ', line?.fahrtNr, ', plannedDeparture:', plannedDeparture);
         if (line?.fahrtNr && plannedDeparture) {
-            navigation.navigate('Trainformation', { fahrtNr: line?.fahrtNr, date: plannedDeparture })
+            const loc = client.getLocation(stop);
+            navigation.navigate('Trainformation', { fahrtNr: line?.fahrtNr, date: plannedDeparture, location: loc })
         }
     }
 
@@ -94,32 +92,28 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         );
     };
 
-    interface ItemProps {
-        item: StopOver, first: StopOver, last: StopOver
-    }
-
-    const OptionalItemDeparture = ({ item }: { item: StopOver }) => {
+    const OptionalItemDeparture = ({ item }: { item: ItemType }) => {
         let departure: MomentWithTimezone = { hasTimezone: false, moment: moment() };
-        if (!item.plannedArrival && item.plannedDeparture && item.stop?.location) {
-            departure = momentWithTimezone(item.plannedDeparture, item.stop?.location);
+        if (!item.s.plannedArrival && item.s.plannedDeparture && item.s.stop?.location) {
+            departure = momentWithTimezone(item.s.plannedDeparture, item.s.stop?.location);
         }
 
         return (
-            !item.plannedArrival && item.plannedDeparture ?
+            item.p == PositionKind.Departure && item.s.plannedDeparture ?
                 <Text style={styles.itemStationText}>
-                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${departure.hasTimezone ? t('TripScreen.Timezone', { date: departure.moment }) : ''} ${item.stop?.name}`}
+                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedDeparture) })} ${departure.hasTimezone ? t('TripScreen.Timezone', { date: departure.moment }) : ''} ${item.s.stop?.name}`}
                 </Text>
                 :
                 null
         )
     }
 
-    const OptionalItemDelay = ({ item }: { item: StopOver }) => {
-        if (item.departureDelay && item.departureDelay > 0 && item.departure)
+    const OptionalItemDelay = ({ item }: { item: ItemType }) => {
+        if (item.s.departureDelay && item.s.departureDelay > 0 && item.s.departure)
             return (
                 <View>
-                    <Text style={styles.itemDelayText}>
-                        {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.departure) })}`}
+                    <Text style={styles.itemDelayTextTrip}>
+                        {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.departure) })}`}
                     </Text>
                 </View>
             )
@@ -132,21 +126,21 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         return cancelled ? "entfällt" : "";
     }
 
-    const OptionalItemBetween = ({ item }: { item: StopOver }) => {
-        if (item.plannedArrival && item.plannedDeparture)
+    const OptionalItemBetween = ({ item }: { item: ItemType }) => {
+        if (item.p == PositionKind.Stop && item.s.plannedDeparture)
             return (
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <TouchableOpacity onPress={() => showDepartures(item.stop?.name ?? "", item.plannedArrival ?? '')}>
+                        <TouchableOpacity onPress={() => showDepartures(item.s.stop?.name ?? "", item.s.plannedArrival ?? '')}>
                             <Text style={styles.itemDetailsText}>
-                                {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture) })} ${asLinkText(item.stop?.name ?? '')}`}
+                                {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedDeparture) })} ${asLinkText(item.s.stop?.name ?? '')}`}
                                 <Text style={styles.itemWarningText}>
-                                    {` ${cancelledInfo(item)}`}
+                                    {` ${cancelledInfo(item.s)}`}
                                 </Text>
                             </Text>
                         </TouchableOpacity>
-                        {hasTrainformation(line) && item.plannedDeparture &&
-                            <TouchableOpacity onPress={() => goToWagenreihung(line, item.plannedDeparture)}>
+                        {line && hasTrainformation(line) && item.s.plannedDeparture &&
+                            <TouchableOpacity onPress={() => goToWagenreihung(line, item.s.plannedDeparture, item.s.stop)}>
                                 <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
                             </TouchableOpacity>
                         }
@@ -158,25 +152,25 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             return null;
     }
 
-    const OptionalItemArrival = ({ item }: { item: StopOver }) => {
+    const OptionalItemArrival = ({ item }: { item: ItemType }) => {
         let arrival: MomentWithTimezone = { hasTimezone: false, moment: moment() };
-        if (item.plannedArrival && !item.plannedDeparture && item.stop?.location) {
-            arrival = momentWithTimezone(item.plannedArrival, item.stop?.location);
+        if (item.s.plannedArrival && !item.s.plannedDeparture && item.s.stop?.location) {
+            arrival = momentWithTimezone(item.s.plannedArrival, item.s.stop?.location);
         }
 
         return (
-            item.plannedArrival && !item.plannedDeparture ?
+            item.p == PositionKind.Arrival && item.s.plannedArrival ?
                 <Text style={styles.itemStationText}>
-                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival) })} ${arrival.hasTimezone ? t('TripScreen.Timezone', { date: arrival.moment }) : ''} ${item.stop?.name}`}
+                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedArrival) })} ${arrival.hasTimezone ? t('TripScreen.Timezone', { date: arrival.moment }) : ''} ${item.s.stop?.name}`}
                 </Text>
                 :
                 null
         )
     }
 
-    const Item = ({ item }: ItemProps) => {
+    const Item = ({ item }: { item: ItemType }) => {
         return (
-            <View style={styles.subtitleView}>
+            <View style={styles.subtitleViewTrip}>
                 <OptionalItemDeparture item={item} />
                 <OptionalItemBetween item={item} />
                 <OptionalItemArrival item={item} />
@@ -186,23 +180,23 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     return (
         <View style={styles.container}>
-            <View >
-                <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+            <View style={{ padding: 10 }}>
+                <TouchableOpacity style={styles.buttonTrip} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('TripScreen.ShowRoute')}
                     </Text>
                 </TouchableOpacity>
             </View>
-            <View >
+            <View style={{ paddingLeft: 10 }}>
                 <Text style={styles.itemHeaderText}>
                     {trip.line?.name ?? ''} ({operatorName}) {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
                 </Text>
             </View>
-            {firstStop && lastStop &&
+            {data && data.length > 1 &&
                 < FlatList
                     data={data}
-                    renderItem={({ item }) => <Item item={item} first={firstStop} last={lastStop} />}
-                    keyExtractor={item => item.stop?.name ?? ""}
+                    renderItem={({ item }) => <Item item={item} />}
+                    keyExtractor={item => item.s.stop?.name ?? ""}
                     ItemSeparatorComponent={renderSeparator}
                     onEndReachedThreshold={50}
                 />
@@ -210,84 +204,3 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    subtitleView: {
-        flexDirection: 'column',
-        paddingLeft: 10,
-        paddingTop: 5,
-        margin: 10,
-        width: '100%'
-    },
-    container: {
-        flex: 1,
-        flexDirection: 'column'
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    itemButtonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center'
-    },
-    itemHeaderText: {
-        fontSize: 14,
-        paddingLeft: 20,
-    },
-    itemWarningText: {
-        color: 'red',
-        paddingLeft: 10,
-    },
-    itemDelayText: {
-        paddingLeft: 50,
-        color: 'green',
-    },
-    itemStationText: {
-        fontWeight: 'bold',
-    },
-    itemDetailsText: {
-        paddingLeft: 50,
-        paddingRight: 5
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 8,
-        margin: 2,
-    },
-});
-

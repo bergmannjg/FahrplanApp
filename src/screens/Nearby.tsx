@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-    StyleSheet,
-    View,
-    TouchableOpacity,
-    FlatList,
-    Text,
-    ActivityIndicator
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import { View, TouchableOpacity, FlatList, Text, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import { Hafas } from '../lib/hafas';
@@ -21,6 +10,7 @@ import { MainStackParamList, NearbyScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { getCurrentAddress } from '../lib/location';
 import { useOrientation } from './useOrientation';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Nearby'>;
@@ -109,7 +99,7 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
                     borderColor: "#CED0CE"
                 }}
             >
-                <ActivityIndicator animating size="large" />
+                <ActivityIndicator size="small" color="#0000ff" />
             </View>
         );
     };
@@ -141,15 +131,15 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
     return (
         <View style={styles.container}>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
-                <Text style={styles.itemHeaderText}>
+                <Text style={styles.itemHeaderTextNearby}>
                     {`${t('NearbyScreen.Distance')} ${distance} m`}
                 </Text>
-                <TouchableOpacity style={styles.button} onPress={() => incrDistance()} disabled={distance > 20000}>
+                <TouchableOpacity style={styles.buttonNearby} onPress={() => incrDistance()} disabled={distance > 20000}>
                     <Text style={styles.itemButtonText}>
                         {t('NearbyScreen.IncrDistance')}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => switchMode()}>
+                <TouchableOpacity style={styles.buttonNearby} onPress={() => switchMode()}>
                     <Text style={styles.itemButtonText}>
                         {`${searchBusStops ? 'auch Bushaltestellen anzeigen' : 'keine Bushaltestellen anzeigen'}`}
                     </Text>
@@ -182,48 +172,3 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
         </View>
     );
 }
-
-const stylesPortrait = StyleSheet.create({
-    containerButtons: {
-        flexDirection: 'column',
-    }
-});
-
-const stylesLandscape = StyleSheet.create({
-    containerButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingLeft: 10
-    },
-});
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-    },
-    titleView: {
-        flexDirection: 'row'
-    },
-    itemWarningText: {
-        color: 'red',
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-        margin: 2,
-    },
-    itemButtonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center',
-    },
-    itemHeaderText: {
-        fontSize: 15,
-        padding: 10,
-        paddingTop: 15,
-        paddingLeft: 15,
-    },
-});
-

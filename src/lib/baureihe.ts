@@ -170,6 +170,38 @@ export function getName(br: Omit<BRInfo, 'name'>): string | undefined {
     if (br.identifier) return nameMap[br.identifier];
 }
 
+const wikiTitleMap: {
+    [K in string]: string;
+} = {
+    'ICE 1 (BR401)': 'ICE_1',
+    'ICE 1 Kurz (BR401)': 'ICE_1',
+    'ICE 1 LDV (BR401)': 'ICE_1',
+    'ICE 2 (BR402)': 'ICE_2',
+    'ICE 3 (BR403)': 'ICE_3',
+    'ICE 3 (BR403 1. Serie)': 'DB-Baureihe_403_(1997)',
+    'ICE 3 (BR403 2. Serie)': 'DB-Baureihe_403_(1997)',
+    'ICE 3 (BR403 Redesign)': 'ICE_3',
+    'ICE 3 (BR406)': 'DB-Baureihe_406',
+    'ICE 3 (BR406 Redesign)': 'DB-Baureihe_406',
+    'ICE 3 Velaro (BR407)': 'DB-Baureihe_407',
+    'ICE S (BR410.1)': 'ICE_1',
+    'ICE T (BR411)': 'ICE_T',
+    'ICE T (BR411 1. Serie)': 'ICE_T',
+    'ICE T (BR411 2. Serie)': 'ICE_T',
+    'ICE 4 (BR412)': 'ICE_4',
+    'ICE 4 Kurz (BR412)': 'ICE_4',
+    'ICE 4 Lang (BR412)': 'ICE_4',
+    'ICE T Kurz (BR415)': 'ICE_T',
+    'IC 2 (Twindexx)': 'Intercity_2_(Deutsche_Bahn)',
+    'IC 2 (KISS)': 'Intercity_2_(Deutsche_Bahn)',
+    'MET': 'Metropolitan',
+    'TGV': 'TGV',
+};
+
+export function getWikiTitle(name?: string): string | undefined {
+    if (name) return wikiTitleMap[name];
+}
+
 export function baureihe(
     fahrzeugnummer: string,
     fahrzeuge: Fahrzeug[],

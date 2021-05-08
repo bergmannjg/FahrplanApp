@@ -93,6 +93,7 @@ export interface JourneyInfo {
     informationAvailable: boolean,
     statusRemarks: Status[],
     changes: number,
+    lineNames: string,
     distance: number
 }
 
@@ -110,6 +111,20 @@ export interface Hafas {
     getLocation: (s: Station | Stop | Location | undefined) => Location | undefined,
     distanceOfJourney: (j: Journey) => number,
     distanceOfLeg: (l: Leg) => number
+}
+
+function isStop(s: Station | Stop | Location | undefined): s is Stop {
+    return 'object' === typeof s && s.type === 'stop';
+}
+
+function isLocation(s: string | Station | Stop | Location | undefined): s is Location {
+    return 'object' === typeof s && s.type === 'location';
+}
+
+export function getLocation(s: Station | Stop | Location | undefined): Location | undefined {
+    if (isStop(s)) return s.location
+    else if (isLocation(s)) return s
+    else return undefined;
 }
 
 export function hafas(profileName: string): Hafas {
@@ -138,6 +153,13 @@ export function hafas(profileName: string): Hafas {
         const reachable = journey.legs.every(item => item.reachable || item.walking);
         const cancelled = journey.legs.some(item => item.cancelled);
         let changes = journey.legs.filter(leg => leg?.line).length;
+        const lineNames = journey.legs.reduce((acc, leg) => {
+            const name = leg.line?.name ?? '';
+            console.log('name:', name);
+            const found = name.match(/^[A-Z]+/i)
+            if (found) return acc + (acc.length > 0 ? ', ' : '') + found[0];
+            else return acc;
+        }, '')
         changes = changes > 0 ? changes - 1 : 0;
 
         // guess missing name
@@ -170,7 +192,7 @@ export function hafas(profileName: string): Hafas {
             plannedDeparture, plannedArrival,
             reachable, cancelled,
             informationAvailable: statusRemarks && statusRemarks.length > 0 ? true : false, statusRemarks: statusRemarks ? statusRemarks : [],
-            changes, distance: distanceOfJourney(journey)
+            changes, lineNames, distance: distanceOfJourney(journey)
         };
     }
 
@@ -225,14 +247,6 @@ export function hafas(profileName: string): Hafas {
             stops = stops.concat(await stopssOfLeg(leg, modes));
         }
         return stops;
-    }
-
-    function isStop(s: Station | Stop | Location | undefined): s is Stop {
-        return 'object' === typeof s && s.type === 'stop';
-    }
-
-    function isLocation(s: string | Station | Stop | Location | undefined): s is Location {
-        return 'object' === typeof s && s.type === 'location';
     }
 
     function getLocation(s: Station | Stop | Location | undefined): Location | undefined {

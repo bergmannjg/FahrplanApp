@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    FlatList,
-    TouchableOpacity,
-    ActivityIndicator
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import moment from 'moment';
-
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import { MainStackParamList, TrainformationScreenParams, asLinkText } from './ScreenTypes';
 import { Fahrzeug, Halt, trainformation } from '../lib/trainformation';
 import { fahrzeuginfo, Fahrzeuginfo } from '../lib/fahrzeuginfo';
 import { useOrientation } from './useOrientation';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Trainformation'>;
@@ -36,6 +26,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
     const { t } = useTranslation();
 
     const [baureihe, setBaureihe] = useState('');
+    const [baureiheUrl, setBaureiheUrl] = useState<string | undefined>(undefined);
     const [data, setData] = useState([] as Fahrzeug[]);
     const [halt, setHalt] = useState<Halt | undefined>(undefined);
     const [zuggattung, setZuggattung] = useState<string | undefined>(undefined);
@@ -44,6 +35,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
 
     const fahrtNr = params.fahrtNr;
     const date = params.date;
+    const location = params.location;
 
     const makeRemoteRequest = () => {
         console.log('makeRemoteRequest, loading:', loading);
@@ -74,7 +66,8 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
                 setZuggattung(_zuggattung);
                 if (_data.length > 0) {
                     const fi = _zuggattung ? fahrzeuginfo(_data[0], _zuggattung) : undefined;
-                    setBaureihe(fi?.name ?? '')
+                    setBaureihe(fi?.baureihename ?? '');
+                    setBaureiheUrl(fi?.url);
                 }
                 setLoading(false);
             })
@@ -116,7 +109,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
                     borderColor: "#CED0CE"
                 }}
             >
-                <ActivityIndicator animating size="large" />
+                <ActivityIndicator size="small" color="#0000ff" />
             </View>
         );
     };
@@ -133,6 +126,19 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
         }
     }
 
+    const showUrl = async (url: string, title: string) => {
+        console.log('showWebView: ', url);
+
+        navigation.navigate('WebView', { url, title });
+    }
+
+    const showLocation = async (name?: string) => {
+        if (location) {
+            console.log('showLocation: ', location);
+            navigation.navigate('BRouter', { isLongPress: false, locations: [location], titleSuffix: name });
+        }
+    }
+
     interface ItemProps {
         item: Fahrzeug
     }
@@ -140,7 +146,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
     const Item = ({ item }: ItemProps) => {
         const fi = zuggattung ? fahrzeuginfo(item, zuggattung) : undefined;
         return (
-            <View style={styles.subtitleView}>
+            <View style={styles.subtitleViewColumn}>
                 <Text>{`Kategorie ${item.kategorie}`}</Text>
                 <Text>{`Fahrzeugnummer ${item.fahrzeugnummer}`}</Text>
                 <TouchableOpacity onPress={() => showImage(fi)} disabled={fi?.image === undefined}>
@@ -156,22 +162,39 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
             <View >
                 {
                     !loading && data.length === 0 &&
-                    <Text style={styles.itemHeaderText}>
+                    <Text style={styles.itemHeaderTextTrainformation}>
                         {`keine Wagenreihung gefunden, FahrtNr: ${fahrtNr}, Datum: ${showTime(new Date(date))}`}
                     </Text>
                 }
                 {
                     halt &&
                     <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerInfo : stylesLandscape.containerInfo}>
-                        <Text style={styles.itemHeaderText}>
-                            {`Bahnhof ${halt.bahnhofsname}, Gleis ${halt.gleisbezeichnung}`}
-                        </Text>
-                        <Text style={styles.itemHeaderText}>
+                        {location && halt.bahnhofsname ?
+                            <TouchableOpacity onPress={() => showLocation(halt.bahnhofsname)}>
+                                <Text style={styles.itemHeaderTextTrainformation}>
+                                    {`Bahnhof ${halt.bahnhofsname}, Gleis ${halt.gleisbezeichnung ? asLinkText(halt.gleisbezeichnung) : ''}`}
+                                </Text>
+                            </TouchableOpacity>
+                            :
+                            <Text style={styles.itemHeaderTextTrainformation}>
+                                {`Bahnhof ${halt.bahnhofsname}, Gleis ${halt.gleisbezeichnung}`}
+                            </Text>
+                        }
+                        <Text style={styles.itemHeaderTextTrainformation}>
                             {`Ankunft ${showTime(halt.ankunftszeit)}, Abfahrt ${showTime(halt.abfahrtszeit)}`}
                         </Text>
-                        <Text style={styles.itemHeaderText}>
-                            {`Baureihe ${baureihe}`}
-                        </Text>
+
+                        {baureiheUrl ?
+                            <TouchableOpacity onPress={() => showUrl(baureiheUrl, baureihe)}>
+                                <Text style={styles.itemHeaderTextTrainformation}>
+                                    {`Baureihe ${asLinkText(baureihe)}`}
+                                </Text>
+                            </TouchableOpacity>
+                            :
+                            <Text style={styles.itemHeaderTextTrainformation}>
+                                {`Baureihe ${baureihe}`}
+                            </Text>
+                        }
                     </View>
                 }
             </View>
@@ -195,88 +218,3 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
         </View>
     );
 }
-
-const stylesPortrait = StyleSheet.create({
-    containerInfo: {
-        flexDirection: 'column',
-    },
-});
-
-const stylesLandscape = StyleSheet.create({
-    containerInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-});
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingTop: 10
-    },
-    container2: {
-        flex: 1,
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    subtitleView: {
-        flexDirection: 'column',
-        paddingLeft: 10,
-        paddingTop: 5
-    },
-    itemWarningText: {
-        color: 'red',
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-        margin: 2,
-    },
-    itemButtonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center',
-    },
-    itemHeaderText: {
-        fontSize: 15,
-        padding: 2,
-        paddingLeft: 15,
-    },
-});
-

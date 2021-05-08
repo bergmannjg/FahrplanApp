@@ -1,26 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    TouchableOpacity,
-    FlatList,
-    ActivityIndicator
-} from 'react-native';
-
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-
 import { ListItem } from "react-native-elements";
 import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
-
 import type { RailwayRouteOfTrip } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { Stop } from 'hafas-client';
-import { MainStackParamList, RailwayRoutesOfTripScreenParams } from './ScreenTypes';
+import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
+import { useOrientation } from './useOrientation';
+import { stylesPortrait,  stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -34,6 +24,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
     const stops: Stop[] = params.stops;
+    const originName = params.originName;
+    const destinationName = params.destinationName;
 
     console.log('stops.length: ', stops.length);
 
@@ -53,6 +45,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const [loading, setLoading] = useState(true);
     const [distance, setDistance] = useState(0);
     const [missing, setMissing] = useState(0);
+
+    const orientation = useOrientation();
 
     useEffect(() => {
         if (loading && data.length === 0) {
@@ -101,7 +95,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                     borderColor: "#CED0CE"
                 }}
             >
-                <ActivityIndicator animating size="large" />
+                <ActivityIndicator size="small" color="#0000ff" />
             </View>
         );
     };
@@ -118,31 +112,34 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     const Item = ({ item }: ItemProps) => {
         return (
-            <View style={styles.subtitleView}>
-                <Text style={styles.itemStationText}>{`${normalizeString(item.from?.name ?? '')} km: ${item.from?.railwayRoutePosition?.KM_L}`}</Text>
-                <TouchableOpacity style={styles.itemButton} onPress={() => showRailwayRoute(item.railwayRouteNr ?? 0)}>
-                    <Text style={styles.itemButtonText}>{`${t('RailwayRoutesOfTripScreen.RailwayRoute')} ${item.railwayRouteNr} ${findRailwayRouteText(item.railwayRouteNr ?? 0)} `}</Text>
+            <View style={styles.subtitleViewColumn}>
+                <Text >{`${normalizeString(item.from?.name ?? '')} km: ${item.from?.railwayRoutePosition?.KM_L}`}</Text>
+                <TouchableOpacity onPress={() => showRailwayRoute(item.railwayRouteNr ?? 0)}>
+                    <Text style={styles.itemButtonTextRouteOfTrip}>{`${t('RailwayRoutesOfTripScreen.RailwayRoute')} ${item.railwayRouteNr} ${asLinkText(findRailwayRouteText(item.railwayRouteNr ?? 0))} `}</Text>
                 </TouchableOpacity>
-                <Text style={styles.itemStationText}>{`${normalizeString(item.to?.name ?? '')} km: ${item.to?.railwayRoutePosition?.KM_L}`}</Text>
+                <Text >{`${normalizeString(item.to?.name ?? '')} km: ${item.to?.railwayRoutePosition?.KM_L}`}</Text>
             </View >
         );
     }
 
     return (
         <View style={styles.container}>
-            <View >
-                <TouchableOpacity style={styles.button} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
-                    <Text style={styles.buttonText}>
+            <View style={{ padding: 10 }}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                    <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')}
                     </Text>
                 </TouchableOpacity>
             </View>
-            <View >
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+                <Text style={styles.itemHeaderText}>
+                    {originName} {t('JourneyplanScreen.DirectionTo')} {destinationName}
+                </Text>
                 <Text style={styles.itemHeaderText}>
                     km: {distance.toFixed(2)}
                 </Text>
                 {(missing > 0) &&
-                    <Text style={styles.itemHeaderWarningText}>
+                    <Text style={styles.itemWarningText}>
                         {`${missing} Verbindungen ohne Strecke`}
                     </Text>
                 }
@@ -164,109 +161,3 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    subtitleView: {
-        flexDirection: 'column',
-        paddingLeft: 10,
-        paddingTop: 5,
-        margin: 10
-    },
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingTop: 22
-    },
-    scrollView: {
-        backgroundColor: Colors.lighter,
-    },
-    engine: {
-        position: 'absolute',
-        right: 0,
-    },
-    body: {
-        backgroundColor: Colors.white,
-    },
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: Colors.black,
-    },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
-        color: Colors.dark,
-    },
-    highlight: {
-        fontWeight: '700',
-    },
-    activity: {
-        backgroundColor: Colors.white,
-    },
-    itemHeaderText: {
-        fontSize: 14,
-        paddingLeft: 35,
-        paddingBottom: 0,
-        paddingTop: 10,
-        backgroundColor: Colors.white,
-    },
-    itemHeaderWarningText: {
-        fontSize: 14,
-        paddingLeft: 35,
-        paddingBottom: 0,
-        paddingTop: 10,
-        backgroundColor: Colors.white,
-        color: 'red'
-    },
-    itemWarningText: {
-        color: 'red',
-        paddingLeft: 50,
-    },
-    itemDelayText: {
-        color: 'green',
-    },
-    itemStationText: {
-        fontWeight: 'normal',
-    },
-    itemDetailsText: {
-        paddingLeft: 30,
-        fontWeight: 'bold'
-    },
-    footer: {
-        color: Colors.dark,
-        fontSize: 12,
-        fontWeight: '600',
-        padding: 4,
-        paddingRight: 12,
-        textAlign: 'right',
-    },
-    itemButton: {
-        alignItems: 'flex-start',
-        fontWeight: 'normal',
-        // backgroundColor: '#DDDDDD',
-        padding: 8,
-        margin: 2,
-    },
-    itemButtonText: {
-        margin: 2,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 8,
-        margin: 2,
-    },
-    buttonText: {
-        fontSize: 18,
-        margin: 2,
-        textAlign: 'center'
-    },
-});
-

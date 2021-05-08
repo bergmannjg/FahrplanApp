@@ -21,7 +21,7 @@ export default function WagonimageScreen({ route }: Props): JSX.Element {
     return (
 
         <ImageTransformer
-            style={{ flex: 1 }}
+            style={{ flex: 1, paddingLeft: 5, paddingRight: 5 }}
             image={
                 {
                     uri: uri

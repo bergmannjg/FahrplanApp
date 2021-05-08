@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-community/async-storage';
-import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
+import { View, TouchableOpacity, Text, Button } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import CustomAutocomplete from './components/CustomAutocomplete';
@@ -10,6 +10,7 @@ import type { Alternative, Location } from 'hafas-client';
 import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import RadioForm from 'react-native-simple-radio-button';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Home'>;
@@ -142,18 +143,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     saveData({ station1: s1, station2: s });
   }
 
-  const asyncFindDepartures = (query: string, callback: (arr: ReadonlyArray<Alternative>) => void) => {
-    if (query.length > 0) {
-      const onlyLocalProducts = false;
-      client.departures(query, ['train', 'watercraft'], date, onlyLocalProducts)
-        .then(alternatives => callback(alternatives))
-        .catch((error) => {
-          console.log('There has been a problem with your locations operation: ' + error);
-          callback([]);
-        });
-    }
-  }
-
   const searchConnections = () => {
     if (station1 !== '' && station2 !== '') {
       console.log('searchConnections. profile:', profile);
@@ -172,13 +161,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const showDeparturesQuery = (query: string) => {
-    asyncFindDepartures(query, (alternatives: ReadonlyArray<Alternative>) => {
-      if (alternatives.length > 0) {
-        navigation.navigate('Departures', { station: query, alternatives, profile: clientProfile })
-      } else {
-        console.log('no departures from ', query)
-      }
-    });
+    navigation.navigate('Departures', { station: query, date: date.valueOf(), profile: clientProfile })
   }
 
   const navigateToOptionsScreen = () => {
@@ -271,34 +254,48 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       { orientation === 'LANDSCAPE' &&
         <View style={stylesLandscape.containerButtons} >
           <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
+          <Text style={{ paddingHorizontal: 5 }} />
           <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
         </View>
       }
 
       <View style={styles.containerDateTime}>
-        <View style={styles.button2}>
+        <View style={styles.buttonDateTime}>
           <Button onPress={() => navigateToDateTimeScreen('date')} title={t('HomeScreen.ShortDate', { date })} />
         </View>
-        <View style={styles.button2}>
+        <View style={styles.buttonDateTime}>
           <Button onPress={() => navigateToDateTimeScreen('time')} title={t('HomeScreen.Time', { date })} />
         </View>
-        <View style={styles.button2}>
+        <View style={styles.buttonDateTime}>
           <Button onPress={() => setDateNow()} title={'jetzt'} />
         </View>
       </View>
 
       { orientation === 'PORTRAIT' &&
         <View style={styles.containerSearch}>
-          <TouchableOpacity style={styles.button} disabled={!searchEnabled} onPress={() => searchConnections()}>
+          <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.SearchConnections')}
             </Text>
           </TouchableOpacity>
         </View>
       }
+
       { orientation === 'PORTRAIT' &&
-        <View style={styles.nearby}>
-          <TouchableOpacity style={styles.button} onPress={() => searchNearby()}>
+        <View
+          style={{
+            borderBottomColor: 'black',
+            borderBottomWidth: 1,
+            marginTop: 5,
+            marginBottom: 5,
+            marginLeft: 10,
+            marginRight: 10
+          }}
+        />
+      }
+      { orientation === 'PORTRAIT' &&
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchNearby()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.Nearby')}
             </Text>
@@ -306,8 +303,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       }
       { orientation === 'PORTRAIT' &&
-        <View style={styles.radar}>
-          <TouchableOpacity style={styles.button} onPress={() => searchRadar()}>
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchRadar()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.Radar')}
             </Text>
@@ -327,7 +324,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       }
       { orientation === 'LANDSCAPE' &&
         <View style={styles.containerSearch}>
-          <TouchableOpacity style={styles.button} onPress={() => search()}>
+          <TouchableOpacity style={styles.buttonContained} onPress={() => search()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.Search')}
             </Text>
@@ -338,103 +335,3 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     </View>
   );
 }
-
-const stylesPortrait = StyleSheet.create({
-  containerButtons: {
-    flexDirection: 'column',
-    padding: 10,
-  }
-});
-
-const stylesLandscape = StyleSheet.create({
-  containerButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10
-  },
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  containerDateTime: {
-    alignSelf: 'stretch',
-    minWidth: 200,
-    padding: 10,
-    backgroundColor: '#F5FCFF',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  containerSearch: {
-    padding: 10,
-    backgroundColor: '#F5FCFF',
-  },
-  nearby: {
-    padding: 10,
-    backgroundColor: '#F5FCFF',
-  },
-  radar: {
-    padding: 10,
-    backgroundColor: '#F5FCFF',
-  },
-  autocompleteContainerFrom: {
-    flexDirection: 'row',
-  },
-  autocompleteContainerVia: {
-    flexDirection: 'row',
-  },
-  autocompleteContainerTo: {
-    flexDirection: 'row',
-  },
-  switchText: {
-    fontSize: 18,
-    margin: 2
-  },
-  itemText: {
-    fontSize: 18,
-    margin: 2
-  },
-  descriptionContainer: {
-    // `backgroundColor` needs to be set otherwise the
-    // autocomplete input will disappear on text input.
-    backgroundColor: '#F5FCFF',
-    marginTop: 25
-  },
-  infoText: {
-    textAlign: 'center'
-  },
-  titleText: {
-    fontSize: 18,
-    fontWeight: '500',
-    marginBottom: 10,
-    marginTop: 10,
-    textAlign: 'center'
-  },
-  directorText: {
-    color: 'grey',
-    fontSize: 12,
-    marginBottom: 10,
-    textAlign: 'center'
-  },
-  openingText: {
-    textAlign: 'center'
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10
-  },
-  switchbutton: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    width: 40
-  },
-  button2: {
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    flexGrow: 1
-  },
-});
