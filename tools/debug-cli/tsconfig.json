@@ -7,14 +7,11 @@
         "moduleResolution": "node",
         "noEmit": false,
         "strict": true,
-        "target": "es6",
+        "target": "es5",
         "resolveJsonModule": true,
         "noImplicitAny": false,
         "outDir": "dist",
-        "module": "commonjs",
-        "lib": [
-            "es2015"
-        ],
+        "module": "es6",
         "sourceMap": true
     },
     "include": [

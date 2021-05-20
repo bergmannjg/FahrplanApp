@@ -14,8 +14,8 @@
         "Title": "Options",
         "InformationSystem": "Information System",
         "Update": "Update",
-        "allStations": "all Stations",
-        "onlyTransfers": "only Transfers",
+        "onlyStops": "only Stops",
+        "allTransfers": "also Transfers",
         "Language": "Language",
         "German": "german",
         "English": "english"

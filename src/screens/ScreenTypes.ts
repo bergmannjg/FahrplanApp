@@ -39,9 +39,12 @@ export interface JourneyplanScreenParams {
 }
 
 export interface RailwayRoutesOfTripScreenParams {
+    profile: string;
     originName: string;
     destinationName: string;
-    stops: Stop[]
+    journeyInfo?: JourneyInfo;
+    stops?: Stop[];
+    tripDetails: boolean;
 }
 
 export interface RailwayRouteScreenParams {
@@ -83,6 +86,7 @@ export interface BRouterScreenParams {
     titleSuffix?: string;
     isCar?: boolean;
     locations: Location[];
+    pois?: Location[];
     isLongPress: boolean
 }
 

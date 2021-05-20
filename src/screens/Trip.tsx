@@ -5,12 +5,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { Location, Trip, StopOver, Alternative, Line, Stop, Station } from 'hafas-client';
+import { Location, Trip, StopOver, Line, Stop, Station } from 'hafas-client';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
-import { hafas } from '../lib/hafas';
-import { styles } from './styles';
+import { hafas, isStop4Routes } from '../lib/hafas';
+import { useOrientation } from './useOrientation';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Trip'>;
@@ -38,7 +39,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const line = params.line;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
-    console.log('trip', trip);
+
+    const orientation = useOrientation();
 
     const length = trip.stopovers?.length ?? 0;
     const getPositionKind = (i: number) => {
@@ -49,25 +51,58 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const data = trip.stopovers?.map((s, i): ItemType => { return { s: s, p: getPositionKind(i) } })
     const operatorName = trip.line?.operator?.name ?? '';
 
+    const isStopover4Routes = (stopover: StopOver) => {
+        return client.isStop(stopover.stop)
+            && (stopover.plannedDeparture || stopover.plannedArrival
+                // conditions for transit stations
+                || isStop4Routes(stopover.stop))
+    }
+
+    const showRailwayRoutes = () => {
+        console.log('showRailwayRoutes');
+        const stops = [] as Stop[];
+        trip.stopovers?.forEach(stopover => {
+            if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
+                stops.push(stopover.stop);
+            }
+        });
+        if (stops.length > 1) {
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+        }
+    }
+
     const showRoute = (isLongPress: boolean) => {
         const locations = [] as Location[];
+        const pois = [] as Location[];
         trip.stopovers?.forEach(stopover => {
             if (stopover.stop?.location) {
-                locations.push(stopover.stop.location);
+                if (isStopover4Routes(stopover)) {
+                    locations.push(stopover.stop.location);
+                } else {
+                    pois.push(stopover.stop.location);
+                }
             }
         });
         console.log('locations: ', locations.length);
-        navigation.navigate('BRouter', { isLongPress, locations });
+        navigation.navigate('BRouter', { isLongPress, locations, pois });
     }
 
     const showDepartures = (query: string, date: string) => {
-        navigation.navigate('Departures', { station: query, date: new Date(Date.parse(date)).valueOf(), profile })
+        navigation.navigate('Departures', { station: query, date: date.length > 0 ? new Date(Date.parse(date)).valueOf() : new Date().valueOf(), profile })
     }
 
     const railwayCar = '\uD83D\uDE83'; // surrogate pair of U+1F683
 
     const hasTrainformation = (line: Line) => {
         return line?.product === 'nationalExpress' || line?.name?.startsWith('IC');
+    }
+
+    const showLocation = async (item: Stop | Station | Location | undefined) => {
+        const loc = client.getLocation(item);
+        if (loc && item) {
+            console.log('showLocation: ', loc);
+            navigation.navigate('BRouter', { isLongPress: false, locations: [loc], pois: [], titleSuffix: item.name });
+        }
     }
 
     const goToWagenreihung = (line: Line, plannedDeparture?: string, stop?: Stop | Station) => {
@@ -148,6 +183,34 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                     <OptionalItemDelay item={item} />
                 </View>
             )
+        else if (item.p == PositionKind.Stop && item.s.plannedArrival)
+            return (
+                <View>
+                    <Text style={styles.itemDetailsText}>
+                        {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedArrival) })} ${item.s.stop?.name ?? ''}`}
+                        <Text style={styles.itemWarningText}>
+                            {` ${cancelledInfo(item.s)}`}
+                        </Text>
+                    </Text>
+                    <OptionalItemDelay item={item} />
+                </View>
+            )
+        else if (item.p == PositionKind.Stop && item.s.stop && item.s.stop?.name)
+            return (
+                <View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <TouchableOpacity onPress={() => showLocation(item.s.stop)}>
+                            <Text style={styles.itemDetailsTextTransit}>
+                                Durchfahrt {`${asLinkText(item.s.stop?.name)}`}
+                                <Text style={styles.itemWarningText}>
+                                    {` ${cancelledInfo(item.s)}`}
+                                </Text>
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <OptionalItemDelay item={item} />
+                </View>
+            )
         else
             return null;
     }
@@ -180,10 +243,15 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     return (
         <View style={styles.container}>
-            <View style={{ padding: 10 }}>
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
                 <TouchableOpacity style={styles.buttonTrip} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('TripScreen.ShowRoute')}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes()}>
+                    <Text style={styles.itemButtonText}>
+                        {t('JourneyplanScreen.ShowRailwayRoutes')}
                     </Text>
                 </TouchableOpacity>
             </View>

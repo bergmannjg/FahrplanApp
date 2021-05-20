@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "update-fs-hafas-client": "rm package-lock.json && rm -rf node_modules/fs-hafas-client/ && npm install",
-    "android-debug": "react-native run-android --variant=debug --deviceId process.env.deviceId",
-    "android-release": "react-native run-android --variant=release --deviceId process.env.deviceId",
+    "android-debug": "tsc && react-native run-android --variant=debug --deviceId process.env.deviceId",
+    "android-release": "tsc && react-native run-android --variant=release --deviceId process.env.deviceId",
     "start": "react-native start --host 0.0.0.0",
     "test": "jest",
     "lint": "eslint src --ext .ts,.tsx"

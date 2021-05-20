@@ -1,6 +1,6 @@
 import createClient from 'hafas-client';
 
-import bvgProfile from 'hafas-client/p/bvg';
+import bvgProfile, { products } from 'hafas-client/p/bvg';
 import cflProfile from 'hafas-client/p/cfl';
 import cmtaProfile from 'hafas-client/p/cmta';
 import dbProfile from 'hafas-client/p/db';
@@ -23,7 +23,7 @@ import vbnProfile from 'hafas-client/p/vbn';
 import vmtProfile from 'hafas-client/p/vmt';
 import vsnProfile from 'hafas-client/p/vsn';
 
-import { Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
+import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -100,10 +100,11 @@ export interface JourneyInfo {
 export interface Hafas {
     journeys: (from: string | Location, to: string | Location, results: number, departure?: Date | undefined, via?: string, transferTime?: number, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
-    nearby: (latitude: number, longitude: number, distance: number, modes?: string[]) => Promise<ReadonlyArray<Station | Stop | Location>>,
+    nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
-    trip: (tripId: string) => Promise<Trip>,
-    stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>) => Promise<Stop[]>,
+    trip: (tripId?: string) => Promise<Trip>,
+    tripOfLeg: (tripId: string, origin: Station | Stop | Location | undefined, destination: Station | Stop | Location | undefined, fc?: FeatureCollection) => Promise<Trip>,
+    stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>, useTransits?: boolean, nationalProductsOfStops?: boolean) => Promise<Stop[]>,
     radar: (loc: Location) => Promise<ReadonlyArray<Movement>>,
     journeyInfo: (journey: Journey) => JourneyInfo,
     isStop: (s: Station | Stop | Location | undefined) => s is Stop,
@@ -121,6 +122,10 @@ function isLocation(s: string | Station | Stop | Location | undefined): s is Loc
     return 'object' === typeof s && s.type === 'location';
 }
 
+export function isStop4Routes(stop: Stop): boolean {
+    return !!stop.products?.nationalExpress || !!stop.products?.national;
+}
+
 export function getLocation(s: Station | Stop | Location | undefined): Location | undefined {
     if (isStop(s)) return s.location
     else if (isLocation(s)) return s
@@ -132,9 +137,11 @@ export function hafas(profileName: string): Hafas {
     const profile = chooseProfile(profileName);
     const client = chooseClient(profileName, profile)
 
+    /*
     if (__DEV__ && profileName === 'db-fsharp') {
         fshafas.setDebug();
     }
+    */
 
     const journeyInfo = (journey: Journey): JourneyInfo => {
         const defaultDate = new Date();
@@ -196,19 +203,45 @@ export function hafas(profileName: string): Hafas {
         };
     }
 
-    const tripOfLeg = async (leg: Leg): Promise<Trip> => {
-        if (leg.tripId && leg?.line && client.trip) {
-            const t: Trip = await client.trip(leg.tripId, leg.line.name != null ? leg.line.name : "ignored", {});
+    const trip = async (tripId?: string): Promise<Trip> => {
+        if (client.trip && tripId) {
+            const t: Trip = await client.trip(tripId, "ignored", {});
             return t;
         } else {
             return Promise.reject();
         }
     }
 
-    const trip = async (tripId: string): Promise<Trip> => {
-        if (client.trip) {
+    const tripOfLeg = async (tripId: string, origin: Station | Stop | Location | undefined, destination: Station | Stop | Location | undefined, fc?: FeatureCollection): Promise<Trip> => {
+        if (client.trip && tripId) {
             const t: Trip = await client.trip(tripId, "ignored", {});
-            return t;
+
+            const stopovers = stopoversOnLeg(t, origin, destination).filter(stopover => stopover.stop && isStop(stopover.stop));
+            const stopsInLeg = stopovers.map<Stop>(stopover => stopover.stop as Stop);
+
+            if (fc) {
+                const productsOfStops = { nationalExpress: true, national: true, regionalExp: true, regional: true }; // todo: as param
+                const stops = await stopsInFeatureCollection(fc, stopsInLeg, productsOfStops);
+
+                const stopoversInFeatureCollection = stops.map(s => {
+                    const stopoverOrig = stopovers.find(so => so.stop?.id === s.id);
+                    const stopover: StopOver = {
+                        stop: s,
+                        plannedDeparture: stopoverOrig?.plannedDeparture,
+                        plannedArrival: stopoverOrig?.plannedArrival
+                    };
+                    return stopover;
+                });
+                const plannedDeparture = stopoversInFeatureCollection[0].plannedDeparture;
+                const plannedArrival = stopoversInFeatureCollection[stopoversInFeatureCollection.length - 1].plannedArrival;
+                console.log('stopoversInFeatureCollection.length:', stopoversInFeatureCollection.length);
+                return { id: t.id, origin: t.origin, destination: t.destination, line: t.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
+            } else {
+                const plannedDeparture = stopovers[0].plannedDeparture;
+                const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
+                console.log('stopovers.length:', stopovers.length);
+                return { id: t.id, origin: t.origin, destination: t.destination, line: t.line, plannedDeparture, plannedArrival, stopovers };
+            }
         } else {
             return Promise.reject();
         }
@@ -224,7 +257,7 @@ export function hafas(profileName: string): Hafas {
 
     const stopssOfLeg = async (leg: Leg, modes: ReadonlyArray<string>) => {
         if (leg.walking) return [];
-        const t = await tripOfLeg(leg);
+        const t = await trip(leg.tripId);
         if (t.line && modes.findIndex(m => m === t.line?.mode?.toString().toLowerCase()) >= 0) {
             return stopoversOnLeg(t, leg.origin, leg.destination)
                 .filter(stopover => stopover.stop && isStop(stopover.stop))
@@ -241,10 +274,18 @@ export function hafas(profileName: string): Hafas {
         else return undefined;
     }
 
-    const stopssOfJourney = async (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>) => {
+    const stopssOfJourney = async (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>, useTransits?: boolean, nationalProductsOfStops?: boolean) => {
         let stops: Stop[] = [];
+        const productsOfStops = nationalProductsOfStops ? { nationalExpress: true, national: true, regionalExp: false, regional: false } : { nationalExpress: true, national: true, regionalExp: true, regional: true };
+        const productsOfLines = ["nationalExpress", "national"];
         for (const leg of journey.legs) {
-            stops = stops.concat(await stopssOfLeg(leg, modes));
+            console.log('useTransits:', leg.line?.name, useTransits, leg.polyline ? true : false, productsOfLines.find(p => leg.line?.product === p))
+            if (useTransits && leg.polyline && productsOfLines.find(p => leg.line?.product === p)) {
+                const stopsInLeg = await stopssOfLeg(leg, ['train']);
+                stops = stops.concat(await stopsInFeatureCollection(leg.polyline, stopsInLeg, productsOfStops));
+            } else {
+                stops = stops.concat(await stopssOfLeg(leg, modes));
+            }
         }
         return stops;
     }
@@ -255,10 +296,18 @@ export function hafas(profileName: string): Hafas {
         else return undefined;
     }
 
-    function getProducts(modes: string[]): Products {
+    function getProductsFromModes(modes: string[]): Products {
         const products: Products = {}
         profile.products.forEach(p => {
             products[p.id] = modes.length === 0 || modes.find(m => unionToString(p.mode) === m.toLowerCase()) !== undefined;
+        })
+        return products;
+    }
+
+    function getProductsFromProducts(productsGiven: Products): Products {
+        const products: Products = {}
+        profile.products.forEach(p => {
+            products[p.id] = productsGiven[p.id];
         })
         return products;
     }
@@ -277,13 +326,13 @@ export function hafas(profileName: string): Hafas {
             let viaId: string | undefined;
             if (via && via.length > 0) {
                 const viaFrom = await client.locations(via, { results: 1 });
-                console.log('via:', viaFrom[0].id, locationsTo[0].name);
+                console.log('via:', viaFrom[0].id, viaFrom[0].name);
                 if (viaFrom[0].id) {
                     viaId = viaFrom[0].id;
                 }
             }
             try {
-                const products = getProducts(modes ?? []);
+                const products = getProductsFromModes(modes ?? []);
                 const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results, departure, via: viaId, transferTime, polylines: true });
                 return res.journeys ?? [];
             } catch (e) {
@@ -325,13 +374,13 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    const nearby = async (latitude: number, longitude: number, distance: number, modes?: string[]): Promise<ReadonlyArray<Station | Stop | Location>> => {
-        const products = getProducts(modes ?? []);
+    const nearby = async (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products): Promise<ReadonlyArray<Station | Stop | Location>> => {
+        const productsOfParams = products ? getProductsFromProducts(products) : getProductsFromModes(modes ?? []);
         return await client.nearby({
             type: 'location',
             latitude: latitude,
             longitude: longitude
-        }, { results: 20, distance, products });
+        }, { results: 200, distance, products: productsOfParams, subStops: false, linesOfStops: true });
     }
 
     const isLocalProduct = (product?: string) => {
@@ -354,8 +403,10 @@ export function hafas(profileName: string): Hafas {
             if (alternatives.length > results) {
                 alternatives = alternatives.slice(0, results);
             }
-            for (const a of alternatives) {
-                console.log('alternative:', a);
+            if (__DEV__) {
+                for (const a of alternatives) {
+                    console.log('alternative:', a);
+                }
             }
             return alternatives;
         } else {
@@ -397,6 +448,22 @@ export function hafas(profileName: string): Hafas {
         }).reduce((a, b) => a + b, 0);
     }
 
+    function distanceOfFeatureCollectionSubset(from: number, to: number, fc: createClient.FeatureCollection): number {
+        const latLonPoints =
+            fc.features.slice(from, to + 1).map(f => { return { lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] }; })
+
+        return latLonPoints.map((v, i) => {
+            if (i > 0) {
+                const prev = latLonPoints[i - 1]
+                const curr = latLonPoints[i]
+                return getDistanceFromLatLonInKm(prev.lat, prev.lon, curr.lat, curr.lon);
+            }
+            else {
+                return 0.0;
+            }
+        }).reduce((a, b) => a + b, 0);
+    }
+
     function distanceOfLeg(l: Leg): number {
         const dist = l.polyline ? distanceOfFeatureCollection(l.polyline) : 0.0;
         return parseFloat(dist.toFixed(0));
@@ -407,5 +474,127 @@ export function hafas(profileName: string): Hafas {
         return parseFloat(dist.toFixed(0));
     }
 
-    return { journeys, locations, nearby, departures, trip, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
+    const distance = (lat1: number, lon1: number, lat2: number, lon2: number, unit: string) => {
+        if ((lat1 === lat2) && (lon1 === lon2)) {
+            return 0;
+        }
+        else {
+            const radlat1 = Math.PI * lat1 / 180;
+            const radlat2 = Math.PI * lat2 / 180;
+            const theta = lon1 - lon2;
+            const radtheta = Math.PI * theta / 180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit === "K") { dist = dist * 1.609344 }
+            if (unit === "N") { dist = dist * 0.8684 }
+            return dist;
+        }
+    }
+
+    const coordinatesDistance = (lat: number, lon: number, coordinates: number[], maxDist: number): boolean => {
+
+        if (coordinates.length === 2) {
+            const dist = distance(lat, lon, coordinates[1], coordinates[0], 'K')
+            return dist <= maxDist;
+        } else {
+            return false;
+        }
+    }
+
+    interface IndexedStop {
+        index: number;
+        stop: Stop;
+    }
+
+    const findStops = (fc: FeatureCollection): IndexedStop[] => {
+        return fc.features
+            .map((f, i) => { return { index: i, maybeStop: f.properties && (<Stop>f.properties).type && (<Stop>f.properties).type.toLowerCase() === 'stop' ? <Stop>f.properties : undefined }; })
+            .filter(c => c.maybeStop)
+            .map(c => { return { index: c.index, stop: <Stop>c.maybeStop }; });
+    }
+
+    const findIndex = (lat: number, lon: number, fc: FeatureCollection, maxDist: number) => {
+        const found = fc.features
+            .map((f, i) => { return { index: i, found: coordinatesDistance(lat, lon, f.geometry.coordinates, maxDist) }; })
+            .filter(c => c.found);
+        return found.length > 0 ? found[0].index : undefined;
+    }
+
+    const stopsInFeatureCollectionSubset = async (fromI: number, toI: number, fc: FeatureCollection, stopsInFc: IndexedStop[], products?: Products): Promise<undefined> => {
+        if (fc.features.length < toI + 1) return;
+
+        const fromS = <Stop>(fc.features[fromI].properties);
+        const toS = <Stop>(fc.features[toI].properties);
+        if (fromS.name === toS.name) return;
+
+        const from = fromS.location;
+        const to = toS.location;
+
+        if (from && to && from.latitude && from.longitude && to.latitude && to.longitude) {
+            const coordinates = fc.features[Math.floor(fromI + (toI - fromI) / 2)].geometry.coordinates;
+            const center = { type: 'location', latitude: coordinates[1], longitude: coordinates[0] };
+
+            if (center.latitude && center.longitude) {
+                const dist = distanceOfFeatureCollectionSubset(fromI, toI, fc);
+                const result = await nearby(center.latitude, center.longitude, dist * 2 * 1000, ["train"], products)
+                console.log('nearby.result.length:', result.length, fromS.name, toS.name)
+                result.forEach(s => {
+                    if (isStop(s)) {
+                        const found = stopsInFc.find(sif => sif.stop.id === s.id)
+                        if (found) {
+                            found.stop.lines = s.lines;
+                        } else {
+                            const index = s.location && s.location?.latitude && s.location?.longitude ? findIndex(s.location?.latitude, s.location?.longitude, fc, 0.2) : undefined;
+                            if (index && !(<Stop>fc.features[index].properties)["type"]) {
+                                fc.features[index].properties = s;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    const filterLines = (lines?: readonly Line[]): string[] => {
+        return lines
+            ? lines?.filter(l => l.name && l.mode?.toString().toLowerCase() === 'train' && !l.name?.startsWith('Bus') && !l.name?.startsWith('S')).map(l => l.name ?? '')
+            : [];
+    }
+
+    const stopsInFeatureCollection = async (fc0: FeatureCollection, stopsInLeg: Stop[], products?: Products): Promise<Stop[]> => {
+        if (!fc0 || fc0.features.length < 2) return [];
+
+        const fc = JSON.parse(JSON.stringify(fc0));
+
+        const stopsInFcOrig = findStops(fc);
+        stopsInLeg.forEach(s => {
+            if (stopsInFcOrig.find(sFc => sFc.stop?.name === s.name) === undefined) {
+                const index = s.location && s.location?.latitude && s.location?.longitude ? findIndex(s.location?.latitude, s.location?.longitude, fc, 0.1) : undefined;
+                if (index && fc.features[index].properties !== undefined && fc.features[index].properties !== {}) {
+                    fc.features[index].properties = s;
+                }
+            }
+        })
+
+        const stopsInFcOfLeg = findStops(fc);
+        if (stopsInFcOfLeg.length > 1) {
+            let from = stopsInFcOfLeg[0]
+            for (const curr of stopsInFcOfLeg) {
+                if (from.index < curr.index) {
+                    await stopsInFeatureCollectionSubset(from.index, curr.index, fc, stopsInFcOfLeg, products);
+                    from = curr;
+                }
+            }
+            const foundStopsInFc = findStops(fc);
+            return foundStopsInFc.filter(si => stopsInFcOfLeg.find(sif => sif.stop.id === si.stop.id) || (!si.stop.station && filterLines(si.stop.lines).length > 0)).map(s => s.stop);
+        }
+        return [];
+    }
+
+    return { journeys, locations, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
 }

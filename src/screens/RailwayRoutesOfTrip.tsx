@@ -8,9 +8,10 @@ import { useTranslation } from 'react-i18next';
 import type { RailwayRouteOfTrip } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { Stop } from 'hafas-client';
+import { hafas, Hafas } from '../lib/hafas';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
-import { stylesPortrait,  stylesLandscape, styles } from './styles';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -23,11 +24,18 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const { t } = useTranslation();
 
     const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
-    const stops: Stop[] = params.stops;
+    const journeyInfo = params.journeyInfo;
+    const stops = params.stops;
+    const showTransfers = params.tripDetails;
+    const profile = params.profile;
+    const client: Hafas = hafas(profile);
+    const trainModes = ["train", "watercraft"];
+
     const originName = params.originName;
     const destinationName = params.destinationName;
 
-    console.log('stops.length: ', stops.length);
+    console.log('journeyInfo.legs.length: ', journeyInfo?.legs.length);
+    console.log('stops.length: ', stops?.length);
 
     const findRailwayRoutes = (stopsOfRoute: Stop[]) => {
         try {
@@ -50,11 +58,31 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     useEffect(() => {
         if (loading && data.length === 0) {
-            const result = findRailwayRoutes(params.stops)
-            setLoading(false);
-            setDistance(computeDistanceOfRoutes(result.railwayRoutes));
-            setData(result.railwayRoutes);
-            setMissing(result.missing)
+            if (journeyInfo) {
+                client.stopssOfJourney(journeyInfo, trainModes, showTransfers, showTransfers)
+                    .then(stops => {
+                        const result = findRailwayRoutes(stops)
+                        setLoading(false);
+                        setDistance(computeDistanceOfRoutes(result.railwayRoutes));
+                        setData(result.railwayRoutes);
+                        setMissing(result.missing)
+                    })
+                    .catch((error) => {
+                        console.log('There has been a problem with your stopssOfJourney operation: ' + error);
+                        console.log(error.stack);
+                        setLoading(false);
+                        setData([]);
+                    });
+            } else if (stops) {
+                const result = findRailwayRoutes(stops)
+                setLoading(false);
+                setDistance(computeDistanceOfRoutes(result.railwayRoutes));
+                setData(result.railwayRoutes);
+                setMissing(result.missing)
+
+            } else {
+                setLoading(false);
+            }
         }
     });
 

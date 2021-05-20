@@ -37,8 +37,8 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     ];
 
     const radioTripDetailsProps = [
-        { label: t('OptionsScreen.allStations') + '  ', value: true },
-        { label: t('OptionsScreen.onlyTransfers'), value: false },
+        { label: t('OptionsScreen.allTransfers') + '  ', value: true },
+        { label: t('OptionsScreen.onlyStops'), value: false },
     ];
 
     const radioLanguageProps = [

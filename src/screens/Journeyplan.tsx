@@ -1,15 +1,15 @@
-import React from 'react';
-import { View, ScrollView, Text, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, ScrollView, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { Hafas, JourneyInfo } from '../lib/hafas';
-import { Location, Leg, Stop, Line } from 'hafas-client';
+import { Location, Leg, Line } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
-import { hafas } from '../lib/hafas';
+import { hafas, isStop4Routes } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 
@@ -28,59 +28,58 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const legs = journeyInfo.legs;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
-    const tripDetails = params.tripDetails;
+    const showTransfers = params.tripDetails;
     const modes = ["train", "watercraft", "bus"];
-    const trainModes = ["train", "watercraft"];
+
+    const [loading, setLoading] = useState(false);
 
     const orientation = useOrientation();
 
     console.log('legs.length: ', legs.length);
-    console.log('legs: ', legs);
 
-    const showRailwayRoutes = async () => {
+    const showRailwayRoutes = () => {
         console.log('showRailwayRoutes');
-        const stops = await client.stopssOfJourney(journeyInfo, trainModes);
-        if (stops.length > 0) {
-            navigation.navigate('RailwayRoutesOfTrip', { originName: journeyInfo.originName, destinationName: journeyInfo.destinationName, stops });
-        }
+        navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: showTransfers, originName: journeyInfo.originName, destinationName: journeyInfo.destinationName, journeyInfo });
     }
 
     const showRoute = async (isLongPress: boolean) => {
-        console.log('showRoute.tripDetails: ', tripDetails);
+        console.log('showRoute.showTransfers: ', showTransfers);
 
-        if (tripDetails) {
-            const stops = await client.stopssOfJourney(journeyInfo, modes);
-            const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
-            console.log('locations: ', locations.length);
-            if (locations && locations.length > 0) {
-                navigation.navigate('BRouter', { isLongPress, locations });
-            }
-        }
-        else {
-            if (legs.length > 0) {
-                const locations = legs.map(leg => client.getLocation(leg.origin)).filter(l => !!l) as Location[];
-                const location = (legs[legs.length - 1].destination as Stop)?.location;
-                if (location) {
-                    locations.push(location);
-                }
-                if (locations && locations.length > 0) {
-                    navigation.navigate('BRouter', { isLongPress: false, locations });
-                }
-            } else {
-                console.log('Bahnhofslisten leer');
-            }
+        const stops = await client.stopssOfJourney(journeyInfo, modes, showTransfers, showTransfers);
+        const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
+        console.log('locations: ', locations.length);
+        if (locations && locations.length > 0) {
+            navigation.navigate('BRouter', { isLongPress, locations });
         }
     }
 
     const goToTrip = (leg: Leg) => {
         console.log('Navigation router run to Trip of Leg');
-        console.log('leg: ', leg);
         if (leg?.line && leg?.tripId) {
+            setLoading(true);
             client.trip(leg.tripId)
                 .then(trip => {
+                    setLoading(false);
                     navigation.navigate('Trip', { trip, line: leg.line, profile })
                 })
                 .catch((error) => {
+                    setLoading(false);
+                    console.log('There has been a problem with your tripsOfJourney operation: ' + error);
+                });
+        }
+    }
+
+    const goToTripOfLeg = (leg: Leg, showTransits: boolean) => {
+        console.log('Navigation router run to Trip of Leg');
+        if (leg?.line && leg?.tripId && leg.polyline) {
+            setLoading(true);
+            client.tripOfLeg(leg.tripId, leg.origin, leg.destination, showTransits && hasNationalProduct(leg.line) ? leg.polyline : undefined)
+                .then(trip => {
+                    setLoading(false);
+                    navigation.navigate('Trip', { trip, line: leg.line, profile })
+                })
+                .catch((error) => {
+                    setLoading(false);
                     console.log('There has been a problem with your tripsOfJourney operation: ' + error);
                 });
         }
@@ -118,6 +117,11 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         else if (loadFactor === 'very-high') return t('JourneyplanScreen.very-high');
         else if (loadFactor === 'exceptionally-high') return t('JourneyplanScreen.exceptionally-high');
         else return 'unbekannt';
+    }
+
+    const hasNationalProduct = (line?: Line) => {
+        const productsOfLines = ["nationalExpress", "national"];
+        return productsOfLines.find(p => line?.product === p);
     }
 
     const legLineName = (leg: Leg) => {
@@ -187,6 +191,19 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                             <Text style={styles.itemWarningTextJourneyPlan}>{`${t('JourneyplanScreen.ConnectionNotAccessible')}`}</Text>
                         }
 
+                        {!item.walking &&
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                                <TouchableOpacity onPress={() => goToTripOfLeg(item, false)}>
+                                    <Text style={styles.itemDetailsText}>{asLinkText('Fahrtverlauf')}</Text>
+                                </TouchableOpacity>
+                                {hasNationalProduct(item.line) &&
+                                    <TouchableOpacity onPress={() => goToTripOfLeg(item, true)}>
+                                        <Text style={{ paddingLeft: 5 }}>{asLinkText('mit Durchfahrten')}</Text>
+                                    </TouchableOpacity>
+                                }
+                            </View>
+                        }
+
                         <TouchableOpacity onPress={() => goToTrip(item)}>
                             <Text style={styles.itemDetailsText}>{asLinkText(legLineName(item))}</Text>
                         </TouchableOpacity>
@@ -218,6 +235,25 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
     const departure = momentWithTimezone(journeyInfo.originDeparture, journeyInfo.originLocation);
     const arrival = momentWithTimezone(journeyInfo.destinationArrival, journeyInfo.destinationLocation);
+
+    const renderFooter = () => {
+        if (!loading) return null;
+
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    paddingVertical: 20,
+                    borderTopWidth: 1,
+                    borderColor: "#CED0CE"
+                }}
+            >
+                <ActivityIndicator size="small" color="#0000ff" />
+            </View>
+        );
+    };
+
 
     return (
         <View style={styles.container}>
@@ -254,6 +290,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     )}
                     keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
                     ItemSeparatorComponent={renderSeparator}
+                    ListFooterComponent={renderFooter}
                     onEndReachedThreshold={50}
                 />
                 <View style={{ paddingLeft: 20 }}>

@@ -145,6 +145,9 @@ export const styles = StyleSheet.create({
   itemDetailsText: {
     paddingLeft: 50,
   },
+  itemDetailsTextTransit: {
+    paddingLeft: 50,
+  },
   buttonJourneyPlan: {
     flexGrow: 1,
     alignItems: 'center',

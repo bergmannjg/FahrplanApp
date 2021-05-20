@@ -95,6 +95,32 @@ const locations2params = (locations: Location[]) => {
     }
 }
 
+const pois2params = (locations: Location[]) => {
+    try {
+        const from = locations[0];
+        const to = locations[locations.length - 1];
+
+        let s = '';
+        if (locations.length > 2) {
+            for (let n = 1; n < locations.length - 1; n++) {
+                const curr = locations[n];
+                s = s + curr.longitude + ',' + curr.latitude + ',' + (curr.name ?? '') + ';'
+            }
+        }
+
+        const lonlat =
+            from.longitude + ',' + from.latitude + ',' + (from.name ?? '')
+            + ';'
+            + s
+            + to.longitude + ',' + to.latitude + ',' + (to.name ?? '');
+
+        return lonlat;
+    }
+    catch (e) {
+        return '';
+    }
+}
+
 const distance2zoom = (d: number) => {
     let zoom = 10;
     if (d < 3) zoom = 16;
@@ -150,11 +176,13 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
 
     const { params }: { params: BRouterScreenParams } = route;
     const locations = noramlizelocations(params.locations);
+    const pois = params.pois;
     const p = locations2params(locations);
+    const o = pois ? pois2params(pois) : '';
     const isCar = !!params.isCar;
     const profile = isCar ? 'car-fast' : 'rail';
     // the query string may change, it reflects the brouter api
-    const uri = `https://brouter.de/brouter-web/#map=${p.map}/osm-mapnik-german_style&lonlats=${p.lonlats}&profile=${profile}`;
+    const uri = `https://brouter.de/brouter-web/#map=${p.map}/osm-mapnik-german_style&lonlats=${p.lonlats}&pois=${o}&profile=${profile}`;
     console.log('uri: ', uri);
 
     Clipboard.setString(uri);

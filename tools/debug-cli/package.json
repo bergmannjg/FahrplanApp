@@ -15,12 +15,20 @@
         "node-fetch": "^2.6.1"
     },
     "devDependencies": {
+        "@babel/compat-data": "^7.12.13",
+        "@babel/core": "^7.12.16",
+        "@babel/preset-env": "^7.12.16",
         "@types/node": "^13.11.0",
-        "@types/node-fetch": "^2.5.7"
+        "@types/node-fetch": "^2.5.7",
+        "babel-loader": "^8.2.2",
+        "ts-loader": "^9.2.1",
+        "webpack": "^5.22.0",
+        "webpack-cli": "^4.5.0",
+        "webpack-node-externals": "^2.5.2"
     },
     "scripts": {
         "update-fs-hafas-client": "rm package-lock.json && rm -rf node_modules/fs-hafas-client/ && npm install",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "npx webpack --config webpack.config.js"
     },
     "author": "",
     "license": "ISC"
