@@ -3,10 +3,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { View, TouchableOpacity, Text, Button } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomAutocomplete from './components/CustomAutocomplete';
 import { useTranslation } from 'react-i18next';
 import { hafas } from '../lib/hafas';
-import type { Alternative, Location } from 'hafas-client';
+import type { Location } from 'hafas-client';
 import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import RadioForm from 'react-native-simple-radio-button';
@@ -40,8 +41,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const [clientProfile, setClientProfile] = useState('db-fsharp');
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date(Date.now()));
+  const [showDate, setShowDate] = useState(false);
   const [transferTime, setTransferTime] = useState(8);
   const [searchType, setSearchType] = useState('Verbindungen');
+  const [mode, setMode] = useState<'date' | 'time'>('date');
 
   const headerRight = () => (
     <View style={{ backgroundColor: '#F5FCFF' }}>
@@ -113,11 +116,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setTransferTime(route.params.transferTime);
   }
 
-  // route.params from DateTimeScreen
-  if (route.params?.date !== undefined && route.params?.date !== date.valueOf()) {
-    setDate(new Date(route.params.date));
-  }
-
   // route.params from NearbyScreen
   if (route.params?.station !== undefined && route.params?.station !== nearbyStation) {
     setNearbyStation(route.params.station);
@@ -130,6 +128,15 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   console.log('date: ', date);
 
   const client = hafas(clientProfile);
+
+  const onChangeDate = (event: Event, selectedDate: Date | undefined) => {
+    setShowDate(false);
+    if (selectedDate) setDate(selectedDate);
+  }
+
+  const setDateNow = () => {
+    setDate(new Date());
+  }
 
   const setAndSaveStation1 = (s: string) => {
     setStation1(s);
@@ -152,12 +159,12 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const searchNearby = () => {
     console.log('searchNearby, profile:', profile);
-    navigation.navigate('Nearby', { profile: clientProfile, distance: 2000, searchBusStops: false });
+    navigation.navigate('Nearby', { profile: clientProfile, distance: 1000, searchBusStops: false });
   }
 
   const searchRadar = () => {
     console.log('searchRadar, profile:', profile);
-    navigation.navigate('Radar', { profile: clientProfile });
+    navigation.navigate('Radar', { profile: clientProfile, duration: 10 });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -170,11 +177,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {
-    navigation.navigate('DateTime', { navigationParams: { date: date.valueOf(), mode } });
-  }
-
-  const setDateNow = () => {
-    setDate(new Date(Date.now()));
+    setMode(mode);
+    setShowDate(true);
   }
 
   const switchStations = () => {
@@ -216,7 +220,20 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   return (
     <View style={styles.container}>
 
-      { orientation === 'PORTRAIT' &&
+      { showDate &&
+        <DateTimePicker
+          minimumDate={new Date(new Date().getFullYear() - 1, 0, 1)}
+          maximumDate={new Date(new Date().getFullYear() + 1, 11, 31)}
+          value={new Date(date)}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={onChangeDate}
+        />
+      }
+
+      {
+        orientation === 'PORTRAIT' &&
         <View style={stylesPortrait.containerButtons} >
           <View style={styles.autocompleteContainerFrom}>
             <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
@@ -251,7 +268,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       }
 
-      { orientation === 'LANDSCAPE' &&
+      {
+        orientation === 'LANDSCAPE' &&
         <View style={stylesLandscape.containerButtons} >
           <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
           <Text style={{ paddingHorizontal: 5 }} />
@@ -271,7 +289,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       </View>
 
-      { orientation === 'PORTRAIT' &&
+      {
+        orientation === 'PORTRAIT' &&
         <View style={styles.containerSearch}>
           <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections()}>
             <Text style={styles.itemText}>
@@ -281,7 +300,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       }
 
-      { orientation === 'PORTRAIT' &&
+      {
+        orientation === 'PORTRAIT' &&
         <View
           style={{
             borderBottomColor: 'black',
@@ -293,7 +313,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
           }}
         />
       }
-      { orientation === 'PORTRAIT' &&
+      {
+        orientation === 'PORTRAIT' &&
         <View style={styles.containerSearch}>
           <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchNearby()}>
             <Text style={styles.itemText}>
@@ -302,7 +323,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
           </TouchableOpacity>
         </View>
       }
-      { orientation === 'PORTRAIT' &&
+      {
+        orientation === 'PORTRAIT' &&
         <View style={styles.containerSearch}>
           <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchRadar()}>
             <Text style={styles.itemText}>
@@ -312,7 +334,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       }
 
-      { orientation === 'LANDSCAPE' &&
+      {
+        orientation === 'LANDSCAPE' &&
         <View style={styles.containerSearch}>
           <RadioForm
             formHorizontal={true}
@@ -322,7 +345,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
           />
         </View>
       }
-      { orientation === 'LANDSCAPE' &&
+      {
+        orientation === 'LANDSCAPE' &&
         <View style={styles.containerSearch}>
           <TouchableOpacity style={styles.buttonContained} onPress={() => search()}>
             <Text style={styles.itemText}>
@@ -332,6 +356,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         </View>
       }
 
-    </View>
+    </View >
   );
 }

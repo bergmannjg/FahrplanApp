@@ -17,7 +17,6 @@ import TrainformationScreen from './Trainformation';
 import WagonimageScreen from './Wagonimage'
 import OptionsScreen from './Options';
 import BRouterScreen from './BRouter';
-import DateTimeScreen from './DateTime';
 import TripScreen from './Trip';
 import WebViewScreen from './WebView';
 import ThirdPartyLicensesScreen from './third-party-licenses';
@@ -120,11 +119,6 @@ function RootStackScreen(): JSX.Element {
         name="Options"
         component={OptionsScreen}
         options={{ title: t('OptionsScreen.Title') }}
-      />
-      <RootStack.Screen
-        name="DateTime"
-        component={DateTimeScreen}
-        options={{ title: t('DateTimeScreen.Title') }}
       />
       <RootStack.Screen
         name="ThirdPartyLicenses"

@@ -44,12 +44,14 @@
     "NearbyScreen": {
         "Title": "Stationen in der Nähe",
         "IncrDistance": "Entfernung erweitern",
-        "Distance": "Entfernung" 
+        "Distance": "Entfernung"
     },
     "RadarScreen": {
         "Title": "Busse und Bahnen in der Nähe",
         "DirectionTo": "nach",
-        "NextStop": "nächster Halt"
+        "NextStop": "nächster Halt",
+        "Duration": "Zeitspanne",
+        "IncrDuration": "Zeitspanne erweitern"
     },
     "TrainformationScreen": {
         "Title": "Wagenreihung",

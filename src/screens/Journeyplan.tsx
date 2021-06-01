@@ -9,9 +9,14 @@ import { Hafas, JourneyInfo } from '../lib/hafas';
 import { Location, Leg, Line } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
-import { hafas, isStop4Routes } from '../lib/hafas';
+import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
+import { LogBox } from 'react-native'
+
+LogBox.ignoreLogs([
+	'VirtualizedLists should never be nested', // warning of FlatList in ScrollView, ignored cause list of legs is small 
+])
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Journeyplan'>;
@@ -73,10 +78,11 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         console.log('Navigation router run to Trip of Leg');
         if (leg?.line && leg?.tripId && leg.polyline) {
             setLoading(true);
-            client.tripOfLeg(leg.tripId, leg.origin, leg.destination, showTransits && hasNationalProduct(leg.line) ? leg.polyline : undefined)
+            const showAsTransits = showTransits && hasNationalProduct(leg.line) && leg.polyline != undefined;
+            client.tripOfLeg(leg.tripId, leg.origin, leg.destination, showAsTransits ? leg.polyline : undefined)
                 .then(trip => {
                     setLoading(false);
-                    navigation.navigate('Trip', { trip, line: leg.line, profile })
+                    navigation.navigate('Trip', { trip, line: leg.line, profile, showAsTransits })
                 })
                 .catch((error) => {
                     setLoading(false);
@@ -119,9 +125,9 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         else return 'unbekannt';
     }
 
-    const hasNationalProduct = (line?: Line) => {
+    const hasNationalProduct = (line?: Line): boolean => {
         const productsOfLines = ["nationalExpress", "national"];
-        return productsOfLines.find(p => line?.product === p);
+        return productsOfLines.find(p => line?.product === p) !== undefined;
     }
 
     const legLineName = (leg: Leg) => {

@@ -30,7 +30,7 @@ const getAddress = (latitude: number, longitude: number): Promise<string | undef
 export function getCurrentPosition(): Promise<Location> {
     const promise = GetLocation.getCurrentPosition({
         enableHighAccuracy: true,
-        timeout: 3000,
+        timeout: 5000,
     }).then(location => {
         console.log('getCurrentPosition:', location);
         const currLoc = {

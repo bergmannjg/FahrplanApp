@@ -24,7 +24,7 @@ const locations = () => {
 
 const filterLines = (lines?: readonly Line[]): string[] => {
     return lines
-        ? lines?.filter(l => l.name && l.mode?.toString().toLowerCase() === 'train' && !l.name?.startsWith('Bus') && !l.name?.startsWith('S')).map(l => l.name ?? '')
+        ? lines?.filter(l => l.name && l.mode === 'train' && !l.name?.startsWith('Bus') && !l.name?.startsWith('S')).map(l => l.name ?? '')
         : [];
 }
 
@@ -37,13 +37,13 @@ const journeys = () => {
                     console.log('leg: ', l.tripId, l.origin?.name, l.destination?.name, l.line?.name, l.line?.product, l.line?.fahrtNr, l.plannedDeparture)
 
                     if (l.tripId
-                        && l.tripId === '1|321004|0|80|20052021'
+                        // && l.tripId === '1|321004|0|80|20052021'
                     ) {
                         client.tripOfLeg(l.tripId, l.origin, l.destination, l.polyline)
                             .then(trip => {
                                 console.log('leg: ', l.tripId, l.origin?.name, l.destination?.name, l.line?.name, l.line?.product, l.line?.fahrtNr, l.plannedDeparture)
                                 trip.stopovers?.forEach(so => {
-                                    console.log('stop: ', so.stop?.name, so.stop?.location?.latitude, so.stop?.location?.longitude, so.stop?.station?.name, ' lines:', filterLines(so.stop?.lines).length);
+                                    console.log('stop: ', so.stop?.name, so.stop?.location?.latitude, so.stop?.location?.longitude, so.stop?.distance?.toFixed(3), ' lines:', filterLines(so.stop?.lines).length);
                                 })
                             })
                             .catch((error) => {

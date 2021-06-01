@@ -42,9 +42,9 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
             .then(location => {
                 console.log(location);
                 if (location.latitude && location.longitude) {
+                    const currLoc = [location] as readonly (Stop | Station | Location)[]
                     client.nearby(location.latitude, location.longitude, distance, searchBusStops ? trainModes : busModes)
                         .then(locations => {
-                            const currLoc = [location] as readonly (Stop | Station | Location)[]
                             const stops = currLoc.concat(locations);
                             setLoading(false);
                             setData(stops);
@@ -53,7 +53,7 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
                             console.log('There has been a problem with your nearby operation: ' + error);
                             console.log(error.stack);
                             setLoading(false);
-                            setData([]);
+                            setData(currLoc);
                         });
                 }
                 else {
@@ -120,11 +120,13 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
 
     const incrDistance = (): void => {
         setCount(count + 1);
+        setData([]);
         navigation.navigate('Nearby', { profile, distance: distance * 2, searchBusStops: searchBusStops });
     };
 
     const switchMode = (): void => {
         setCount(count + 1);
+        setData([]);
         navigation.navigate('Nearby', { profile, distance: distance, searchBusStops: !searchBusStops });
     };
 

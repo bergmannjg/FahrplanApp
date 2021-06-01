@@ -4,12 +4,14 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { parseDatestring, extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
+import { useTranslation } from 'react-i18next';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, RadarScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { getCurrentPosition } from '../lib/location';
 import { Movement, StopOver, Location } from 'hafas-client';
-import { styles } from './styles';
+import { useOrientation } from './useOrientation';
+import { stylesPortrait, stylesLandscape, styles } from './styles';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Radar'>;
@@ -34,10 +36,13 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
         console.log('constructor RadarScreen');
     }
 
+    const { t } = useTranslation();
+
     const [data, setData] = useState([] as NextStop[]);
     const [loading, setLoading] = useState(false);
-    const [count] = useState(0);
+    const [count, setCount] = useState(0);
 
+    const duration = params.duration;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
 
@@ -107,7 +112,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
             .then(location => {
                 console.log(location);
 
-                client.radar(location)
+                client.radar(location, duration * 60)
                     .then(movements => {
                         console.log('movements', movements.length);
                         const dt = new Date();
@@ -130,6 +135,8 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                 setData([]);
             });
     };
+
+    const orientation = useOrientation();
 
     useEffect(() => {
         makeRemoteRequest();
@@ -185,8 +192,24 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
         }
     }
 
+    const incrDuration = (): void => {
+        setCount(count + 1);
+        setData([]);
+        navigation.navigate('Radar', { profile, duration: duration * 2 });
+    };
+
     return (
         <View style={styles.container}>
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
+                <Text style={styles.itemHeaderTextNearby}>
+                    {`${t('RadarScreen.Duration')} ${duration} min`}
+                </Text>
+                <TouchableOpacity style={styles.buttonNearby} onPress={() => incrDuration()} disabled={duration > 30}>
+                    <Text style={styles.itemButtonText}>
+                        {t('RadarScreen.IncrDuration')}
+                    </Text>
+                </TouchableOpacity>
+            </View>
             <View style={styles.container}>
                 <FlatList
                     data={data}
@@ -208,7 +231,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                             </ListItem.Content>
                         </ListItem>
                     )}
-                    keyExtractor={item => item.direction ? item.direction : ''}
+                    keyExtractor={item => item.direction && item.tripId ? item.direction + item.tripId : ''}
                     ItemSeparatorComponent={renderSeparator}
                     ListFooterComponent={renderFooter}
                     onEndReachedThreshold={50}

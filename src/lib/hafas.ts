@@ -1,4 +1,4 @@
-import createClient from 'hafas-client';
+import createClient, { Feature } from 'hafas-client';
 
 import bvgProfile, { products } from 'hafas-client/p/bvg';
 import cflProfile from 'hafas-client/p/cfl';
@@ -105,7 +105,7 @@ export interface Hafas {
     trip: (tripId?: string) => Promise<Trip>,
     tripOfLeg: (tripId: string, origin: Station | Stop | Location | undefined, destination: Station | Stop | Location | undefined, fc?: FeatureCollection) => Promise<Trip>,
     stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>, useTransits?: boolean, nationalProductsOfStops?: boolean) => Promise<Stop[]>,
-    radar: (loc: Location) => Promise<ReadonlyArray<Movement>>,
+    radar: (loc: Location, duration?: number) => Promise<ReadonlyArray<Movement>>,
     journeyInfo: (journey: Journey) => JourneyInfo,
     isStop: (s: Station | Stop | Location | undefined) => s is Stop,
     isLocation: (s: string | Station | Stop | Location | undefined) => s is Location,
@@ -356,7 +356,7 @@ export function hafas(profileName: string): Hafas {
         return await client.locations(from, { results });
     }
 
-    const radar = async (loc: Location): Promise<ReadonlyArray<Movement>> => {
+    const radar = async (loc: Location, duration?: number): Promise<ReadonlyArray<Movement>> => {
         if (client.radar && loc.latitude && loc.longitude) {
             const [southwest, northeast] = geolib.getBoundsOfDistance(
                 { latitude: loc.latitude, longitude: loc.longitude },
@@ -368,7 +368,7 @@ export function hafas(profileName: string): Hafas {
                 west: southwest.longitude,
                 south: southwest.latitude,
                 east: northeast.longitude
-            }, { results: 20, duration: 600 });
+            }, { results: 20, duration: duration });
         } else {
             return Promise.reject();
         }
@@ -432,15 +432,14 @@ export function hafas(profileName: string): Hafas {
         return deg * (Math.PI / 180)
     }
 
-    function distanceOfFeatureCollection(fc: createClient.FeatureCollection): number {
-        const latLonPoints =
-            fc.features.map(f => { return { lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] }; })
+    function getDistanceFromFeaturesInKm(f0: Feature, f1: Feature): number {
+        return getDistanceFromLatLonInKm(f0.geometry.coordinates[1], f0.geometry.coordinates[0], f1.geometry.coordinates[1], f1.geometry.coordinates[0]);
+    }
 
-        return latLonPoints.map((v, i) => {
+    function distanceOfFeatureCollection(fc: createClient.FeatureCollection): number {
+        return fc.features.map((v, i) => {
             if (i > 0) {
-                const prev = latLonPoints[i - 1]
-                const curr = latLonPoints[i]
-                return getDistanceFromLatLonInKm(prev.lat, prev.lon, curr.lat, curr.lon);
+                return getDistanceFromFeaturesInKm(fc.features[i - 1], fc.features[i]);
             }
             else {
                 return 0.0;
@@ -569,7 +568,7 @@ export function hafas(profileName: string): Hafas {
     const stopsInFeatureCollection = async (fc0: FeatureCollection, stopsInLeg: Stop[], products?: Products): Promise<Stop[]> => {
         if (!fc0 || fc0.features.length < 2) return [];
 
-        const fc = JSON.parse(JSON.stringify(fc0));
+        const fc: FeatureCollection = JSON.parse(JSON.stringify(fc0));
 
         const stopsInFcOrig = findStops(fc);
         stopsInLeg.forEach(s => {
@@ -591,6 +590,19 @@ export function hafas(profileName: string): Hafas {
                 }
             }
             const foundStopsInFc = findStops(fc);
+
+            let dist = 0;
+            fc.features.forEach((v, i) => {
+                if (i > 0) {
+                    dist = dist + getDistanceFromFeaturesInKm(fc.features[i - 1], fc.features[i]);
+
+                    const foundStopInFc = foundStopsInFc.find(f => f.index === i);
+                    if (foundStopInFc) {
+                        foundStopInFc.stop.distance = dist;
+                    }
+                }
+            });
+
             return foundStopsInFc.filter(si => stopsInFcOfLeg.find(sif => sif.stop.id === si.stop.id) || (!si.stop.station && filterLines(si.stop.lines).length > 0)).map(s => s.stop);
         }
         return [];

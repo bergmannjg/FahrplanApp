@@ -11,7 +11,6 @@ export interface HomeScreenParams {
     clientLib?: string;
     profile?: string,
     tripDetails?: boolean,
-    date?: number,
     transferTime?: number,
     station?: string | Location
 }
@@ -28,7 +27,7 @@ export interface OptionScreenParams {
 export interface DateTimeScreenParams {
     navigationParams: {
         date: number,
-        mode: 'date' | 'time' | 'datetime',
+        mode: 'date' | 'time',
     }
 }
 
@@ -73,7 +72,8 @@ export interface ConnectionsScreenParams {
 }
 
 export interface RadarScreenParams {
-    profile: string
+    profile: string;
+    duration: number;
 }
 
 export interface NearbyScreenParams {
@@ -104,7 +104,8 @@ export interface DepartureScreenParams {
 export interface TripScreenParams {
     trip: Trip,
     line?: Line;
-    profile: string
+    profile: string;
+    showAsTransits?: boolean;
 }
 
 export interface OpenStreetMapParams {

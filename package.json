@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
     "@react-native-community/clipboard": "^1.5.1",
+    "@react-native-community/datetimepicker": "^3.5.0",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
@@ -43,7 +44,6 @@
     "react-i18next": "^11.8.6",
     "react-native": "0.63.4",
     "react-native-autocomplete-input": "^4.2.0",
-    "react-native-date-picker": "^3.2.9",
     "react-native-device-info": "^8.0.1",
     "react-native-elements": "^3.2.0",
     "react-native-gesture-handler": "^1.10.1",

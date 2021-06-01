@@ -36,6 +36,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const { params }: { params: TripScreenParams } = route;
     const trip: Trip = params.trip;
+    const showAsTransits = params.showAsTransits;
     const line = params.line;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
@@ -161,8 +162,30 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         return cancelled ? "entfällt" : "";
     }
 
+    const transitInfo = (so: StopOver): string => {
+        if (so.plannedDeparture) {
+            return t('TripScreen.Time', { date: extractTimeOfDatestring(so.plannedDeparture) })
+        } else {
+            return 'Durchfahrt';
+        }
+    }
+
+    const nameInfo = (so: StopOver): string => {
+        const name = so.stop?.name ?? '';
+        if (name.length > 20) {
+            return name.substring(0, 18) + '...';
+        } else {
+            return name;
+        }
+    }
+
+    const distanceInfo = (so: StopOver): string => {
+        const dist = so.stop?.distance ? (', ' + so.stop?.distance.toFixed(0) + ' km') : '';
+        return dist;
+    }
+
     const OptionalItemBetween = ({ item }: { item: ItemType }) => {
-        if (item.p == PositionKind.Stop && item.s.plannedDeparture)
+        if (!showAsTransits && item.p == PositionKind.Stop && item.s.plannedDeparture)
             return (
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -183,7 +206,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                     <OptionalItemDelay item={item} />
                 </View>
             )
-        else if (item.p == PositionKind.Stop && item.s.plannedArrival)
+        else if (!showAsTransits && item.p == PositionKind.Stop && item.s.plannedArrival)
             return (
                 <View>
                     <Text style={styles.itemDetailsText}>
@@ -201,7 +224,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <TouchableOpacity onPress={() => showLocation(item.s.stop)}>
                             <Text style={styles.itemDetailsTextTransit}>
-                                Durchfahrt {`${asLinkText(item.s.stop?.name)}`}
+                                {`${transitInfo(item.s)} ${asLinkText(nameInfo(item.s) + distanceInfo(item.s))}`}
                                 <Text style={styles.itemWarningText}>
                                     {` ${cancelledInfo(item.s)}`}
                                 </Text>
