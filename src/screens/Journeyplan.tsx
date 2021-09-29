@@ -5,8 +5,8 @@ import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { Hafas, JourneyInfo } from '../lib/hafas';
-import { Location, Leg, Line } from 'hafas-client';
+import { Hafas, JourneyInfo, isStopover4Routes } from '../lib/hafas';
+import { Location, Leg, Line, Stop } from 'hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
@@ -15,7 +15,7 @@ import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { LogBox } from 'react-native'
 
 LogBox.ignoreLogs([
-	'VirtualizedLists should never be nested', // warning of FlatList in ScrollView, ignored cause list of legs is small 
+    'VirtualizedLists should never be nested', // warning of FlatList in ScrollView, ignored cause list of legs is small 
 ])
 
 type Props = {
@@ -43,14 +43,27 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     console.log('legs.length: ', legs.length);
 
     const showRailwayRoutes = () => {
-        console.log('showRailwayRoutes');
-        navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: showTransfers, originName: journeyInfo.originName, destinationName: journeyInfo.destinationName, journeyInfo });
+        console.log('Journeyplan showRailwayRoutes');
+        const stops = [] as Stop[];
+        journeyInfo.legs.forEach(leg => {
+            leg.stopovers?.forEach(stopover => {
+                if (client.isStop(stopover.stop)) {
+                    console.log('stop of leg:', stopover.stop?.name);
+                }
+                if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
+                    stops.push(stopover.stop);
+                }   
+            })
+        })
+        if (stops.length > 1) {
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+        }
     }
 
     const showRoute = async (isLongPress: boolean) => {
         console.log('showRoute.showTransfers: ', showTransfers);
 
-        const stops = await client.stopssOfJourney(journeyInfo, modes, showTransfers, showTransfers);
+        const stops = await client.stopssOfJourney(journeyInfo, modes, false, false);
         const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
         console.log('locations: ', locations.length);
         if (locations && locations.length > 0) {

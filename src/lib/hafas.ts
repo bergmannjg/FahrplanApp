@@ -126,6 +126,13 @@ export function isStop4Routes(stop: Stop): boolean {
     return !!stop.products?.nationalExpress || !!stop.products?.national;
 }
 
+export function isStopover4Routes(stopover: StopOver): boolean {
+    return isStop(stopover.stop)
+        && (!!stopover.plannedDeparture || !!stopover.plannedArrival
+            // conditions for transit stations
+            || isStop4Routes(stopover.stop))
+}
+
 export function getLocation(s: Station | Stop | Location | undefined): Location | undefined {
     if (isStop(s)) return s.location
     else if (isLocation(s)) return s
@@ -333,7 +340,7 @@ export function hafas(profileName: string): Hafas {
             }
             try {
                 const products = getProductsFromModes(modes ?? []);
-                const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results, departure, via: viaId, transferTime, polylines: true });
+                const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results, departure, via: viaId, transferTime, polylines: true, stopovers: true });
                 return res.journeys ?? [];
             } catch (e) {
                 const error = e as Error;
@@ -398,7 +405,7 @@ export function hafas(profileName: string): Hafas {
         const results = 20;
         console.log('station:', locationsOfStation[0].id, locationsOfStation[0].name);
         if (locationsOfStation[0].id) {
-            let alternatives = await client.departures(locationsOfStation[0].id, { duration, when });
+            let alternatives = await client.departures(locationsOfStation[0], { duration, when });
             alternatives = alternatives.filter(a => a.line && filterLine(a.line, modes, onlyLocalProducts));
             if (alternatives.length > results) {
                 alternatives = alternatives.slice(0, results);

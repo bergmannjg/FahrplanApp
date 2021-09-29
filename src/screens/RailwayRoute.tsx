@@ -4,11 +4,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
-import type { BetriebsstelleRailwayRoutePosition } from 'railwaytrip-to-railwayroute/dist/db-data';
-import { findRailwayRoute, findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { Location } from 'hafas-client';
 import { MainStackParamList, RailwayRouteScreenParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
+import { rinfFindRailwayRoutesOfLine, rinfGetLocationsOfPath, rinfToLineNodes, rinfGetLineName } from '../lib/rinf-data-railway-routes';
+import type { LineNode } from '../lib/rinf-data-railway-routes';
+import type { GraphNode } from 'rinf-data/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoute'>;
@@ -23,13 +24,13 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
 
-    const data: BetriebsstelleRailwayRoutePosition[] = findBetriebsstellenWithRailwayRoutePositionForRailwayRouteNr(railwayRouteNr).sort((a, b) => a.KM_I - b.KM_I);
-    const strecke = findRailwayRoute(railwayRouteNr);
-    const STRNAME = strecke?.STRNAME || '';
+    const graphNodes: GraphNode[] = rinfFindRailwayRoutesOfLine(railwayRouteNr);
+    const data: LineNode[] = rinfToLineNodes(graphNodes);
+    const STRNAME = rinfGetLineName(railwayRouteNr);
 
     const showRoute = async () => {
         if (data.length > 0) {
-            const locations: Location[] = data.filter(s => s.GEOGR_LAENGE > 0 && s.GEOGR_LAENGE > 0).map(s => { return { type: 'location', longitude: s.GEOGR_LAENGE, latitude: s.GEOGR_BREITE } })
+            const locations: Location[] = rinfGetLocationsOfPath(graphNodes).map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
             navigation.navigate('BRouter', { isLongPress: false, locations });
         }
     }
@@ -48,13 +49,13 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     };
 
     interface ItemProps {
-        item: BetriebsstelleRailwayRoutePosition
+        item: LineNode
     }
 
     const Item = ({ item }: ItemProps) => {
         return (
             <View style={styles.subtitleViewColumn}>
-                <Text>{`km: ${item.KM_L} ${item.BEZEICHNUNG}, max: ${item.maxSpeed ? item.maxSpeed + ' km' : 'unbekannt'}`}</Text>
+                <Text>{`km: ${item.km} ${item.name}${item.maxSpeed ? ', max: ' + item.maxSpeed + ' km' : ''}`}</Text>
             </View >
         );
     }
@@ -86,7 +87,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.KM_L}
+                keyExtractor={item => item.name}
                 ItemSeparatorComponent={renderSeparator}
                 onEndReachedThreshold={50}
             />

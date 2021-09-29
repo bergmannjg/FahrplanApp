@@ -38,3 +38,5 @@ android/app/.settings
 android/.project
 
 private_modules
+
+db-data/

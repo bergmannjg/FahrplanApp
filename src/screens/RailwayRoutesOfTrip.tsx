@@ -5,13 +5,13 @@ import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
-import type { RailwayRouteOfTrip } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
-import { findRailwayRoutesOfTrip, findRailwayRouteText, computeDistanceOfRoutes, findRailwayRoutePositionForRailwayRoutes } from 'railwaytrip-to-railwayroute/dist/db-data-railway-routes';
 import { Stop } from 'hafas-client';
 import { hafas, Hafas } from '../lib/hafas';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
+import { rinfToPathElement, rinfFindRailwayRoutesOfTripIBNRs, rinfComputeDistanceOfPath, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
+import type { GraphNode } from 'rinf-data/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -37,48 +37,46 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     console.log('journeyInfo.legs.length: ', journeyInfo?.legs.length);
     console.log('stops.length: ', stops?.length);
 
-    const findRailwayRoutes = (stopsOfRoute: Stop[]) => {
+    const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
         try {
-            return findRailwayRoutesOfTrip(stopsOfRoute.map(s => parseInt(s.id || "0", 10)))
+            const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
+            return rinfFindRailwayRoutesOfTripIBNRs(uics);
         } catch (ex) {
             console.error("findRailwayRoutesOfTrip", ex.message);
-            return {
-                railwayRoutes: [],
-                missing: 0
-            };
+            return [];
         }
     }
 
-    const [data, setData] = useState([] as RailwayRouteOfTrip[]);
+    const [path, setPath] = useState([] as GraphNode[]);
+    const [compactPath, setCompactData] = useState([] as GraphNode[]);
     const [loading, setLoading] = useState(true);
     const [distance, setDistance] = useState(0);
-    const [missing, setMissing] = useState(0);
 
     const orientation = useOrientation();
 
     useEffect(() => {
-        if (loading && data.length === 0) {
+        if (loading && path.length === 0) {
             if (journeyInfo) {
                 client.stopssOfJourney(journeyInfo, trainModes, showTransfers, showTransfers)
                     .then(stops => {
                         const result = findRailwayRoutes(stops)
                         setLoading(false);
-                        setDistance(computeDistanceOfRoutes(result.railwayRoutes));
-                        setData(result.railwayRoutes);
-                        setMissing(result.missing)
+                        setDistance(rinfComputeDistanceOfPath(result));
+                        setPath(result);
+                        setCompactData(rinfGetCompactPath(result));
                     })
                     .catch((error) => {
                         console.log('There has been a problem with your stopssOfJourney operation: ' + error);
                         console.log(error.stack);
                         setLoading(false);
-                        setData([]);
+                        setPath([]);
                     });
             } else if (stops) {
                 const result = findRailwayRoutes(stops)
                 setLoading(false);
-                setDistance(computeDistanceOfRoutes(result.railwayRoutes));
-                setData(result.railwayRoutes);
-                setMissing(result.missing)
+                setDistance(rinfComputeDistanceOfPath(result));
+                setPath(result);
+                setCompactData(rinfGetCompactPath(result));
 
             } else {
                 setLoading(false);
@@ -87,8 +85,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     });
 
     const showRoute = async (isLongPress: boolean) => {
-        if (data.length > 0) {
-            const locations: Location[] = findRailwayRoutePositionForRailwayRoutes(data, isLongPress).filter(s => s.GEOGR_LAENGE > 0 && s.GEOGR_LAENGE > 0).map(s => { return { type: 'location', longitude: s.GEOGR_LAENGE, latitude: s.GEOGR_BREITE } })
+        if (path.length > 0) {
+            const locations: Location[] = rinfGetLocationsOfPath(path).map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
             navigation.navigate('BRouter', { isLongPress: false, locations });
         }
     }
@@ -129,23 +127,23 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     };
 
     interface ItemProps {
-        item: RailwayRouteOfTrip
+        item: GraphNode
     }
 
+    // adhoc
     const normalizeString = (s: string) => {
-        // const re = / {2}/gi;
-        // return s.replace(re, '');
-        return s;
+        return s.replace('Berlin Hauptbahnhof - Lehrter Bahnhof', 'Berlin Hauptbahnhof');
     }
 
     const Item = ({ item }: ItemProps) => {
+        const element = rinfToPathElement(item);
         return (
             <View style={styles.subtitleViewColumn}>
-                <Text >{`${normalizeString(item.from?.name ?? '')} km: ${item.from?.railwayRoutePosition?.KM_L}`}</Text>
-                <TouchableOpacity onPress={() => showRailwayRoute(item.railwayRouteNr ?? 0)}>
-                    <Text style={styles.itemButtonTextRouteOfTrip}>{`${t('RailwayRoutesOfTripScreen.RailwayRoute')} ${item.railwayRouteNr} ${asLinkText(findRailwayRouteText(item.railwayRouteNr ?? 0))} `}</Text>
+                <Text >{`${normalizeString(element.from)} (${element.fromOPID}) km: ${element.startKm}`}</Text>
+                <TouchableOpacity onPress={() => showRailwayRoute(element.line)}>
+                    <Text style={styles.itemButtonTextRouteOfTrip}>{`${element.line} ${asLinkText(normalizeString(element.lineText))} `}</Text>
                 </TouchableOpacity>
-                <Text >{`${normalizeString(item.to?.name ?? '')} km: ${item.to?.railwayRoutePosition?.KM_L}`}</Text>
+                <Text >{`${normalizeString(element.to)} (${element.toOPID}) km: ${element.endKm}`}</Text>
             </View >
         );
     }
@@ -166,14 +164,9 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                 <Text style={styles.itemHeaderText}>
                     km: {distance.toFixed(2)}
                 </Text>
-                {(missing > 0) &&
-                    <Text style={styles.itemWarningText}>
-                        {`${missing} Verbindungen ohne Strecke`}
-                    </Text>
-                }
             </View>
             <FlatList
-                data={data}
+                data={compactPath}
                 renderItem={({ item }) => (
                     <ListItem containerStyle={{ borderBottomWidth: 0 }} >
                         <ListItem.Content>
@@ -181,7 +174,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.railwayRouteNr ? item.railwayRouteNr.toString() : ''}
+                keyExtractor={item => item.Node}
                 ItemSeparatorComponent={renderSeparator}
                 ListFooterComponent={renderFooter}
                 onEndReachedThreshold={50}

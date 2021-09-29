@@ -9,7 +9,7 @@ import { Location, Trip, StopOver, Line, Stop, Station } from 'hafas-client';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
-import { hafas, isStop4Routes } from '../lib/hafas';
+import { hafas, isStopover4Routes } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 
@@ -52,17 +52,13 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const data = trip.stopovers?.map((s, i): ItemType => { return { s: s, p: getPositionKind(i) } })
     const operatorName = trip.line?.operator?.name ?? '';
 
-    const isStopover4Routes = (stopover: StopOver) => {
-        return client.isStop(stopover.stop)
-            && (stopover.plannedDeparture || stopover.plannedArrival
-                // conditions for transit stations
-                || isStop4Routes(stopover.stop))
-    }
-
     const showRailwayRoutes = () => {
-        console.log('showRailwayRoutes');
+        console.log('Trip showRailwayRoutes');
         const stops = [] as Stop[];
         trip.stopovers?.forEach(stopover => {
+            if (client.isStop(stopover.stop)) {
+                console.log('stop of trip:', stopover.stop?.name);
+            }
             if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
                 stops.push(stopover.stop);
             }

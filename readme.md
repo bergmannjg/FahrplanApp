@@ -6,7 +6,7 @@ Android App to get timetable information for public transportation in germany an
 * supported languages: German and English,
 * uses [hafas-client](https://github.com/public-transport/hafas-client) or [fshafas](https://github.com/bergmannjg/fshafas) for timetable information,
 * routes will be shown in a map with [brouter web client](https://brouter.de/brouter-web),
-* uses [open data](https://github.com/bergmannjg/railwaytrip-to-railwayroute) from Deutsche Bahn to match journeys with railway route numbers, this provides a further way to get the rail line kilometers.
+* uses [RInfData](https://github.com/bergmannjg/RInfData) to match journeys with railway route numbers, this provides a further way to get the rail line kilometers.
 
 ## Installation
 
