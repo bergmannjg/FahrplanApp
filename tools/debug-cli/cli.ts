@@ -9,8 +9,8 @@ const profile = myArgs.indexOf("--fshafas") > 0 ? 'db-fsharp' : 'db';
 
 const client = hafas(profile);
 
-const locations = () => {
-    client.locations('Minden', 1)
+const locations = (name?: string) => {
+    name && client.locations(name, 5)
         .then(result => {
             result.forEach(s => {
                 if (client.isStop(s)) {
@@ -28,8 +28,8 @@ const filterLines = (lines?: readonly Line[]): string[] => {
         : [];
 }
 
-const journeys = () => {
-    client.journeys('Bünde', 'Hamburg', 3, undefined, 'Hannover')
+const journeys = (from?: string, to?: string, via?: string) => {
+    from && to && client.journeys(from, to, 3, undefined, via)
         .then(result => {
             result.forEach(j => {
                 console.log('price: ', j.price);
@@ -69,8 +69,8 @@ const journeys = () => {
         .catch(console.error);
 }
 
-const nearby = () => {
-    client.nearby(52.202139, 8.57383, 20000, ["train"], { nationalExpress: true, national: true, regionalExp: true, regional: true })
+const nearby = (lat?:string,lon?:string) => {
+    lat && lon && client.nearby(parseFloat(lat), parseFloat(lon), 20000, ["train"], { nationalExpress: true, national: true, regionalExp: true, regional: true })
         .then(result => {
             console.log('found:', result.length)
             result.forEach(s => {
@@ -85,13 +85,13 @@ const nearby = () => {
 
 switch (myArgs[0]) {
     case 'locations':
-        locations();
+        locations(myArgs[1]);
         break;
     case 'journeys':
-        journeys();
+        journeys(myArgs[1], myArgs[2], myArgs[3]);
         break;
     case 'nearby':
-        nearby();
+        nearby(myArgs[1], myArgs[2]);
         break;
     default:
         console.log('unkown argument: ', myArgs[0]);

@@ -548,7 +548,6 @@ export function hafas(profileName: string): Hafas {
             if (center.latitude && center.longitude) {
                 const dist = distanceOfFeatureCollectionSubset(fromI, toI, fc);
                 const result = await nearby(center.latitude, center.longitude, dist * 2 * 1000, ["train"], products)
-                console.log('nearby.result.length:', result.length, fromS.name, toS.name)
                 result.forEach(s => {
                     if (isStop(s)) {
                         const found = stopsInFc.find(sif => sif.stop.id === s.id)
