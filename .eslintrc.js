@@ -17,6 +17,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended"
   ],
   rules: {
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "react/display-name": 0
   }
 };

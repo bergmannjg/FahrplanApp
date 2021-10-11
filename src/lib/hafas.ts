@@ -319,6 +319,11 @@ export function hafas(profileName: string): Hafas {
         return products;
     }
 
+    interface HafasError {
+        isHafasError: boolean;
+        hafasErrorCode: string
+    }
+
     const journeys = async (from: string | Location, to: string | Location, results: number, departure?: Date, via?: string, transferTime?: number, modes?: string[]): Promise<ReadonlyArray<Journey>> => {
         if (!transferTime) transferTime = 10;
         const locationsFrom =
@@ -344,9 +349,9 @@ export function hafas(profileName: string): Hafas {
                 return res.journeys ?? [];
             } catch (e) {
                 const error = e as Error;
-                const isHafasError = e.isHafasError;
+                const isHafasError = (e as HafasError).isHafasError;
                 if (isHafasError) {
-                    console.log(error.message, ', hafasErrorCode: ', e.hafasErrorCode);
+                    console.log(error.message, ', hafasErrorCode: ', (e as HafasError).hafasErrorCode);
                     return [];
                 }
                 else {

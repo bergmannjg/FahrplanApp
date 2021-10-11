@@ -62,23 +62,24 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
                 setCount(count + 1);
             }}
             placeholder={props.placeholder}
-            keyExtractor={(item) => item.name ?? ""}
+            flatListProps={{
+                keyExtractor: (item) => item.name ?? "",
+                renderItem: ({ item }) =>
+                    <TouchableOpacity onPress={() => {
+                        const x = item.name ?? '';
+                        console.log('onPress: ', x);
+                        setQuery(x);
+                        setBahnhoefe([])
+                        onPress(x);
+                        Keyboard.dismiss();
+                    }}>
+                        <Text style={styles.itemText}>
+                            {item.name}
+                        </Text>
+                    </TouchableOpacity>
+            }}
             renderTextInput={(renderTextProps) => (
                 <TextInput {...renderTextProps} style={styles.itemText} />
-            )}
-            renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => {
-                    const x = item.name ?? '';
-                    console.log('onPress: ', x);
-                    setQuery(x);
-                    setBahnhoefe([])
-                    onPress(x);
-                    Keyboard.dismiss();
-                }}>
-                    <Text style={styles.itemText}>
-                        {item.name}
-                    </Text>
-                </TouchableOpacity>
             )}
         />
     );

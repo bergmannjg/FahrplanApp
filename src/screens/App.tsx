@@ -109,7 +109,7 @@ function MainStackScreen() {
 function RootStackScreen(): JSX.Element {
   const { t } = useTranslation();
   return (
-    <RootStack.Navigator mode="modal">
+    <RootStack.Navigator screenOptions={{ presentation: 'modal' }}>
       <RootStack.Screen
         name="Main"
         component={MainStackScreen}

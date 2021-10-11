@@ -42,7 +42,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
             const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
             return rinfFindRailwayRoutesOfTripIBNRs(uics);
         } catch (ex) {
-            console.error("findRailwayRoutesOfTrip", ex.message);
+            console.error("findRailwayRoutesOfTrip", (ex as Error).message);
             return [];
         }
     }
