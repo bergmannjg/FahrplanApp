@@ -24,14 +24,18 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
 
-    const graphNodes: GraphNode[] = rinfFindRailwayRoutesOfLine(railwayRouteNr);
+    const graphNodes: GraphNode[][] = rinfFindRailwayRoutesOfLine(railwayRouteNr);
     const data: LineNode[] = rinfToLineNodes(graphNodes);
     const STRNAME = rinfGetLineName(railwayRouteNr);
 
     const showRoute = async () => {
         if (data.length > 0) {
-            const locations: Location[] = rinfGetLocationsOfPath(graphNodes).map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
-            navigation.navigate('BRouter', { isLongPress: false, locations });
+            // todo: more buttons
+            const locationsOfPath = rinfGetLocationsOfPath(graphNodes.reduce((accumulator, value) => accumulator.concat(value), []));
+            if (locationsOfPath.length > 0) {
+                const locations: Location[] = locationsOfPath[0].map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
+                navigation.navigate('BRouter', { isLongPress: false, locations });
+            }
         }
     }
 

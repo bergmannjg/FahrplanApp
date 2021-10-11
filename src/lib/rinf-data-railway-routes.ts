@@ -1,12 +1,12 @@
 import { rinfgraph } from 'rinf-data/rinfgraph.bundle';
-import type { GraphNode, OpInfo, LineInfo, Location } from 'rinf-data/rinfgraph.bundle';
+import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-data/rinfgraph.bundle';
 
 interface Haltestelle {
     EVA_NR: number;
     DS100: string;
     Verkehr: string;
 }
- 
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const g = require('rinf-data/data/Graph.json') as GraphNode[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -15,18 +15,6 @@ const opInfos = require('rinf-data/data/OpInfos.json') as OpInfo[];
 const lineInfos = require('rinf-data/data/LineInfos.json') as LineInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const haltestellen = require('../../db-data/uic-to-opid.json') as Haltestelle[];
-
-interface PathElement {
-    from: string;
-    fromOPID: string;
-    to: string;
-    toOPID: string;
-    line: number;
-    lineText: string;
-    startKm: string;
-    endKm: string;
-    maxSpeed?: number;
-}
 
 interface LineNode {
     name: string;
@@ -40,7 +28,7 @@ const mapLines = lineInfos.reduce((map: Map<string, LineInfo>, line: LineInfo) =
 const graph = rinfgraph.Graph_toGraph(g);
 
 // missing data
-const missingDS100: Map<string, string> = new Map().set('EBILP', 'EBIL').set('UE  P', 'UE').set('MH  S', 'MH').set('BLS', 'BL');
+const missingDS100: Map<string, string> = new Map().set('EBILP', 'EBIL').set('UE  P', 'UE').set('MH  S', 'MH');
 
 function findDS100ForUicRef(uicref: number): string | undefined {
     const haltestelle = haltestellen.find(h => h.EVA_NR === uicref);
@@ -55,18 +43,11 @@ function rinfGetLineName(line: number): string {
 }
 
 function rinfToPathElement(n: GraphNode): PathElement {
-    const edge = n.Edges[0];
-    return {
-        from: mapOps.get(n.Node)?.Name ?? n.Node,
-        fromOPID: n.Node,
-        to: mapOps.get(edge.Node)?.Name ?? edge.Node,
-        toOPID: edge.Node,
-        line: parseInt(edge.Line, 10),
-        lineText: mapLines.get(edge.Line)?.Name ?? edge.Line,
-        startKm: edge.StartKm.toFixed(3),
-        endKm: edge.EndKm.toFixed(3),
-        maxSpeed: edge.MaxSpeed
-    }
+    return rinfgraph.Graph_toPathElement(mapOps, mapLines, n);
+}
+
+function rinfIsWalkingPath(n: GraphNode): boolean {
+    return rinfgraph.Graph_isWalkingPath(n);
 }
 
 function rinfToLineNode(n: GraphNode): LineNode {
@@ -78,7 +59,7 @@ function rinfToLineNode(n: GraphNode): LineNode {
     }
 }
 
-function rinfToLineNodes(nodes: GraphNode[]): LineNode[] {
+function toLineNodes(nodes: GraphNode[]): LineNode[] {
     if (nodes.length === 0) return [];
     const lastNode = nodes[nodes.length - 1];
     const lastElement: LineNode = {
@@ -89,6 +70,10 @@ function rinfToLineNodes(nodes: GraphNode[]): LineNode[] {
     return nodes.map(n => rinfToLineNode(n)).concat([lastElement]);
 }
 
+function rinfToLineNodes(nodesList: GraphNode[][]): LineNode[] {
+    return nodesList.map(nodes => toLineNodes(nodes))
+        .reduce((accumulator, value) => accumulator.concat(value), []);
+}
 function removeDuplicates(arr: Array<number>) {
     const temp: Array<number> = [];
     for (let i = 0; i < arr.length; i++) {
@@ -130,12 +115,11 @@ function rinfFindRailwayRoutesOfTrip(ids: string[]): GraphNode[] {
     return rinfgraph.Graph_getShortestPathFromGraph(g, graph, ids);
 }
 
-function rinfFindRailwayRoutesOfLine(line: number): GraphNode[] {
+function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {
     return lineInfos
         .filter(li => li.Line === line.toString())
         .map(li => rinfgraph.Graph_getPathOfLineFromGraph(g, graph, li))
-        .reduce((acc, value) => acc.concat(value), [])
-        .sort((a, b) => a.Edges[0].StartKm - b.Edges[0].StartKm);
+        .sort((a, b) => a[0].Edges[0].StartKm - b[0].Edges[0].StartKm);
 }
 
 function rinfFindRailwayRoutesOfTripIBNRs(uic_refs: number[]): GraphNode[] {
@@ -149,7 +133,7 @@ function rinfGetCompactPath(path: GraphNode[]): GraphNode[] {
     return rinfgraph.Graph_getCompactPath(path);
 }
 
-function rinfGetLocationsOfPath(path: GraphNode[]): Location[] {
+function rinfGetLocationsOfPath(path: GraphNode[]): Location[][] {
     return rinfgraph.Graph_getLocationsOfPath(g, mapOps, path);
 }
 
@@ -159,6 +143,6 @@ function rinfComputeDistanceOfPath(path: GraphNode[]): number {
     }, 0)
 }
 
-export { rinfToPathElement, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripIBNRs, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
+export { rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripIBNRs, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
 
 export type { PathElement, LineNode }

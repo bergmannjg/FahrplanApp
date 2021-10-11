@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, VirtualizedList } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
@@ -10,8 +10,8 @@ import { hafas, Hafas } from '../lib/hafas';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
-import { rinfToPathElement, rinfFindRailwayRoutesOfTripIBNRs, rinfComputeDistanceOfPath, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
-import type { GraphNode } from 'rinf-data/rinfgraph.bundle';
+import { rinfToPathElement, rinfIsWalkingPath, rinfFindRailwayRoutesOfTripIBNRs, rinfComputeDistanceOfPath, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
+import type { GraphNode, Location as RInfLocation } from 'rinf-data/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -51,6 +51,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const [compactPath, setCompactData] = useState([] as GraphNode[]);
     const [loading, setLoading] = useState(true);
     const [distance, setDistance] = useState(0);
+    const [locationsOfPath, setLocationsOfPath] = useState([] as RInfLocation[][]);
+    const [locationsOfPathIndexes, setLocationsOfPathIndexes] = useState([] as number[]);
 
     const orientation = useOrientation();
 
@@ -64,29 +66,41 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                         setDistance(rinfComputeDistanceOfPath(result));
                         setPath(result);
                         setCompactData(rinfGetCompactPath(result));
+                        const locations = rinfGetLocationsOfPath(result);
+                        setLocationsOfPath(locations);
+                        const indexes = [...locations.keys()];
+                        console.log('indexes:', indexes);
+                        setLocationsOfPathIndexes(indexes);
                     })
                     .catch((error) => {
                         console.log('There has been a problem with your stopssOfJourney operation: ' + error);
                         console.log(error.stack);
                         setLoading(false);
                         setPath([]);
+                        setLocationsOfPath([]);
                     });
             } else if (stops) {
                 const result = findRailwayRoutes(stops)
                 setLoading(false);
+                const locations = rinfGetLocationsOfPath(result);
+                console.log('locations:', locations.length);
+                const indexes = [...locations.map((_, i) => i)];
+                console.log('indexes:', indexes);
+
                 setDistance(rinfComputeDistanceOfPath(result));
                 setPath(result);
                 setCompactData(rinfGetCompactPath(result));
-
+                setLocationsOfPath(locations);
+                setLocationsOfPathIndexes(indexes);
             } else {
                 setLoading(false);
             }
         }
     });
 
-    const showRoute = async (isLongPress: boolean) => {
-        if (path.length > 0) {
-            const locations: Location[] = rinfGetLocationsOfPath(path).map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
+    const showRoute = async (index: number) => {
+        if (locationsOfPath[index].length > 0) {
+            const locations: Location[] = locationsOfPath[index].map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
             navigation.navigate('BRouter', { isLongPress: false, locations });
         }
     }
@@ -126,36 +140,65 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         );
     };
 
-    interface ItemProps {
-        item: GraphNode
-    }
-
     // adhoc
     const normalizeString = (s: string) => {
         return s.replace('Berlin Hauptbahnhof - Lehrter Bahnhof', 'Berlin Hauptbahnhof');
     }
 
+    interface ItemProps {
+        item: GraphNode
+    }
+
     const Item = ({ item }: ItemProps) => {
         const element = rinfToPathElement(item);
+        const isWalking = rinfIsWalkingPath(item); // todo
         return (
             <View style={styles.subtitleViewColumn}>
-                <Text >{`${normalizeString(element.from)} (${element.fromOPID}) km: ${element.startKm}`}</Text>
-                <TouchableOpacity onPress={() => showRailwayRoute(element.line)}>
-                    <Text style={styles.itemButtonTextRouteOfTrip}>{`${element.line} ${asLinkText(normalizeString(element.lineText))} `}</Text>
-                </TouchableOpacity>
-                <Text >{`${normalizeString(element.to)} (${element.toOPID}) km: ${element.endKm}`}</Text>
+                <Text >{`${normalizeString(element.From)} (${element.FromOPID}) km: ${element.StartKm}`}</Text>
+                {isWalking ?
+                    <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
+                    :
+                    <TouchableOpacity onPress={() => showRailwayRoute(parseInt(element.Line))}>
+                        <Text style={styles.itemButtonTextRouteOfTrip}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                    </TouchableOpacity>
+                }
+                <Text >{`${normalizeString(element.To)} (${element.ToOPID}) km: ${element.EndKm}`}</Text>
             </View >
+        );
+    }
+
+    interface RouteItemProps {
+        item: number,
+    }
+
+    const RouteItem = ({ item }: RouteItemProps) => {
+        const len = locationsOfPathIndexes.length;
+        const txt = len > 1 ? (item + 1).toString() : ''
+        console.log('RouteItem: ', item, len)
+        return (
+            <View style={styles.subtitleButtonColumn}>
+                <TouchableOpacity style={styles.buttonRoute} onPress={() => showRoute(item)}>
+                    <Text style={styles.itemButtonText}>
+                        {t('JourneyplanScreen.ShowRoute')} {txt}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         );
     }
 
     return (
         <View style={styles.container}>
-            <View style={{ padding: 10 }}>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
-                    <Text style={styles.itemButtonText}>
-                        {t('JourneyplanScreen.ShowRoute')}
-                    </Text>
-                </TouchableOpacity>
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+                <VirtualizedList
+                    data={locationsOfPathIndexes}
+                    renderItem={({ item }) => (
+                        <RouteItem item={item as number} />
+                    )}
+                    getItem={(date, index) => locationsOfPathIndexes[index]}
+                    getItemCount={() => locationsOfPathIndexes.length}
+                    keyExtractor={(item: number) => item.toString()}
+                    ListFooterComponent={null}
+                />
             </View>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
                 <Text style={styles.itemHeaderText}>

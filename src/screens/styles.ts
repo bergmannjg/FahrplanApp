@@ -1,3 +1,4 @@
+
 import { StyleSheet } from "react-native";
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
@@ -36,6 +37,7 @@ export const stylesLandscape = StyleSheet.create({
 
 export const styles = StyleSheet.create({
   container: {
+    display:"flex",
     flex: 1,
     flexDirection: 'column',
   },
@@ -95,6 +97,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 10,
     paddingTop: 5
+  },
+  subtitleButtonColumn: {
+    flexDirection: 'column',
+    borderWidth: 0,
+    padding:10
   },
   itemWarningText: {
     color: 'red',
@@ -156,6 +163,14 @@ export const styles = StyleSheet.create({
     margin: 2,
     minWidth: 200
   },
+  buttonRoute: {
+    flexGrow: 1,
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 0,
+    margin: 0,
+    minWidth: 300
+  },
   buttonNearby: {
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
@@ -201,7 +216,7 @@ export const styles = StyleSheet.create({
   itemButtonTextRouteOfTrip: {
     paddingLeft: 10,
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'left'
   },
 });
 

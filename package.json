@@ -57,7 +57,7 @@
     "react-native-tcp": "^4.0.0",
     "react-native-vector-icons": "^8.0.0",
     "react-native-webview": "^11.2.3",
-    "rinf-data": "file:../RInfData/src/RInfGraph/rinf-data-1.0.2.tgz",
+    "rinf-data": "file:../RInfData/src/RInfGraph/rinf-data-1.0.3.tgz",
     "slugg": "^1.2.1",
     "stream-browserify": "^3.0.0",
     "tz-lookup": "^6.1.25",
