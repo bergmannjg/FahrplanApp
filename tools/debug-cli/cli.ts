@@ -16,7 +16,7 @@ const locations = (name?: string) => {
                 if (client.isStop(s)) {
                     console.log(s.id, s.name);
                 }
-                console.log(s);
+                // console.log(s);
             });
         })
         .catch(console.error);

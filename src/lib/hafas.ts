@@ -1,4 +1,4 @@
-import createClient, { Feature } from 'hafas-client';
+import createClient, { Feature, ProductType, Profile } from 'hafas-client';
 
 import bvgProfile, { products } from 'hafas-client/p/bvg';
 import cflProfile from 'hafas-client/p/cfl';
@@ -32,13 +32,8 @@ const geolib = require('geolib');
 require('isomorphic-fetch');
 
 const chooseClient = (p: string, profile: createClient.Profile) => {
-    switch (p) {
-        case 'bvg-fsharp': return fshafas.createClient('bvg');
-        case 'db-fsharp': return fshafas.createClient('db');
-        default: {
-            return createClient(profile, 'agent');
-        }
-    }
+    if (p.endsWith('-fsharp')) return fshafas.createClient(profile);
+    else return createClient(profile, 'agent');
 }
 
 const chooseProfile = (p: string): createClient.Profile => {
@@ -64,8 +59,8 @@ const chooseProfile = (p: string): createClient.Profile => {
         case 'vbn': return vbnProfile;
         case 'vmt': return vmtProfile;
         case 'vsn': return vsnProfile;
-        case 'bvg-fsharp': return fshafas.getProfile('bvg');
-        case 'db-fsharp': return fshafas.getProfile('db');
+        case 'bvg-fsharp': return fshafas.bvgProfile;
+        case 'db-fsharp': return fshafas.dbProfile;
         default: {
             console.log('choose default');
             return dbProfile;

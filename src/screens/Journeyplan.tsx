@@ -331,7 +331,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                                 </ListItem.Content>
                             </ListItem>
                         )}
-                        keyExtractor={item => item.summary ?? ''}
+                        keyExtractor={item => (item.summary ?? '') + item.text.length}
                         ItemSeparatorComponent={renderSeparator}
                         onEndReachedThreshold={50}
                     />
