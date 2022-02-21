@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, TouchableOpacity, Text, Button } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';

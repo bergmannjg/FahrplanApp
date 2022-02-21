@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ListRenderItem, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
@@ -131,6 +131,23 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     );
   };
 
+  const renderItem: ListRenderItem<JourneyInfo> = ({ item }) => (
+    <ListItem onPress={() => { goToView(item) }} containerStyle={{ borderBottomWidth: 0 }}>
+      <ListItem.Content>
+        <ListItem.Title>
+          <Text style={styles.summaryText}>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${item.distance} km`}</Text>
+        </ListItem.Title>
+        <ListItem.Subtitle>
+          <View style={styles.subtitleViewColumn}>
+            <Text>{`${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.lineNames}`}</Text>
+            {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
+            {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
+            {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
+          </View>
+        </ListItem.Subtitle>
+      </ListItem.Content>
+    </ListItem>);
+
   return (
     <View style={styles.container}>
       <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
@@ -161,23 +178,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
       <View style={styles.container}>
         <FlatList
           data={data}
-          renderItem={({ item }) => (
-            <ListItem onPress={() => { goToView(item) }} containerStyle={{ borderBottomWidth: 0 }} >
-              <ListItem.Content>
-                <ListItem.Title>
-                  <Text style={styles.summaryText}>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${item.distance} km`}</Text>
-                </ListItem.Title>
-                <ListItem.Subtitle>
-                  <View style={styles.subtitleViewColumn}>
-                    <Text>{`${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.lineNames}`}</Text>
-                    {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
-                    {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
-                    {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
-                  </View>
-                </ListItem.Subtitle>
-              </ListItem.Content>
-            </ListItem>
-          )}
+          renderItem={renderItem}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={renderSeparator}
           ListFooterComponent={renderFooter}

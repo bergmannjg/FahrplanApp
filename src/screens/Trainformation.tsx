@@ -202,7 +202,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
                 <FlatList
                     data={data}
                     renderItem={({ item }) => (
-                        <ListItem containerStyle={{ borderBottomWidth: 0 }} >
+                        <ListItem containerStyle={{ borderBottomWidth: 0 }}>
                             <ListItem.Content>
                                 <ListItem.Title>{`Wagen ${item.wagenordnungsnummer}`}</ListItem.Title>
                                 <ListItem.Subtitle><Item item={item} /></ListItem.Subtitle>

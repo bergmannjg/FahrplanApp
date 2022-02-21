@@ -10,6 +10,7 @@ Android App to get timetable information for public transportation in germany an
 
 ## Installation
 
+* restore db-data: `./scripts/restore-data.sh`
 * install packages: `npm install`
 * compile: `tsc`
 * run tests: `npm test`

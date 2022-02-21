@@ -84,7 +84,7 @@ function removeDuplicates(arr: Array<number>) {
 
 function ds100ToUOPID(ds100pattern: string) {
     const ds100 = ds100pattern.split(',')[0];
-    return 'DE' + ' '.repeat(5 - ds100.length) + ds100;
+    return 'DE' + '0'.repeat(5 - ds100.length) + ds100;
 }
 
 /*

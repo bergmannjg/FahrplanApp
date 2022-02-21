@@ -123,7 +123,7 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
                 <FlatList
                     data={data}
                     renderItem={({ item }) => (
-                        <ListItem onPress={() => { goToTrip(item) }} containerStyle={{ borderBottomWidth: 0 }} >
+                        <ListItem onPress={() => { goToTrip(item) }} containerStyle={{ borderBottomWidth: 0 }}>
                             <ListItem.Content>
                                 <ListItem.Title>
                                     <Text style={styles.summaryText}>

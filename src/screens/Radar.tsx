@@ -214,7 +214,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
                 <FlatList
                     data={data}
                     renderItem={({ item }) => (
-                        <ListItem containerStyle={{ borderBottomWidth: 0 }} >
+                        <ListItem containerStyle={{ borderBottomWidth: 0 }}>
                             <ListItem.Content>
                                 <ListItem.Title>{`${item.line} ${item.direction ? '-> ' + item.direction : ''}`}</ListItem.Title>
                                 <ListItem.Subtitle>

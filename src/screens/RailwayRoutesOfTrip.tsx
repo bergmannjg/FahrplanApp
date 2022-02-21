@@ -211,7 +211,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
             <FlatList
                 data={compactPath}
                 renderItem={({ item }) => (
-                    <ListItem containerStyle={{ borderBottomWidth: 0 }} >
+                    <ListItem containerStyle={{ borderBottomWidth: 0 }}>
                         <ListItem.Content>
                             <ListItem.Title><Item item={item} /></ListItem.Title>
                         </ListItem.Content>

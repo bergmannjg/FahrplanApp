@@ -12,7 +12,7 @@ if [ ! -d "./db-data" ]; then
     mkdir db-data
 fi
 
-cd db-data
+pushd db-data
 
 INFILE=D_Bahnhof_2020_alle.CSV
 OUTFILE=D_Bahnhof_2020_alle.json
@@ -27,3 +27,5 @@ sed -i -e 's/\\t//' -e 's/\xC2\xA0/ /' ${OUTFILE}
 rm -f ${INFILE}
 
 npx json-property-filter --in "${OUTFILE}" --out "uic-to-opid.json" --filters "EVA_NR" --filters "DS100" --filters "Verkehr"
+
+popd

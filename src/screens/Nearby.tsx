@@ -150,7 +150,7 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
-                    <ListItem containerStyle={{ borderBottomWidth: 0 }} >
+                    <ListItem containerStyle={{ borderBottomWidth: 0 }}>
                         <ListItem.Content>
                             <ListItem.Title>
                                 <View style={styles.titleView} >

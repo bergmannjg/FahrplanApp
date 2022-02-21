@@ -52,7 +52,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                 }
                 if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
                     stops.push(stopover.stop);
-                }   
+                }
             })
         })
         if (stops.length > 1) {
