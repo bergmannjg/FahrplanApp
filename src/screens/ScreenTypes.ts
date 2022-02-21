@@ -87,7 +87,8 @@ export interface BRouterScreenParams {
     isCar?: boolean;
     locations: Location[];
     pois?: Location[];
-    isLongPress: boolean
+    isLongPress: boolean;
+    zoom?: number;
 }
 
 export interface WebViewScreenParams {

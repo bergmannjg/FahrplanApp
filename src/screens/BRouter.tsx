@@ -55,7 +55,7 @@ const centerOflocations = (locations: Location[]): Location => {
     }
 }
 
-const locations2params = (locations: Location[]) => {
+const locations2params = (locations: Location[], preferredZoom?: number) => {
     try {
         const from = locations[0];
         const to = locations[locations.length - 1];
@@ -68,7 +68,7 @@ const locations2params = (locations: Location[]) => {
         console.log('center: ', center);
         const d = center.altitude ?? 0;
 
-        const zoom = distance2zoom(d);
+        const zoom = preferredZoom ?? distance2zoom(d);
         console.log('distance: ', d, ', zoom: ', zoom);
 
         let s = '';
@@ -177,7 +177,7 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
     const { params }: { params: BRouterScreenParams } = route;
     const locations = noramlizelocations(params.locations);
     const pois = params.pois;
-    const p = locations2params(locations);
+    const p = locations2params(locations, params.zoom);
     const o = pois ? pois2params(pois) : '';
     const isCar = !!params.isCar;
     const profile = isCar ? 'car-fast' : 'rail';

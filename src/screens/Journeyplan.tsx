@@ -71,6 +71,13 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         }
     }
 
+    const showCurrentLocation = async (loc: Location | undefined, line: string | undefined) => {
+        if (loc) {
+            console.log('showLocation: ', loc);
+            navigation.navigate('BRouter', { isLongPress: false, locations: [loc], pois: [], titleSuffix: line, zoom: 10 });
+        }
+    }
+
     const goToTrip = (leg: Leg) => {
         console.log('Navigation router run to Trip of Leg');
         if (leg?.line && leg?.tripId) {
@@ -88,8 +95,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     }
 
     const goToTripOfLeg = (leg: Leg, showTransits: boolean) => {
-        console.log('Navigation router run to Trip of Leg');
-        if (leg?.line && leg?.tripId && leg.polyline) {
+        console.log('Navigation router run to Trip of Leg, leg?.line: ', leg?.line, ', leg?.tripId: ', leg?.tripId, ', leg.polyline: ', leg.polyline);
+        if (leg?.line && leg?.tripId) {
             setLoading(true);
             const showAsTransits = showTransits && hasNationalProduct(leg.line) && leg.polyline != undefined;
             client.tripOfLeg(leg.tripId, leg.origin, leg.destination, showAsTransits ? leg.polyline : undefined)
@@ -236,6 +243,13 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                             <Text style={styles.itemDetailsText}>{`${t('JourneyplanScreen.LoadFactor')}: ${loadFactor2Text(item.loadFactor)}`}</Text>
                         }
 
+                        {
+                            (item?.currentLocation) &&
+                            <TouchableOpacity onPress={() => showCurrentLocation(item?.currentLocation, item?.line?.name)}>
+                                <Text style={styles.itemDetailsText}>{asLinkText("aktuelle Position")}</Text>
+                            </TouchableOpacity>
+                        }
+
                         <Text> </Text>
                         <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name} ${platform(item.arrivalPlatform)}`}</Text>
                         {
@@ -246,6 +260,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                                 :
                                 <View />
                         }
+
                     </View>
                 }
             </View >
