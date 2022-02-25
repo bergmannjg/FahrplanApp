@@ -1,5 +1,5 @@
-import { rinfgraph } from 'rinf-data/rinfgraph.bundle';
-import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-data/rinfgraph.bundle';
+import { rinfgraph } from 'rinf-graph/rinfgraph.bundle';
+import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
 
 interface Haltestelle {
     EVA_NR: number;
@@ -8,11 +8,11 @@ interface Haltestelle {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const g = require('rinf-data/data/Graph.json') as GraphNode[];
+const g = require('rinf-graph/data/Graph.json') as GraphNode[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const opInfos = require('rinf-data/data/OpInfos.json') as OpInfo[];
+const opInfos = require('rinf-graph/data/OpInfos.json') as OpInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lineInfos = require('rinf-data/data/LineInfos.json') as LineInfo[];
+const lineInfos = require('rinf-graph/data/LineInfos.json') as LineInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const haltestellen = require('../../db-data/uic-to-opid.json') as Haltestelle[];
 
@@ -112,7 +112,8 @@ function findDs100PatternsForUicrefs(uicrefs: number[]) {
 }
 
 function rinfFindRailwayRoutesOfTrip(ids: string[]): GraphNode[] {
-    return rinfgraph.Graph_getShortestPathFromGraph(g, graph, ids);
+    const spath = rinfgraph.Graph_getShortestPathFromGraph(g, graph, ids);
+    return rinfgraph.Graph_compactifyPath(spath, g);
 }
 
 function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {

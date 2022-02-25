@@ -28,10 +28,10 @@ export function useOrientation(): 'PORTRAIT' | 'LANDSCAPE' {
             console.log('changeOrientation to ', o)
             setOrientation(o);
         };    
-        Dimensions.addEventListener('change', callback);
+        const subscription = Dimensions.addEventListener('change', callback);
 
         return () => {
-            Dimensions.removeEventListener('change', callback);
+            subscription.remove();
         };
     }, []);
 

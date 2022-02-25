@@ -9,7 +9,7 @@ import { MainStackParamList, RailwayRouteScreenParams, asLinkText } from './Scre
 import { styles } from './styles';
 import { rinfFindRailwayRoutesOfLine, rinfGetLocationsOfPath, rinfToLineNodes, rinfGetLineName } from '../lib/rinf-data-railway-routes';
 import type { LineNode } from '../lib/rinf-data-railway-routes';
-import type { GraphNode } from 'rinf-data/rinfgraph.bundle';
+import type { GraphNode } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoute'>;

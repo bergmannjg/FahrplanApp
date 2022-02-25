@@ -37,7 +37,7 @@ export const stylesLandscape = StyleSheet.create({
 
 export const styles = StyleSheet.create({
   container: {
-    display:"flex",
+    display: "flex",
     flex: 1,
     flexDirection: 'column',
   },
@@ -101,7 +101,8 @@ export const styles = StyleSheet.create({
   subtitleButtonColumn: {
     flexDirection: 'column',
     borderWidth: 0,
-    padding:10
+    padding: 0,
+    paddingBottom: 4
   },
   itemWarningText: {
     color: 'red',

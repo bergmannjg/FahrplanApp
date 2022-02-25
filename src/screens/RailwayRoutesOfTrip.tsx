@@ -11,7 +11,7 @@ import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from 
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { rinfToPathElement, rinfIsWalkingPath, rinfFindRailwayRoutesOfTripIBNRs, rinfComputeDistanceOfPath, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
-import type { GraphNode, Location as RInfLocation } from 'rinf-data/rinfgraph.bundle';
+import type { GraphNode, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -177,7 +177,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         console.log('RouteItem: ', item, len)
         return (
             <View style={styles.subtitleButtonColumn}>
-                <TouchableOpacity style={styles.buttonRoute} onPress={() => showRoute(item)}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(item)}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')} {txt}
                     </Text>
