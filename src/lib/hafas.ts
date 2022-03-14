@@ -139,12 +139,6 @@ export function hafas(profileName: string): Hafas {
     const profile = chooseProfile(profileName);
     const client = chooseClient(profileName, profile)
 
-    /*
-    if (__DEV__ && profileName === 'db-fsharp') {
-        fshafas.setDebug();
-    }
-    */
-
     const journeyInfo = (journey: Journey): JourneyInfo => {
         const defaultDate = new Date();
         const indexFrom = 0;
@@ -409,11 +403,6 @@ export function hafas(profileName: string): Hafas {
             alternatives = alternatives.filter(a => a.line && filterLine(a.line, modes, onlyLocalProducts));
             if (alternatives.length > results) {
                 alternatives = alternatives.slice(0, results);
-            }
-            if (__DEV__) {
-                for (const a of alternatives) {
-                    console.log('alternative:', a);
-                }
             }
             return alternatives;
         } else {

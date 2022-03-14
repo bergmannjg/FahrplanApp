@@ -4,7 +4,7 @@
     "description": "",
     "main": "dist/cli.js",
     "dependencies": {
-        "fs-hafas-client": "file:../../../fshafas/src/fshafas.fable.package/fs-hafas-client-1.2.0.tgz",
+        "fs-hafas-client": "https://github.com/bergmannjg/fshafas/releases/download/1.4.0/fs-hafas-client-1.4.0.tgz",
         "geolib": "^3.3.1",
         "google-polyline": "^1.0.3",
         "hafas-client": "github:bergmannjg/hafas-client#add-types-in-jsdoc",
@@ -27,7 +27,6 @@
         "webpack-node-externals": "^2.5.2"
     },
     "scripts": {
-        "update-fs-hafas-client": "rm package-lock.json && rm -rf node_modules/fs-hafas-client/ && npm install",
         "build": "npx webpack --config webpack.config.js"
     },
     "author": "",
