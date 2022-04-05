@@ -52,7 +52,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const data = trip.stopovers?.map((s, i): ItemType => { return { s: s, p: getPositionKind(i) } })
     const operatorName = trip.line?.operator?.name ?? '';
 
-    const showRailwayRoutes = () => {
+    const showRailwayRoutes = (longPress: boolean) => {
         console.log('Trip showRailwayRoutes');
         const stops = [] as Stop[];
         trip.stopovers?.forEach(stopover => {
@@ -64,7 +64,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             }
         });
         if (stops.length > 1) {
-            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, compactifyPath: !longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
         }
     }
 
@@ -268,7 +268,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                         {t('TripScreen.ShowRoute')}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes()}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRailwayRoutes')}
                     </Text>

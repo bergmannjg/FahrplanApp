@@ -42,7 +42,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
     console.log('legs.length: ', legs.length);
 
-    const showRailwayRoutes = () => {
+    const showRailwayRoutes = (longPress: boolean) => {
         console.log('Journeyplan showRailwayRoutes');
         const stops = [] as Stop[];
         journeyInfo.legs.forEach(leg => {
@@ -56,7 +56,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             })
         })
         if (stops.length > 1) {
-            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, compactifyPath: !longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
         }
     }
 
@@ -297,7 +297,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         {t('JourneyplanScreen.ShowRoute')}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes()}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRailwayRoutes')}
                     </Text>

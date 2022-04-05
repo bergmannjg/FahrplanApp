@@ -96,7 +96,23 @@ export const styles = StyleSheet.create({
   subtitleViewColumn: {
     flexDirection: 'column',
     paddingLeft: 10,
-    paddingTop: 5
+    paddingTop: 5,
+    borderWidth:0
+  },
+  routeViewColumn: {
+    flexDirection: 'column',
+    paddingLeft: 18,
+    paddingTop: 5,
+    borderWidth:0
+  },
+  distanceColumn: {
+    flexDirection: 'column',
+    paddingLeft: 10,
+    paddingTop: 10,
+    paddingBottom: 5,
+    borderWidth:0
+  },
+  distanceText: {
   },
   subtitleButtonColumn: {
     flexDirection: 'column',

@@ -111,9 +111,9 @@ function findDs100PatternsForUicrefs(uicrefs: number[]) {
         });
 }
 
-function rinfFindRailwayRoutesOfTrip(ids: string[]): GraphNode[] {
+function rinfFindRailwayRoutesOfTrip(ids: string[], compactifyPath: boolean): GraphNode[] {
     const spath = rinfgraph.Graph_getShortestPathFromGraph(g, graph, ids);
-    return rinfgraph.Graph_compactifyPath(spath, g);
+    return compactifyPath ? rinfgraph.Graph_compactifyPath(spath, g) : spath;
 }
 
 function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {
@@ -123,11 +123,11 @@ function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {
         .sort((a, b) => a[0].Edges[0].StartKm - b[0].Edges[0].StartKm);
 }
 
-function rinfFindRailwayRoutesOfTripIBNRs(uic_refs: number[]): GraphNode[] {
+function rinfFindRailwayRoutesOfTripIBNRs(uic_refs: number[], compactifyPath: boolean): GraphNode[] {
     const ids = findDs100PatternsForUicrefs(removeDuplicates(uic_refs));
     console.log('uic_refs:', uic_refs)
     console.log('opids:', ids)
-    return rinfFindRailwayRoutesOfTrip(ids);
+    return rinfFindRailwayRoutesOfTrip(ids, compactifyPath);
 }
 
 function rinfGetCompactPath(path: GraphNode[]): GraphNode[] {
