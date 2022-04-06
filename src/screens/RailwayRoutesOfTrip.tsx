@@ -57,7 +57,6 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const [path, setPath] = useState([] as GraphNode[]);
     const [compactPath, setCompactData] = useState([] as GraphNodeEx[]);
     const [loading, setLoading] = useState(true);
-    const [distance, setDistance] = useState(0);
     const [locationsOfPath, setLocationsOfPath] = useState([] as RInfLocation[][]);
     const [locationsOfPathIndexes, setLocationsOfPathIndexes] = useState([] as number[]);
 
@@ -81,7 +80,6 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                     .then(stops => {
                         const result = findRailwayRoutes(stops)
                         setLoading(false);
-                        setDistance(rinfComputeDistanceOfPath(result));
                         setPath(result);
                         setCompactData(rinfGetCompactPath(result).reduce(reducer, []));
                         const locations = rinfGetLocationsOfPath(result);
@@ -105,7 +103,6 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                 const indexes = [...locations.map((_, i) => i)];
                 console.log('indexes:', indexes);
 
-                setDistance(rinfComputeDistanceOfPath(result));
                 setPath(result);
                 setCompactData(rinfGetCompactPath(result).reduce(reducer, []));
                 setLocationsOfPath(locations);

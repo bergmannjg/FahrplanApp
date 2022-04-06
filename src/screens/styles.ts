@@ -105,6 +105,12 @@ export const styles = StyleSheet.create({
     paddingTop: 5,
     borderWidth:0
   },
+  maxSpeedColumn: {
+    flexDirection: 'column',
+    paddingLeft: 30,
+    paddingTop: 5,
+    borderWidth:0
+  },
   distanceColumn: {
     flexDirection: 'column',
     paddingLeft: 10,

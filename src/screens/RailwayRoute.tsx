@@ -39,28 +39,20 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
         }
     }
 
-    const renderSeparator = () => {
-        return (
-            <View
-                style={{
-                    height: 1,
-                    width: "86%",
-                    backgroundColor: "#CED0CE",
-                    marginLeft: "14%"
-                }}
-            />
-        );
-    };
-
     interface ItemProps {
         item: LineNode
     }
 
     const Item = ({ item }: ItemProps) => {
         return (
-            <View style={styles.subtitleViewColumn}>
-                <Text>{`km: ${item.km} ${item.name}${item.maxSpeed ? ', max: ' + item.maxSpeed + ' km' : ''}`}</Text>
-            </View >
+            <View >
+                <View style={styles.routeViewColumn}>
+                    <Text>{`km: ${item.km} ${item.name}`}</Text>
+                </View >
+                {item.maxSpeed && <View style={styles.maxSpeedColumn}>
+                    <Text>{`max: ${item.maxSpeed} km`}</Text>
+                </View >}
+            </View>
         );
     }
 
@@ -85,14 +77,13 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
-                    <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                    <ListItem containerStyle={{ borderBottomWidth: 0, padding: 0 }}>
                         <ListItem.Content>
                             <ListItem.Title><Item item={item} /></ListItem.Title>
                         </ListItem.Content>
                     </ListItem>
                 )}
                 keyExtractor={item => item.name}
-                ItemSeparatorComponent={renderSeparator}
                 onEndReachedThreshold={50}
             />
         </View>
