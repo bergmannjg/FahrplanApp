@@ -10,7 +10,7 @@ import { hafas, Hafas } from '../lib/hafas';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
-import { rinfToPathElement, rinfIsWalkingPath, rinfFindRailwayRoutesOfTripIBNRs, rinfComputeDistanceOfPath, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
+import { rinfToPathElement, rinfIsWalkingPath, rinfFindRailwayRoutesOfTripIBNRs, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
 import type { GraphNode, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
@@ -27,7 +27,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const journeyInfo = params.journeyInfo;
     const stops = params.stops;
     const showTransfers = params.tripDetails;
-    const compactifyPath = params.compactifyPath;
+    const useMaxSpeed = !params.compactifyPath;
+    const compactifyPath = true;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const trainModes = ["train", "watercraft"];
@@ -51,7 +52,9 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     interface GraphNodeEx {
         TotalStartKm: number;
         TotalEndKm: number;
-        node: GraphNode
+        node: GraphNode;
+        prevNode?: GraphNode
+        nextNode?: GraphNode
     }
 
     const [path, setPath] = useState([] as GraphNode[]);
@@ -66,10 +69,14 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     const reducer = (previous: GraphNodeEx[], current: GraphNode): GraphNodeEx[] => {
         const currTotal = previous.length > 0 ? previous[previous.length - 1].TotalEndKm : 0;
+        if (previous.length > 0) {
+            previous[previous.length - 1].nextNode = current;
+        }
         return previous.concat([{
             TotalStartKm: currTotal,
             TotalEndKm: currTotal + distanceOfNode(current),
-            node: current
+            node: current,
+            prevNode: previous.length > 0 ? previous[previous.length - 1].node : undefined
         }]);
     }
 
@@ -81,7 +88,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                         const result = findRailwayRoutes(stops)
                         setLoading(false);
                         setPath(result);
-                        setCompactData(rinfGetCompactPath(result).reduce(reducer, []));
+                        setCompactData(rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, []));
                         const locations = rinfGetLocationsOfPath(result);
                         setLocationsOfPath(locations);
                         const indexes = [...locations.keys()];
@@ -104,7 +111,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                 console.log('indexes:', indexes);
 
                 setPath(result);
-                setCompactData(rinfGetCompactPath(result).reduce(reducer, []));
+                setCompactData(rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, []));
                 setLocationsOfPath(locations);
                 setLocationsOfPathIndexes(indexes);
             } else {
@@ -144,7 +151,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     // adhoc
     const normalizeString = (s: string) => {
-        return s.replace('Berlin Hauptbahnhof - Lehrter Bahnhof', 'Berlin Hauptbahnhof');
+        return s.replace('Berlin Hauptbahnhof - Lehrter Bahnhof', 'Berlin Hauptbahnhof').replace(/[ ]+/, ' ');
     }
 
     interface ItemProps {
@@ -154,26 +161,51 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const Item = ({ item }: ItemProps) => {
         const element = rinfToPathElement(item.node);
         const isWalking = rinfIsWalkingPath(item.node); // todo
+        const maxSpeedInfo = useMaxSpeed ? element.MaxSpeed.toString() + ' km ' : ''
+        const firstNodeOfLine = item.TotalStartKm === 0 || (item.prevNode ? item.prevNode.Edges[0].Line !== item.node.Edges[0].Line : true);
+        const lastNodeOfLine = item.nextNode ? item.nextNode.Edges[0].Line !== item.node.Edges[0].Line : true;
+        const lastNode = !item.nextNode;
         return (
-            <View>
-                {item.TotalStartKm === 0 && <View style={styles.distanceColumn}>
-                    <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
-                </View>}
-                <View style={styles.routeViewColumn}>
-                    <Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
-                    {isWalking ?
-                        <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
-                        :
+            useMaxSpeed ?
+                <View>
+                    {firstNodeOfLine && <View style={styles.distanceColumn}>
+                        <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
                         <TouchableOpacity onPress={() => showRailwayRoute(parseInt(element.Line))}>
-                            <Text style={styles.itemButtonTextRouteOfTrip}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
-                        </TouchableOpacity>
-                    }
-                    <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>
-                </View >
-                <View style={styles.distanceColumn}>
-                    <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`}</Text>
+                                <Text style={styles.maxSpeedLinkText}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                            </TouchableOpacity>
+                    </View>}
+                    <View style={styles.routeViewMaxSpeedColumn}>
+                        <Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
+                        {isWalking ?
+                            <Text style={styles.itemButtonTextMaxSpeed}>Fußweg</Text>
+                            :
+                                <Text style={styles.itemButtonTextMaxSpeed}>{`${maxSpeedInfo}`}</Text>
+                        }
+                        {lastNodeOfLine && <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>}
+                    </View >
+                    {lastNode && <View style={styles.distanceColumn}>
+                        <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`}</Text>
+                    </View>}
+                </View> :
+                <View>
+                    {item.TotalStartKm === 0 && <View style={styles.distanceColumn}>
+                        <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
+                    </View>}
+                    <View style={styles.routeViewColumn}>
+                        <Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
+                        {isWalking ?
+                            <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
+                            :
+                            <TouchableOpacity onPress={() => showRailwayRoute(parseInt(element.Line))}>
+                                <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                            </TouchableOpacity>
+                        }
+                        <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>
+                    </View >
+                    <View style={styles.distanceColumn}>
+                        <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`}</Text>
+                    </View>
                 </View>
-            </View>
         );
     }
 

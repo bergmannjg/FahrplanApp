@@ -105,6 +105,18 @@ export const styles = StyleSheet.create({
     paddingTop: 5,
     borderWidth:0
   },
+  routeViewMaxSpeedColumn: {
+    flexDirection: 'column',
+    paddingLeft: 18,
+    paddingTop: 0,
+    borderWidth:0
+  },
+  routeViewColumnNoPaddingTop: {
+    flexDirection: 'column',
+    paddingLeft: 18,
+    paddingTop: 0,
+    borderWidth:0
+  },
   maxSpeedColumn: {
     flexDirection: 'column',
     paddingLeft: 30,
@@ -119,6 +131,11 @@ export const styles = StyleSheet.create({
     borderWidth:0
   },
   distanceText: {
+  },
+  maxSpeedLinkText: {
+    fontWeight: 'bold',
+    paddingTop: 5,
+    paddingLeft: 10,
   },
   subtitleButtonColumn: {
     flexDirection: 'column',
@@ -239,6 +256,11 @@ export const styles = StyleSheet.create({
   itemButtonTextRouteOfTrip: {
     paddingLeft: 10,
     fontWeight: 'bold',
+    textAlign: 'left'
+  },
+  itemButtonTextMaxSpeed: {
+    paddingLeft: 10,
+    fontWeight: "bold",
     textAlign: 'left'
   },
 });

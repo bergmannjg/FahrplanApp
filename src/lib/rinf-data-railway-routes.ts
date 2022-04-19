@@ -130,8 +130,9 @@ function rinfFindRailwayRoutesOfTripIBNRs(uic_refs: number[], compactifyPath: bo
     return rinfFindRailwayRoutesOfTrip(ids, compactifyPath);
 }
 
-function rinfGetCompactPath(path: GraphNode[]): GraphNode[] {
-    return rinfgraph.Graph_getCompactPath(path);
+function rinfGetCompactPath(path: GraphNode[], useMaxSpeed?: boolean): GraphNode[] {
+    if (useMaxSpeed) return rinfgraph.Graph_getCompactPathWithMaxSpeed(path, g);
+    else return rinfgraph.Graph_getCompactPath(path);
 }
 
 function rinfGetLocationsOfPath(path: GraphNode[]): Location[][] {
