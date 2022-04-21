@@ -36,7 +36,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="Connections"
         component={ConnectionsScreen}
-        options={{ title: t('ConnectionsScreen.Title') }}
+        options={({ route }) => ({ title: t('ConnectionsScreen.Title') + (route.params.regional ? ' regional' : '') })}
       />
       <MainStack.Screen
         name="Radar"

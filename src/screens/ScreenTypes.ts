@@ -69,7 +69,8 @@ export interface ConnectionsScreenParams {
     via: string,
     tripDetails: boolean,
     transferTime: number,
-    profile: string
+    profile: string,
+    regional: boolean;
 }
 
 export interface RadarScreenParams {

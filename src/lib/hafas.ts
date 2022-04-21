@@ -93,7 +93,7 @@ export interface JourneyInfo {
 }
 
 export interface Hafas {
-    journeys: (from: string | Location, to: string | Location, results: number, departure?: Date | undefined, via?: string, transferTime?: number, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
+    journeys: (from: string | Location, to: string | Location, results: number, departure?: Date | undefined, via?: string, transferTime?: number, modes?: string[], regional?: boolean) => Promise<ReadonlyArray<Journey>>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
     nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
@@ -151,8 +151,8 @@ export function hafas(profileName: string): Hafas {
         const destinationLocation = (journey.legs[indexTo].destination as Stop).location;
         const destinationArrival = journey.legs[indexTo].arrival ?? defaultDate.toISOString();
         const legs = journey.legs.filter(leg => leg?.line || leg.walking);
-        const plannedDeparture = journey.legs[indexFrom].plannedDeparture ?? "";
-        const plannedArrival = journey.legs[indexTo].plannedArrival ?? "";
+        const plannedDeparture = journey.legs[indexFrom].plannedDeparture ?? (journey.legs[indexFrom].walking ? (journey.legs[indexFrom + 1].plannedDeparture ?? "") : "");
+        const plannedArrival = journey.legs[indexTo].plannedArrival ?? (journey.legs[indexTo].walking ? (journey.legs[indexTo - 1].plannedArrival ?? "") : "");
         const reachable = journey.legs.every(item => item.reachable || item.walking);
         const cancelled = journey.legs.some(item => item.cancelled);
         let changes = journey.legs.filter(leg => leg?.line).length;
@@ -292,10 +292,13 @@ export function hafas(profileName: string): Hafas {
         else return undefined;
     }
 
-    function getProductsFromModes(modes: string[]): Products {
+    function getProductsFromModes(modes: string[], regional?: boolean): Products {
         const products: Products = {}
         profile.products.forEach(p => {
             products[p.id] = modes.length === 0 || modes.find(m => unionToString(p.mode) === m.toLowerCase()) !== undefined;
+            if (regional && products[p.id]) {
+                products[p.id] = p.id.toLowerCase().indexOf('national') < 0;
+            }
         })
         return products;
     }
@@ -313,7 +316,7 @@ export function hafas(profileName: string): Hafas {
         hafasErrorCode: string
     }
 
-    const journeys = async (from: string | Location, to: string | Location, results: number, departure?: Date, via?: string, transferTime?: number, modes?: string[]): Promise<ReadonlyArray<Journey>> => {
+    const journeys = async (from: string | Location, to: string | Location, results: number, departure?: Date, via?: string, transferTime?: number, modes?: string[], regional?: boolean): Promise<ReadonlyArray<Journey>> => {
         if (!transferTime) transferTime = 10;
         const locationsFrom =
             isLocation(from) ? [from] :
@@ -333,7 +336,7 @@ export function hafas(profileName: string): Hafas {
                 }
             }
             try {
-                const products = getProductsFromModes(modes ?? []);
+                const products = getProductsFromModes(modes ?? [], regional);
                 const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results, departure, via: viaId, transferTime, polylines: true, stopovers: true });
                 return res.journeys ?? [];
             } catch (e) {

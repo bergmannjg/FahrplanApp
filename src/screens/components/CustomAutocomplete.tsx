@@ -63,6 +63,7 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
             }}
             placeholder={props.placeholder}
             flatListProps={{
+                keyboardShouldPersistTaps: 'always',
                 keyExtractor: (item) => item.name ?? "",
                 renderItem: ({ item }) =>
                     <TouchableOpacity onPress={() => {

@@ -150,10 +150,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     saveData({ station1: s1, station2: s });
   }
 
-  const searchConnections = () => {
+  const searchConnections = (isLongPress: boolean) => {
     if (station1 !== '' && station2 !== '') {
       console.log('searchConnections. profile:', profile);
-      navigation.navigate('Connections', { profile: clientProfile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime });
+      navigation.navigate('Connections', { profile: clientProfile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime, regional: isLongPress });
     }
   }
 
@@ -193,8 +193,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     { label: 'Busse und Bahnen in der Nähe', value: 'BusseBahnen' }
   ];
 
-  const search = () => {
-    if (searchType === 'Verbindungen') searchConnections();
+  const search = (isLongPress: boolean) => {
+    if (searchType === 'Verbindungen') searchConnections(isLongPress);
     else if (searchType === 'Haltestellen') searchNearby();
     else if (searchType === 'BusseBahnen') searchRadar();
   }
@@ -220,7 +220,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   return (
     <View style={styles.container}>
 
-      { showDate &&
+      {showDate &&
         <DateTimePicker
           minimumDate={new Date(new Date().getFullYear() - 1, 0, 1)}
           maximumDate={new Date(new Date().getFullYear() + 1, 11, 31)}
@@ -241,7 +241,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
               <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station1 ? station1 : '')} disabled={!('string' === typeof station1 && station1.length > 0)} >
                 <Text style={styles.switchText}>
                   &#8614;
-            </Text>
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -251,7 +251,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
               <TouchableOpacity onPress={() => switchStations()} >
                 <Text style={styles.switchText}>
                   &#8645;
-            </Text>
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -261,7 +261,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
               <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
                 <Text style={styles.switchText}>
                   &#8614;
-            </Text>
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -292,7 +292,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       {
         orientation === 'PORTRAIT' &&
         <View style={styles.containerSearch}>
-          <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections()}>
+          <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections(false)} onLongPress={() => searchConnections(true)}>
             <Text style={styles.itemText}>
               {t('HomeScreen.SearchConnections')}
             </Text>
@@ -348,7 +348,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       {
         orientation === 'LANDSCAPE' &&
         <View style={styles.containerSearch}>
-          <TouchableOpacity style={styles.buttonContained} onPress={() => search()}>
+          <TouchableOpacity style={styles.buttonContained} onPress={() => search(false)} onLongPress={() => search(true)}>
             <Text style={styles.itemText}>
               {t('HomeScreen.Search')}
             </Text>

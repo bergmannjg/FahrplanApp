@@ -11,6 +11,7 @@ import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
+import createClient from 'fs-hafas-client/hafas-client';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
@@ -35,6 +36,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
   const query1 = params.station1;
   const query2 = params.station2;
+  const regional = params.regional;
   const queryVia = params.via;
   const profile = params.profile;
   const client: Hafas = hafas(profile);
@@ -47,7 +49,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     if (loading) return;
     setLoading(true);
 
-    client.journeys(query1, query2, 5, date, queryVia, transferTime, modes)
+    client.journeys(query1, query2, 5, date, queryVia, transferTime, modes, regional)
       .then(journeys => {
         const infos = [] as JourneyInfo[];
         journeys.forEach(journey => {
@@ -84,6 +86,14 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
       />
     );
   };
+
+  const toName = (loc: string | createClient.Location) => {
+    if (client.isLocation(loc)) {
+      return loc.name;
+    } else {
+      return loc;
+    }
+  }
 
   const goToView = (item: JourneyInfo) => {
     console.log('Navigation router run to Journeyplan');
@@ -164,7 +174,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
       </View>
       <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
         <Text style={styles.itemHeaderText}>
-          {query1} {t('JourneyplanScreen.DirectionTo')} {query2}
+          {toName(query1)} {t('JourneyplanScreen.DirectionTo')} {toName(query2)}
         </Text>
         <Text style={styles.itemHeaderText}>
           {t('ConnectionsScreen.Date', { date })}
