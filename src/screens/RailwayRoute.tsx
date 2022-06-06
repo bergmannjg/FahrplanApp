@@ -23,11 +23,18 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
 
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
+    const imcode = params.imcode;
 
     const graphNodes: GraphNode[][] = rinfFindRailwayRoutesOfLine(railwayRouteNr);
     const data: LineNode[] = rinfToLineNodes(graphNodes);
     const STRNAME = rinfGetLineName(railwayRouteNr);
 
+    const queryText = () => {
+        console.log('imcode:', imcode);
+        if (imcode === '0081') return 'Streckennummer ÖBB "' + (railwayRouteNr / 100).toFixed(0) + ' ' 
+                + String(railwayRouteNr % 100).padStart(2, '0') + '" Wikipedia'; // öbb
+        else return 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
+    }
     const showRoute = async () => {
         if (data.length > 0) {
             // todo: more buttons
@@ -70,8 +77,8 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                     {STRNAME}
                 </Text>
                 <Text style={styles.itemHeaderText}
-                    onPress={() => Linking.openURL('https://www.google.de/search?q=Bahnstrecke+' + railwayRouteNr)}>
-                    Suche nach Bahnstrecke {railwayRouteNr} {asLinkText('')}
+                    onPress={() => Linking.openURL('https://www.google.de/search?q=+' + queryText())}>
+                    Suche nach Bahnstecke {railwayRouteNr} {asLinkText('')}
                 </Text>
             </View>
             <FlatList

@@ -23,10 +23,14 @@ const asyncGetLocationsOfHannoverCorrectly = () => {
         });
 }
 
+const defaultJourneyParams = {
+    bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 5, firstClass: false, transfers: -1, transferTime: 8, regional: false
+}
+
 const asyncGetJourneyCorrectly = () => {
     expect.assertions(3);
     const client = hafas('db');
-    return client.journeys('Hannover', 'Bielefeld', 1)
+    return client.journeys('Hannover', 'Bielefeld', defaultJourneyParams)
         .then(journeys => {
             expect(journeys.length).toBe(1);
             const info = client.journeyInfo(journeys[0]);
@@ -38,7 +42,7 @@ const asyncGetJourneyCorrectly = () => {
 const asyncGetStopssOfJourneyCorrectly = () => {
     expect.assertions(2);
     const client = hafas('db');
-    return client.journeys('Hannover', 'Bielefeld', 1)
+    return client.journeys('Hannover', 'Bielefeld', defaultJourneyParams)
         .then(journeys => {
             expect(journeys.length).toBe(1);
             return client.stopssOfJourney(journeys[0], ['train']);

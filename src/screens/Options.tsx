@@ -46,29 +46,22 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
         { label: t('OptionsScreen.English'), value: 'en' },
     ];
 
-    const radioTransferTimeProps = [
-        { label: '8 min.  ', value: 8 },
-        { label: '30 min.', value: 30 },
-    ];
-
     const { params } = route;
 
     const [clientLib, setClientLib] = useState(params.navigationParams.clientLib);
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
-    const [transferTime, setTransferTime] = useState(params.navigationParams.transferTime);
 
     const initialClientLib = radioClientLib.findIndex(p => p.value === clientLib);
     const initialProfile = radioProps.findIndex(p => p.value === profile);
     const initialTripDetails = radioTripDetailsProps.findIndex(p => p.value === tripDetails);
     const initialLanguage = radioLanguageProps.findIndex(p => p.value === i18n.language);
-    const initialtransferTime = radioTransferTimeProps.findIndex(p => p.value === transferTime);
 
     console.log('initialProfile: ', initialProfile, ', navigationParams: ', params.navigationParams);
 
     const goback = () => {
         console.log('goback OptionsScreen', profile, tripDetails);
-        navigation.navigate('Home', { clientLib, profile, tripDetails, transferTime });
+        navigation.navigate('Home', { clientLib, profile, tripDetails });
     }
 
     const showLicences = () => {
@@ -101,15 +94,6 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
                     radio_props={radioTripDetailsProps}
                     initial={initialTripDetails}
                     onPress={(value: boolean) => { setTripDetails(value) }}
-                />
-            </View>
-            <Text style={styles.itemText1}>{t('OptionsScreen.Search')}</Text>
-            <View style={styles.radioView}>
-                <RadioForm
-                    formHorizontal={true}
-                    radio_props={radioTransferTimeProps}
-                    initial={initialtransferTime}
-                    onPress={(value: number) => { setTransferTime(value); }}
                 />
             </View>
             <Text style={styles.itemText1}>{t('OptionsScreen.Language')}</Text>
@@ -150,7 +134,7 @@ const styles = StyleSheet.create({
     },
     radioView: {
         fontSize: 10,
-        paddingLeft: 22,
+        paddingLeft: 40,
         paddingTop: 10,
         marginRight: 5
     },

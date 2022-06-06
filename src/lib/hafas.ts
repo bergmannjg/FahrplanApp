@@ -68,6 +68,17 @@ const chooseProfile = (p: string): createClient.Profile => {
     }
 };
 
+export interface JourneyParams {
+    bahncardDiscount: number;
+    bahncardClass: number;
+    age: number,
+    results: number,
+    firstClass: boolean;
+    transfers: number;
+    transferTime: number;
+    regional: boolean;
+}
+
 export interface JourneyInfo {
     type: 'journeyinfo',
     id: string,
@@ -89,11 +100,12 @@ export interface JourneyInfo {
     statusRemarks: Status[],
     changes: number,
     lineNames: string,
-    distance: number
+    distance: number,
+    price?: string
 }
 
 export interface Hafas {
-    journeys: (from: string | Location, to: string | Location, results: number, departure?: Date | undefined, via?: string, transferTime?: number, modes?: string[], regional?: boolean) => Promise<ReadonlyArray<Journey>>,
+    journeys: (from: string | Location, to: string | Location, journeyParams: JourneyParams, departure?: Date | undefined, via?: string, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
     nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
@@ -187,6 +199,7 @@ export function hafas(profileName: string): Hafas {
 
         const statusRemarks = legs[indexTo].remarks?.filter(r => r.type === 'status' && r.summary) as Status[] | undefined;
 
+        const price = journey.price ? journey.price.amount?.toFixed(2) + ' ' + journey.price.currency : undefined;
         return {
             type: 'journeyinfo', legs, id: originName + '+' + destinationName + '+' + originDeparture + '+' + destinationArrival,
             origin, originName, originDeparture, originLocation,
@@ -195,7 +208,7 @@ export function hafas(profileName: string): Hafas {
             plannedDeparture, plannedArrival,
             reachable, cancelled,
             informationAvailable: statusRemarks && statusRemarks.length > 0 ? true : false, statusRemarks: statusRemarks ? statusRemarks : [],
-            changes, lineNames, distance: distanceOfJourney(journey)
+            changes, lineNames, distance: distanceOfJourney(journey), price
         };
     }
 
@@ -297,7 +310,7 @@ export function hafas(profileName: string): Hafas {
         profile.products.forEach(p => {
             products[p.id] = modes.length === 0 || modes.find(m => unionToString(p.mode) === m.toLowerCase()) !== undefined;
             if (regional && products[p.id]) {
-                products[p.id] = p.id.toLowerCase().indexOf('national') < 0;
+                products[p.id] = p.id.toLowerCase().indexOf('national') < 0 && p.id.toLowerCase().indexOf('regionalexp') < 0;
             }
         })
         return products;
@@ -316,8 +329,8 @@ export function hafas(profileName: string): Hafas {
         hafasErrorCode: string
     }
 
-    const journeys = async (from: string | Location, to: string | Location, results: number, departure?: Date, via?: string, transferTime?: number, modes?: string[], regional?: boolean): Promise<ReadonlyArray<Journey>> => {
-        if (!transferTime) transferTime = 10;
+    const journeys = async (from: string | Location, to: string | Location, journeyParams: JourneyParams, departure?: Date, via?: string, modes?: string[]): Promise<ReadonlyArray<Journey>> => {
+        if (!journeyParams.transferTime) journeyParams.transferTime = 10;
         const locationsFrom =
             isLocation(from) ? [from] :
                 await client.locations(from, { results: 1 });
@@ -336,8 +349,9 @@ export function hafas(profileName: string): Hafas {
                 }
             }
             try {
-                const products = getProductsFromModes(modes ?? [], regional);
-                const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results, departure, via: viaId, transferTime, polylines: true, stopovers: true });
+                const products = getProductsFromModes(modes ?? [], journeyParams.regional);
+                const loyaltyCard = journeyParams.bahncardDiscount > 0 ? { type: 'Bahncard', discount: journeyParams.bahncardDiscount, class: journeyParams.bahncardClass } : undefined; // todo: per parameter
+                const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results: journeyParams.results, departure, via: viaId, transfers: journeyParams.transfers, transferTime: journeyParams.transferTime, polylines: true, stopovers: true, age: journeyParams.age, firstClass: journeyParams.firstClass, loyaltyCard });
                 return res.journeys ?? [];
             } catch (e) {
                 const error = e as Error;

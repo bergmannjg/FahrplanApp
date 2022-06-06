@@ -127,10 +127,10 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         }
     }
 
-    const showRailwayRoute = async (railwayRouteNr: number) => {
+    const showRailwayRoute = async (imcode: string, railwayRouteNr: number) => {
         console.log('showRailwayRoute');
 
-        navigation.navigate('RailwayRoute', { railwayRouteNr });
+        navigation.navigate('RailwayRoute', { railwayRouteNr, imcode });
     }
 
     const renderFooter = () => {
@@ -170,7 +170,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                 <View>
                     {firstNodeOfLine && <View style={styles.distanceColumn}>
                         <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
-                        <TouchableOpacity onPress={() => showRailwayRoute(parseInt(element.Line))}>
+                        <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(element.Line))}>
                                 <Text style={styles.maxSpeedLinkText}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                             </TouchableOpacity>
                     </View>}
@@ -196,7 +196,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                         {isWalking ?
                             <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
                             :
-                            <TouchableOpacity onPress={() => showRailwayRoute(parseInt(element.Line))}>
+                            <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(element.Line))}>
                                 <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                             </TouchableOpacity>
                         }

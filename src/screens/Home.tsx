@@ -31,6 +31,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const { t } = useTranslation();
 
+  const defaultJourneyParams = {
+    bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 5, firstClass: false, transfers: -1, transferTime: 8, regional: false
+  }
+
   const [nearbyStation, setNearbyStation] = useState<string | Location>('');
   const [station1, setStation1] = useState<string | Location>('');
   const [station2, setStation2] = useState<string | Location>('');
@@ -42,7 +46,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date(Date.now()));
   const [showDate, setShowDate] = useState(false);
-  const [transferTime, setTransferTime] = useState(8);
+  const [journeyParams, setJourneyParams] = useState(defaultJourneyParams);
   const [searchType, setSearchType] = useState('Verbindungen');
   const [mode, setMode] = useState<'date' | 'time'>('date');
 
@@ -62,7 +66,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       headerTitle: t('HomeScreen.Header'),
       headerRight: headerRight
     });
-  }, [navigation, clientLib, profile, transferTime, tripDetails]);
+  }, [navigation, clientLib, profile, tripDetails]);
 
   const orientation = useOrientation();
 
@@ -111,9 +115,9 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setTripDetails(route.params.tripDetails);
   }
 
-  // route.params from OptionsScreen
-  if (route.params?.transferTime !== undefined && route.params?.transferTime !== transferTime) {
-    setTransferTime(route.params.transferTime);
+  // route.params from JourneyOptionsScreen
+  if (route.params?.journeyParams !== undefined && route.params?.journeyParams !== journeyParams) {
+    setJourneyParams(route.params.journeyParams);
   }
 
   // route.params from NearbyScreen
@@ -150,10 +154,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     saveData({ station1: s1, station2: s });
   }
 
-  const searchConnections = (isLongPress: boolean) => {
+  const searchConnections = () => {
     if (station1 !== '' && station2 !== '') {
       console.log('searchConnections. profile:', profile);
-      navigation.navigate('Connections', { profile: clientProfile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, transferTime, regional: isLongPress });
+      navigation.navigate('Connections', { profile: clientProfile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, journeyParams });
     }
   }
 
@@ -173,7 +177,12 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const navigateToOptionsScreen = () => {
     console.log('navigateToOptionsScreen. profile:', profile);
-    navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails, transferTime } });
+    navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails } });
+  }
+
+  const navigateToJourneyOptionsScreen = () => {
+    console.log('navigateToJourneyOptionsScreen. journeyParams:', journeyParams);
+    navigation.navigate('JourneyOptions', { navigationParams: { journeyParams } });
   }
 
   const navigateToDateTimeScreen = (mode: 'date' | 'time') => {
@@ -193,8 +202,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     { label: 'Busse und Bahnen in der Nähe', value: 'BusseBahnen' }
   ];
 
-  const search = (isLongPress: boolean) => {
-    if (searchType === 'Verbindungen') searchConnections(isLongPress);
+  const search = () => {
+    if (searchType === 'Verbindungen') searchConnections();
     else if (searchType === 'Haltestellen') searchNearby();
     else if (searchType === 'BusseBahnen') searchRadar();
   }
@@ -292,7 +301,17 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       {
         orientation === 'PORTRAIT' &&
         <View style={styles.containerSearch}>
-          <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections(false)} onLongPress={() => searchConnections(true)}>
+          <TouchableOpacity style={styles.buttonOutlined} onPress={() => navigateToJourneyOptionsScreen()}>
+            <Text style={styles.itemText}>
+              Suchoptionen ändern
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+      {
+        orientation === 'PORTRAIT' &&
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.SearchConnections')}
             </Text>
@@ -348,7 +367,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       {
         orientation === 'LANDSCAPE' &&
         <View style={styles.containerSearch}>
-          <TouchableOpacity style={styles.buttonContained} onPress={() => search(false)} onLongPress={() => search(true)}>
+          <TouchableOpacity style={styles.buttonContained} onPress={() => search()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.Search')}
             </Text>

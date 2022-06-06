@@ -1,10 +1,15 @@
 import { rinfgraph } from 'rinf-graph/rinfgraph.bundle';
 import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
 
-interface Haltestelle {
+interface DBHaltestelle {
     EVA_NR: number;
     DS100: string;
     Verkehr: string;
+}
+
+interface ÖBBHaltestelle {
+    EVA_NR: number;
+    DB640_CODE: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -14,7 +19,9 @@ const opInfos = require('rinf-graph/data/OpInfos.json') as OpInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lineInfos = require('rinf-graph/data/LineInfos.json') as LineInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const haltestellen = require('../../db-data/uic-to-opid.json') as Haltestelle[];
+const dbhaltestellen = require('../../db-data/uic-to-opid.json') as DBHaltestelle[];
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const öbbhaltestellen = require('../../öbb-data/uic-to-opid.json') as ÖBBHaltestelle[];
 
 interface LineNode {
     name: string;
@@ -30,11 +37,24 @@ const graph = rinfgraph.Graph_toGraph(g);
 // missing data
 const missingDS100: Map<string, string> = new Map().set('EBILP', 'EBIL').set('UE  P', 'UE').set('MH  S', 'MH');
 
-function findDS100ForUicRef(uicref: number): string | undefined {
-    const haltestelle = haltestellen.find(h => h.EVA_NR === uicref);
-    if (haltestelle) return missingDS100.get(haltestelle.DS100) ?? haltestelle.DS100;
+function ds100ToUOPID(ds100pattern: string) {
+    const ds100 = ds100pattern.split(',')[0];
+    return 'DE' + '0'.repeat(5 - ds100.length) + ds100;
+}
+
+function db640ToUOPID(ds640: string) {
+    return 'AT' + ds640;
+}
+function findOPIDForUicRef(uicref: number): string {
+    const haltestelle = dbhaltestellen.find(h => h.EVA_NR === uicref);
+    if (haltestelle) return ds100ToUOPID(missingDS100.get(haltestelle.DS100) ?? haltestelle.DS100);
     else {
-        console.log('uic not found: ', uicref);
+        const haltestelle = öbbhaltestellen.find(h => h.EVA_NR === uicref);
+        if (haltestelle) return db640ToUOPID(haltestelle.DB640_CODE);
+        else {
+            console.log('uic not found: ', uicref);
+            return '';
+        }
     }
 }
 
@@ -82,26 +102,9 @@ function removeDuplicates(arr: Array<number>) {
     return temp;
 }
 
-function ds100ToUOPID(ds100pattern: string) {
-    const ds100 = ds100pattern.split(',')[0];
-    return 'DE' + '0'.repeat(5 - ds100.length) + ds100;
-}
-
-/*
-haltestellen.forEach(h => {
-    if (h.Verkehr !== 'nur DPN') {
-        const opId = ds100ToUOPID(h.DS100);
-        if (!mapOps.get(opId)) {
-            console.log('no OPID for ', h.DS100);
-        }
-    }
-})
-*/
-
 function findDs100PatternsForUicrefs(uicrefs: number[]) {
     return uicrefs
-        .map(uicref => findDS100ForUicRef(uicref))
-        .map(ds100 => ds100ToUOPID(ds100 ?? ''))
+        .map(uicref => findOPIDForUicRef(uicref))
         .filter(opId => {
             const op = mapOps.get(opId)
             if (!op) {

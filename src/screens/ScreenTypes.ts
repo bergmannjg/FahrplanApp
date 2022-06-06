@@ -1,5 +1,5 @@
-import { JourneyInfo } from '../lib/hafas';
-import { Location, Trip, Alternative, Stop, Line } from 'hafas-client';
+import { JourneyInfo, JourneyParams } from '../lib/hafas';
+import { Location, Trip, Stop, Line } from 'hafas-client';
 
 const nortEastArrow = '\u2197';
 
@@ -11,8 +11,8 @@ export interface HomeScreenParams {
     clientLib?: string;
     profile?: string,
     tripDetails?: boolean,
-    transferTime?: number,
-    station?: string | Location
+    station?: string | Location,
+    journeyParams?: JourneyParams
 }
 
 export interface OptionScreenParams {
@@ -20,7 +20,12 @@ export interface OptionScreenParams {
         clientLib: string,
         profile: string,
         tripDetails: boolean,
-        transferTime: number
+    }
+}
+
+export interface JourneyOptionScreenParams {
+    navigationParams: {
+        journeyParams: JourneyParams
     }
 }
 
@@ -48,7 +53,8 @@ export interface RailwayRoutesOfTripScreenParams {
 }
 
 export interface RailwayRouteScreenParams {
-    railwayRouteNr: number
+    railwayRouteNr: number;
+    imcode: string;
 }
 
 export interface TrainformationScreenParams {
@@ -68,9 +74,8 @@ export interface ConnectionsScreenParams {
     station2: string | Location,
     via: string,
     tripDetails: boolean,
-    transferTime: number,
     profile: string,
-    regional: boolean;
+    journeyParams: JourneyParams
 }
 
 export interface RadarScreenParams {
@@ -136,6 +141,7 @@ export type MainStackParamList = {
 export type RootStackParamList = {
     Main: undefined;
     Options: OptionScreenParams;
+    JourneyOptions: JourneyOptionScreenParams;
     DateTime: DateTimeScreenParams;
     ThirdPartyLicenses: undefined
 };

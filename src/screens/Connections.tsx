@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ListRenderItem, ActivityIndicator } from 'react-native';
+import { List as PaperList, Text } from 'react-native-paper';
+import { View, TouchableOpacity, FlatList, ListRenderItem, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
@@ -22,7 +22,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   const { params }: { params: ConnectionsScreenParams } = route;
 
   if (__DEV__) {
-    console.log('constructor ConnectionsScreen, params.date: ', params.date);
+    console.log('constructor ConnectionsScreen, params.date: ', new Date(params.date).toString(), ', params.journeyParams: ', params.journeyParams);
   }
 
   const { t } = useTranslation();
@@ -36,12 +36,11 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
   const query1 = params.station1;
   const query2 = params.station2;
-  const regional = params.regional;
   const queryVia = params.via;
   const profile = params.profile;
   const client: Hafas = hafas(profile);
   const tripDetails = params.tripDetails;
-  const transferTime = params.transferTime;
+  const journeyParams = params.journeyParams;
   const modes = ["train", "watercraft", "bus"];
 
   const makeRemoteRequest = () => {
@@ -49,7 +48,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     if (loading) return;
     setLoading(true);
 
-    client.journeys(query1, query2, 5, date, queryVia, transferTime, modes, regional)
+    client.journeys(query1, query2, journeyParams, date, queryVia, modes)
       .then(journeys => {
         const infos = [] as JourneyInfo[];
         journeys.forEach(journey => {
@@ -111,11 +110,19 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   }
 
   const showPrev = () => {
-    showIncr(-1);
+    showIncr(-2);
   }
 
   const showNext = () => {
-    showIncr(1);
+    if (data.length > 0) {
+      const newDate = new Date(data[data.length - 1].originDeparture);
+      console.log('originDeparture: ', newDate)
+      setDate(newDate);
+      setData([]);
+      setCount(count + 1);
+    } else {
+      showIncr(1);
+    }
   }
 
   const showDiffDays = (from: Date, to: Date) => {
@@ -142,21 +149,27 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   };
 
   const renderItem: ListRenderItem<JourneyInfo> = ({ item }) => (
-    <ListItem onPress={() => { goToView(item) }} containerStyle={{ borderBottomWidth: 0 }}>
-      <ListItem.Content>
-        <ListItem.Title>
-          <Text style={styles.summaryText}>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}, ${item.distance} km`}</Text>
-        </ListItem.Title>
-        <ListItem.Subtitle>
-          <View style={styles.subtitleViewColumn}>
-            <Text>{`${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.lineNames}`}</Text>
-            {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
-            {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
-            {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
+    <PaperList.Item
+      style={{ borderWidth: 0, padding: 0 }}
+      title={
+        () => <Text style={styles.summaryText}>{`${t('ConnectionsScreen.TimeFrom', { date: extractTimeOfDatestring(item.plannedDeparture) })}, ${t('ConnectionsScreen.TimeTo', { date: extractTimeOfDatestring(item.plannedArrival) })}${showDiffDays(new Date(item.plannedDeparture), new Date(item.plannedArrival))}, ${t('ConnectionsScreen.Duration', { duration: moment.duration((new Date(item.plannedArrival)).valueOf() - (new Date(item.plannedDeparture)).valueOf()) })}${item.distance > 0 ? ', ' + item.distance + ' km' : ''}`}</Text>
+      }
+      description={
+        () =>
+          <View>
+            <View style={styles.containerPriceText}>
+              <Text>{`${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.lineNames}`}</Text>
+              {item.price && <Text>{`${item.price}`}</Text>}
+            </View>
+            <View style={styles.subtitleConnectionsColumn}>
+              {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
+              {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
+              {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
+            </View>
           </View>
-        </ListItem.Subtitle>
-      </ListItem.Content>
-    </ListItem>);
+      }
+      onPress={() => { goToView(item) }}
+    />);
 
   return (
     <View style={styles.container}>

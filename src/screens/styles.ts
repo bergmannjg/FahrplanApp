@@ -26,7 +26,7 @@ export const stylesLandscape = StyleSheet.create({
   },
   containerHeaderText: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     paddingHorizontal: 10
   },
   containerInfo: {
@@ -97,38 +97,52 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 10,
     paddingTop: 5,
-    borderWidth:0
+    borderWidth: 0
+  },
+  containerPriceText: {
+    borderWidth: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 5,
+    paddingHorizontal: 10,
+    paddingLeft: 30
+  },
+  subtitleConnectionsColumn: {
+    flexDirection: 'column',
+    paddingLeft: 30,
+    paddingTop: 0,
+    borderWidth: 0
   },
   routeViewColumn: {
     flexDirection: 'column',
     paddingLeft: 18,
     paddingTop: 5,
-    borderWidth:0
+    borderWidth: 0
   },
   routeViewMaxSpeedColumn: {
     flexDirection: 'column',
     paddingLeft: 18,
     paddingTop: 0,
-    borderWidth:0
+    borderWidth: 0
   },
   routeViewColumnNoPaddingTop: {
     flexDirection: 'column',
     paddingLeft: 18,
     paddingTop: 0,
-    borderWidth:0
+    borderWidth: 0
   },
   maxSpeedColumn: {
     flexDirection: 'column',
     paddingLeft: 30,
     paddingTop: 5,
-    borderWidth:0
+    borderWidth: 0
   },
   distanceColumn: {
     flexDirection: 'column',
     paddingLeft: 10,
     paddingTop: 10,
     paddingBottom: 5,
-    borderWidth:0
+    borderWidth: 0
   },
   distanceText: {
   },
@@ -165,7 +179,7 @@ export const styles = StyleSheet.create({
   summaryText: {
     fontWeight: 'bold',
     fontSize: 14,
-    paddingLeft: 20,
+    paddingLeft: 10,
   },
   contentText: {
     paddingLeft: 20,

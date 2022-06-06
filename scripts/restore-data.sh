@@ -29,3 +29,10 @@ rm -f ${INFILE}
 npx json-property-filter --in "${OUTFILE}" --out "uic-to-opid.json" --filters "EVA_NR" --filters "DS100" --filters "Verkehr"
 
 popd
+
+pushd öbb-data
+
+# https://data.oebb.at/#default/datasetDetail
+cat GIP_PV_STOPS_EU_DEL_V.json | jq '[.features[] |  { EVA_NR : .properties.EVA_NR, DB640_CODE: .properties.DB640_CODE}]' > uic-to-opid.json
+
+popd

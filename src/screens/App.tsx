@@ -16,6 +16,7 @@ import OpenStreetMapScreen from './OpenStreetMap';
 import TrainformationScreen from './Trainformation';
 import WagonimageScreen from './Wagonimage'
 import OptionsScreen from './Options';
+import JourneyOptionsScreen from './JourneyOptions';
 import BRouterScreen from './BRouter';
 import TripScreen from './Trip';
 import WebViewScreen from './WebView';
@@ -36,7 +37,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="Connections"
         component={ConnectionsScreen}
-        options={({ route }) => ({ title: t('ConnectionsScreen.Title') + (route.params.regional ? ' regional' : '') })}
+        options={({ route }) => ({ title: t('ConnectionsScreen.Title') + (route.params.journeyParams.regional ? ' regional' : '') })}
       />
       <MainStack.Screen
         name="Radar"
@@ -119,6 +120,11 @@ function RootStackScreen(): JSX.Element {
         name="Options"
         component={OptionsScreen}
         options={{ title: t('OptionsScreen.Title') }}
+      />
+      <RootStack.Screen
+        name="JourneyOptions"
+        component={JourneyOptionsScreen}
+        options={{ title: 'Suchoptionen' }}
       />
       <RootStack.Screen
         name="ThirdPartyLicenses"

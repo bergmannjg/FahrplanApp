@@ -28,8 +28,12 @@ const filterLines = (lines?: readonly Line[]): string[] => {
         : [];
 }
 
+const defaultJourneyParams = {
+    bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 3, firstClass: false, transfers: -1, transferTime: 8, regional: false
+}
+
 const journeys = (from?: string, to?: string, via?: string) => {
-    from && to && client.journeys(from, to, 3, undefined, via)
+    from && to && client.journeys(from, to, defaultJourneyParams, undefined, via)
         .then(result => {
             result.forEach(j => {
                 console.log('price: ', j.price);
