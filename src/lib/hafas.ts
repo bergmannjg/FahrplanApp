@@ -1,6 +1,6 @@
-import createClient, { Feature, ProductType, Profile } from 'hafas-client';
+import createClient, { Feature, Profile } from 'hafas-client';
 
-import bvgProfile, { products } from 'hafas-client/p/bvg';
+import bvgProfile from 'hafas-client/p/bvg';
 import cflProfile from 'hafas-client/p/cfl';
 import cmtaProfile from 'hafas-client/p/cmta';
 import dbProfile from 'hafas-client/p/db';
@@ -31,12 +31,12 @@ const geolib = require('geolib');
 
 require('isomorphic-fetch');
 
-const chooseClient = (p: string, profile: createClient.Profile) => {
+const chooseClient = (p: string, profile: Profile) => {
     if (p.endsWith('-fsharp')) return fshafas.createClient(profile);
     else return createClient(profile, 'agent');
 }
 
-const chooseProfile = (p: string): createClient.Profile => {
+const chooseProfile = (p: string): Profile => {
     switch (p) {
         case 'bvg': return bvgProfile;
         case 'cfl': return cflProfile;
@@ -449,7 +449,7 @@ export function hafas(profileName: string): Hafas {
         return getDistanceFromLatLonInKm(f0.geometry.coordinates[1], f0.geometry.coordinates[0], f1.geometry.coordinates[1], f1.geometry.coordinates[0]);
     }
 
-    function distanceOfFeatureCollection(fc: createClient.FeatureCollection): number {
+    function distanceOfFeatureCollection(fc: FeatureCollection): number {
         return fc.features.map((v, i) => {
             if (i > 0) {
                 return getDistanceFromFeaturesInKm(fc.features[i - 1], fc.features[i]);
@@ -460,7 +460,7 @@ export function hafas(profileName: string): Hafas {
         }).reduce((a, b) => a + b, 0);
     }
 
-    function distanceOfFeatureCollectionSubset(from: number, to: number, fc: createClient.FeatureCollection): number {
+    function distanceOfFeatureCollectionSubset(from: number, to: number, fc: FeatureCollection): number {
         const latLonPoints =
             fc.features.slice(from, to + 1).map(f => { return { lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] }; })
 

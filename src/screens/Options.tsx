@@ -60,7 +60,7 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     console.log('initialProfile: ', initialProfile, ', navigationParams: ', params.navigationParams);
 
     const goback = () => {
-        console.log('goback OptionsScreen', profile, tripDetails);
+        console.log('goback OptionsScreen', profile, clientLib, tripDetails);
         navigation.navigate('Home', { clientLib, profile, tripDetails });
     }
 

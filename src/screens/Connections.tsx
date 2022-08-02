@@ -11,7 +11,7 @@ import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
-import createClient from 'fs-hafas-client/hafas-client';
+import { Location } from 'fs-hafas-client/hafas-client';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
@@ -86,7 +86,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     );
   };
 
-  const toName = (loc: string | createClient.Location) => {
+  const toName = (loc: string | Location) => {
     if (client.isLocation(loc)) {
       return loc.name;
     } else {

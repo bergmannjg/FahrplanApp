@@ -42,7 +42,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [clientLib, setClientLib] = useState('fs-hafas-client');
   const [profile, setProfile] = useState('db');
-  const [clientProfile, setClientProfile] = useState('db-fsharp');
   const [tripDetails, setTripDetails] = useState(true);
   const [date, setDate] = useState(new Date(Date.now()));
   const [showDate, setShowDate] = useState(false);
@@ -94,20 +93,18 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     await AsyncStorage.setItem('user', JSON.stringify(localData));
   };
 
-  const resetClientProfile = () => {
-    setClientProfile(profile + (clientLib === 'fs-hafas-client' ? '-fsharp' : ''));
+  const clientProfile = () => {
+    return profile + (clientLib === 'fs-hafas-client' ? '-fsharp' : '');
   }
 
   // route.params from OptionsScreen
   if (route.params?.clientLib !== undefined && route.params?.clientLib !== clientLib) {
     setClientLib(route.params.clientLib);
-    resetClientProfile();
   }
 
   // route.params from OptionsScreen
   if (route.params?.profile !== undefined && route.params?.profile !== profile) {
     setProfile(route.params.profile);
-    resetClientProfile();
   }
 
   // route.params from OptionsScreen
@@ -131,7 +128,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   console.log('tripDetails: ', tripDetails);
   console.log('date: ', date);
 
-  const client = hafas(clientProfile);
+  const client = hafas(clientProfile());
 
   const onChangeDate = (event: Event, selectedDate: Date | undefined) => {
     setShowDate(false);
@@ -156,23 +153,23 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const searchConnections = () => {
     if (station1 !== '' && station2 !== '') {
-      console.log('searchConnections. profile:', profile);
-      navigation.navigate('Connections', { profile: clientProfile, station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, journeyParams });
+      console.log('searchConnections. profile:', clientProfile());
+      navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, journeyParams });
     }
   }
 
   const searchNearby = () => {
-    console.log('searchNearby, profile:', profile);
-    navigation.navigate('Nearby', { profile: clientProfile, distance: 1000, searchBusStops: false });
+    console.log('searchNearby, profile:', clientProfile());
+    navigation.navigate('Nearby', { profile: clientProfile(), distance: 1000, searchBusStops: false });
   }
 
   const searchRadar = () => {
-    console.log('searchRadar, profile:', profile);
-    navigation.navigate('Radar', { profile: clientProfile, duration: 10 });
+    console.log('searchRadar, profile:', clientProfile());
+    navigation.navigate('Radar', { profile: clientProfile(), duration: 10 });
   }
 
   const showDeparturesQuery = (query: string) => {
-    navigation.navigate('Departures', { station: query, date: date.valueOf(), profile: clientProfile })
+    navigation.navigate('Departures', { station: query, date: date.valueOf(), profile: clientProfile() })
   }
 
   const navigateToOptionsScreen = () => {
