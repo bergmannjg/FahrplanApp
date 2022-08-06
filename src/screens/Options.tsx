@@ -41,6 +41,11 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
         { label: t('OptionsScreen.onlyStops'), value: false },
     ];
 
+    const radioRouteProps = [
+        { label: 'exakt' + '  ', value: 'exact' },
+        { label: 'kompakt', value: 'compact' },
+    ];
+
     const radioLanguageProps = [
         { label: t('OptionsScreen.German') + '  ', value: 'de' },
         { label: t('OptionsScreen.English'), value: 'en' },
@@ -51,17 +56,23 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     const [clientLib, setClientLib] = useState(params.navigationParams.clientLib);
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
+    const [compactifyPath, setCompactifyPath] = useState(params.navigationParams.compactifyPath);
+
+    const getCompactifyPath = () => {
+        return compactifyPath ? 'compact' : 'exact';
+    }
 
     const initialClientLib = radioClientLib.findIndex(p => p.value === clientLib);
     const initialProfile = radioProps.findIndex(p => p.value === profile);
     const initialTripDetails = radioTripDetailsProps.findIndex(p => p.value === tripDetails);
+    const initialRouteProps = radioRouteProps.findIndex(p => p.value === getCompactifyPath());
     const initialLanguage = radioLanguageProps.findIndex(p => p.value === i18n.language);
 
     console.log('initialProfile: ', initialProfile, ', navigationParams: ', params.navigationParams);
 
     const goback = () => {
-        console.log('goback OptionsScreen', profile, clientLib, tripDetails);
-        navigation.navigate('Home', { clientLib, profile, tripDetails });
+        console.log('goback OptionsScreen', profile, clientLib, tripDetails, compactifyPath);
+        navigation.navigate('Home', { clientLib, profile, tripDetails, compactifyPath });
     }
 
     const showLicences = () => {
@@ -94,6 +105,18 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
                     radio_props={radioTripDetailsProps}
                     initial={initialTripDetails}
                     onPress={(value: boolean) => { setTripDetails(value) }}
+                />
+            </View>
+            <Text style={styles.itemText1}>Railway Route </Text>
+            <View style={styles.radioView}>
+                <RadioForm
+                    formHorizontal={true}
+                    radio_props={radioRouteProps}
+                    initial={initialRouteProps}
+                    onPress={(value: string) => {
+                        console.log('radioRouteProps: ', value, value === 'compact')
+                        setCompactifyPath(value === 'compact')
+                    }}
                 />
             </View>
             <Text style={styles.itemText1}>{t('OptionsScreen.Language')}</Text>

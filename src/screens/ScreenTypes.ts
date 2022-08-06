@@ -11,6 +11,7 @@ export interface HomeScreenParams {
     clientLib?: string;
     profile?: string,
     tripDetails?: boolean,
+    compactifyPath?: boolean,
     station?: string | Location,
     journeyParams?: JourneyParams
 }
@@ -20,6 +21,7 @@ export interface OptionScreenParams {
         clientLib: string,
         profile: string,
         tripDetails: boolean,
+        compactifyPath: boolean,
     }
 }
 
@@ -39,6 +41,7 @@ export interface DateTimeScreenParams {
 export interface JourneyplanScreenParams {
     journey: JourneyInfo,
     tripDetails: boolean,
+    compactifyPath: boolean;
     profile: string
 }
 
@@ -50,6 +53,7 @@ export interface RailwayRoutesOfTripScreenParams {
     stops?: Stop[];
     tripDetails: boolean;
     compactifyPath: boolean;
+    useMaxSpeed: boolean;
 }
 
 export interface RailwayRouteScreenParams {
@@ -74,6 +78,7 @@ export interface ConnectionsScreenParams {
     station2: string | Location,
     via: string,
     tripDetails: boolean,
+    compactifyPath: boolean;
     profile: string,
     journeyParams: JourneyParams
 }

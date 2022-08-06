@@ -43,6 +43,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const [clientLib, setClientLib] = useState('fs-hafas-client');
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
+  const [compactifyPath, setCompactifyPath] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
   const [showDate, setShowDate] = useState(false);
   const [journeyParams, setJourneyParams] = useState(defaultJourneyParams);
@@ -112,6 +113,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setTripDetails(route.params.tripDetails);
   }
 
+  // route.params from OptionsScreen
+  if (route.params?.compactifyPath !== undefined && route.params?.compactifyPath !== compactifyPath) {
+    setCompactifyPath(route.params.compactifyPath);
+  }
+
   // route.params from JourneyOptionsScreen
   if (route.params?.journeyParams !== undefined && route.params?.journeyParams !== journeyParams) {
     setJourneyParams(route.params.journeyParams);
@@ -126,6 +132,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   console.log('clientLib: ', clientLib);
   console.log('profile: ', profile);
   console.log('tripDetails: ', tripDetails);
+  console.log('compactifyfRoute: ', compactifyPath);
   console.log('date: ', date);
 
   const client = hafas(clientProfile());
@@ -154,7 +161,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const searchConnections = () => {
     if (station1 !== '' && station2 !== '') {
       console.log('searchConnections. profile:', clientProfile());
-      navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, journeyParams });
+      navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, compactifyPath: compactifyPath, journeyParams });
     }
   }
 
@@ -173,8 +180,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const navigateToOptionsScreen = () => {
-    console.log('navigateToOptionsScreen. profile:', profile);
-    navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails } });
+    console.log('navigateToOptionsScreen. profile:', profile, compactifyPath);
+    navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails, compactifyPath } });
   }
 
   const navigateToJourneyOptionsScreen = () => {

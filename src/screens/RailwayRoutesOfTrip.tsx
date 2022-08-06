@@ -27,8 +27,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const journeyInfo = params.journeyInfo;
     const stops = params.stops;
     const showTransfers = params.tripDetails;
-    const useMaxSpeed = !params.compactifyPath;
-    const compactifyPath = true;
+    const useMaxSpeed = params.useMaxSpeed;
+    const compactifyPath = params.compactifyPath;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const trainModes = ["train", "watercraft"];
@@ -38,6 +38,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     console.log('journeyInfo.legs.length: ', journeyInfo?.legs.length);
     console.log('stops.length: ', stops?.length);
+    console.log('compactifyPath: ', compactifyPath);
 
     const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
         try {

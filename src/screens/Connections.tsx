@@ -40,6 +40,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
   const profile = params.profile;
   const client: Hafas = hafas(profile);
   const tripDetails = params.tripDetails;
+  const compactifyPath = params.compactifyPath;
   const journeyParams = params.journeyParams;
   const modes = ["train", "watercraft", "bus"];
 
@@ -96,7 +97,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
   const goToView = (item: JourneyInfo) => {
     console.log('Navigation router run to Journeyplan');
-    navigation.navigate('Journeyplan', { journey: item, profile, tripDetails })
+    navigation.navigate('Journeyplan', { journey: item, profile, tripDetails, compactifyPath })
   };
 
   const showIncr = (hours: number) => {
