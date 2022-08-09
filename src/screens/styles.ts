@@ -119,6 +119,12 @@ export const styles = StyleSheet.create({
     paddingTop: 5,
     borderWidth: 0
   },
+  routeTunnelColumn: {
+    flexDirection: 'column',
+    paddingLeft: 30,
+    paddingTop: 5,
+    borderWidth: 0
+  },
   routeViewMaxSpeedColumn: {
     flexDirection: 'column',
     paddingLeft: 18,

@@ -30,7 +30,7 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
     const [regional, setRegional] = useState(params.navigationParams.journeyParams.regional);
     const age = params.navigationParams.journeyParams.age;
     const results = params.navigationParams.journeyParams.results;
-    
+
     const onToggleTransfers = () => setTransfers(transfers == 0 ? -1 : 0);
     const onToggleRegional = () => setRegional(!regional);
 
@@ -39,37 +39,45 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
         navigation.navigate('Home', { journeyParams: { bahncardDiscount: bahncard % 100, bahncardClass: Math.floor(bahncard / 100), age, results, firstClass, transfers, transferTime, regional } });
     }
 
+    interface ListItem {
+        label: string;
+        value: string;
+    }
+
+    const radioItems = (items: ListItem[]) =>
+        items.map((item: ListItem) =>
+            <RadioButton.Item style={styles.radioButtonItem} key={item.label} label={item.label} value={item.value} />
+        );
+
+    const radioBahncardItems: ListItem[] = [
+        { label: 'keine', value: '0' },
+        { label: 'BC 25, 1. Klasse', value: '125' },
+        { label: 'BC 25, 2. Klasse', value: '225' },
+    ];
+
+    const radioClassItems: ListItem[] = [
+        { label: '1. Klasse', value: 'true' },
+        { label: '2. Klasse', value: 'false' },
+    ];
+
+    const radioTransferTimeItems: ListItem[] = [
+        { label: '8 Min.', value: '8' },
+        { label: '30 Min.', value: '30' },
+    ];
+
     return (
         <View style={styles.container}>
-            <Text style={styles.radioButtonTitle}>{'Bahncard'}</Text>
+            <Text style={styles.radioButtonTitle}>Bahncard</Text>
             <RadioButton.Group onValueChange={newValue => setBahncard(parseInt(newValue))} value={bahncard.toString()}>
-                <View style={styles.radioButton}>
-                    <Text>keine</Text>
-                    <RadioButton value="0" />
-                </View>
-                <View style={styles.radioButton}>
-                    <Text>BC 25, 1. Klasse</Text>
-                    <RadioButton value="125" />
-                </View>
-                <View style={styles.radioButton}>
-                    <Text>BC 25, 2. Klasse</Text>
-                    <RadioButton value="225" />
-                </View>
+                {radioItems(radioBahncardItems)}
             </RadioButton.Group>
 
-            <Text style={styles.radioButtonTitle}>{'Klasse'}</Text>
+            <Text style={styles.radioButtonTitle}>Klasse</Text>
             <RadioButton.Group onValueChange={newValue => setFirstClass(newValue === 'true')} value={firstClass.toString()}>
-                <View style={styles.radioButton}>
-                    <Text>1. Klasse</Text>
-                    <RadioButton value="true" />
-                </View>
-                <View style={styles.radioButton}>
-                    <Text>2. Klasse</Text>
-                    <RadioButton value="false" />
-                </View>
+                {radioItems(radioClassItems)}
             </RadioButton.Group>
 
-            <Text style={styles.radioButtonTitle}>{'Vebindungen'}</Text>
+            <Text style={styles.radioButtonTitle}>Vebindungen</Text>
             <View style={styles.switch}>
                 <Text>nur Direktvebindungen</Text>
                 <Switch value={transfers == 0} onValueChange={onToggleTransfers} />
@@ -81,14 +89,7 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
 
             <Text style={styles.radioButtonTitle}>Umsteigezeit</Text>
             <RadioButton.Group onValueChange={newValue => setTransferTime(parseInt(newValue))} value={transferTime.toString()}>
-                <View style={styles.radioButton}>
-                    <Text>8 Min.</Text>
-                    <RadioButton value="8" />
-                </View>
-                <View style={styles.radioButton}>
-                    <Text>30 Min.</Text>
-                    <RadioButton value="30" />
-                </View>
+                {radioItems(radioTransferTimeItems)}
             </RadioButton.Group>
 
             <View style={styles.container3}>
@@ -157,6 +158,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingLeft: 40,
         paddingRight: 20
+    },
+    radioButtonItem: {
+        paddingLeft: 40,
+        paddingRight: 20,
+        paddingBottom: 0,
+        paddingTop: 0,
     }
 });
 

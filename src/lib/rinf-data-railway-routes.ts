@@ -1,5 +1,5 @@
 import { rinfgraph } from 'rinf-graph/rinfgraph.bundle';
-import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
+import type { GraphNode, OpInfo, LineInfo, TunnelInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
 
 interface DBHaltestelle {
     EVA_NR: number;
@@ -19,15 +19,24 @@ const opInfos = require('rinf-graph/data/OpInfos.json') as OpInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lineInfos = require('rinf-graph/data/LineInfos.json') as LineInfo[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const tunnelInfos = require('rinf-graph/data/TunnelInfos.json') as TunnelInfo[];
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const dbhaltestellen = require('../../db-data/uic-to-opid.json') as DBHaltestelle[];
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const öbbhaltestellen = require('../../öbb-data/uic-to-opid.json') as ÖBBHaltestelle[];
+
+interface TunnelNode {
+    name: string;
+    km: string;
+    length: string;
+}
 
 interface LineNode {
     name: string;
     opid: string;
     km: string;
     maxSpeed?: number;
+    tunnelNodes: TunnelNode[];
 }
 
 const mapOps = opInfos.reduce((map: Map<string, OpInfo>, op: OpInfo) => map.set(op.UOPID, op), new Map());
@@ -71,11 +80,26 @@ function rinfIsWalkingPath(n: GraphNode): boolean {
 }
 
 function rinfToLineNode(n: GraphNode): LineNode {
+    const tunnelsOfLine: TunnelNode[] = tunnelInfos
+        .filter(t =>
+            t.Line === n.Edges[0].Line
+            && t.StartKm >= n.Edges[0].StartKm
+            && t.EndKm <= n.Edges[0].EndKm)
+        .sort((a, b) => a.StartKm - b.StartKm)
+        .map(t => {
+            return {
+                name: t.Tunnel,
+                km: t.StartKm.toFixed(3),
+                length: ((t.EndKm - t.StartKm)).toFixed(3)
+            }
+        }
+        );
     return {
         name: mapOps.get(n.Node)?.Name ?? n.Node,
         opid: n.Node,
         km: n.Edges[0].StartKm.toFixed(3),
-        maxSpeed: n.Edges[0].MaxSpeed
+        maxSpeed: n.Edges[0].MaxSpeed,
+        tunnelNodes: tunnelsOfLine
     }
 }
 
@@ -85,7 +109,8 @@ function toLineNodes(nodes: GraphNode[]): LineNode[] {
     const lastElement: LineNode = {
         name: mapOps.get(lastNode.Edges[0].Node)?.Name ?? lastNode.Edges[0].Node,
         opid: lastNode.Edges[0].Node,
-        km: (lastNode.Edges[0].StartKm + lastNode.Edges[0].Length).toFixed(3)
+        km: (lastNode.Edges[0].StartKm + lastNode.Edges[0].Length).toFixed(3),
+        tunnelNodes: []
     }
     return nodes.map(n => rinfToLineNode(n)).concat([lastElement]);
 }
@@ -150,4 +175,4 @@ function rinfComputeDistanceOfPath(path: GraphNode[]): number {
 
 export { rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripIBNRs, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
 
-export type { PathElement, LineNode }
+export type { PathElement, LineNode, TunnelNode }

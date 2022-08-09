@@ -8,7 +8,7 @@ import { Location } from 'hafas-client';
 import { MainStackParamList, RailwayRouteScreenParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
 import { rinfFindRailwayRoutesOfLine, rinfGetLocationsOfPath, rinfToLineNodes, rinfGetLineName } from '../lib/rinf-data-railway-routes';
-import type { LineNode } from '../lib/rinf-data-railway-routes';
+import type { LineNode, TunnelNode } from '../lib/rinf-data-railway-routes';
 import type { GraphNode } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
@@ -31,8 +31,8 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
 
     const queryText = () => {
         console.log('imcode:', imcode);
-        if (imcode === '0081') return 'Streckennummer ÖBB "' + (railwayRouteNr / 100).toFixed(0) + ' ' 
-                + String(railwayRouteNr % 100).padStart(2, '0') + '" Wikipedia'; // öbb
+        if (imcode === '0081') return 'Streckennummer ÖBB "' + (railwayRouteNr / 100).toFixed(0) + ' '
+            + String(railwayRouteNr % 100).padStart(2, '0') + '" Wikipedia'; // öbb
         else return 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
     }
     const showRoute = async () => {
@@ -50,6 +50,21 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
         item: LineNode
     }
 
+    const tunnels = (tunnelNodes: TunnelNode[]) => {
+        const nodes =
+            tunnelNodes.map(t =>
+                <Text key={t.name}
+                    onPress={() => Linking.openURL('https://www.google.de/search?q=+' + t.name)}
+                >
+                    {`km: ${t.km} ${t.name} (${t.length} km)`} {asLinkText('')}</Text>
+            )
+        return (
+            <View style={styles.routeTunnelColumn}>
+                {nodes}
+            </View>
+        );
+    }
+
     const Item = ({ item }: ItemProps) => {
         return (
             <View >
@@ -59,6 +74,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                 {item.maxSpeed && <View style={styles.maxSpeedColumn}>
                     <Text>{`max: ${item.maxSpeed} km`}</Text>
                 </View >}
+                {item.tunnelNodes.length > 0 && tunnels(item.tunnelNodes)}
             </View>
         );
     }
