@@ -25,6 +25,7 @@ import vsnProfile from 'hafas-client/p/vsn';
 
 import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
+import { profiles } from "fs-hafas-profiles";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const geolib = require('geolib');
@@ -59,8 +60,8 @@ const chooseProfile = (p: string): Profile => {
         case 'vbn': return vbnProfile;
         case 'vmt': return vmtProfile;
         case 'vsn': return vsnProfile;
-        case 'bvg-fsharp': return fshafas.bvgProfile;
-        case 'db-fsharp': return fshafas.dbProfile;
+        case 'bvg-fsharp': return profiles.getProfile('bvg');
+        case 'db-fsharp': return profiles.getProfile('db');
         default: {
             console.log('choose default');
             return dbProfile;
