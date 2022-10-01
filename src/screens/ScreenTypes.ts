@@ -83,6 +83,18 @@ export interface ConnectionsScreenParams {
     journeyParams: JourneyParams
 }
 
+export interface BestPriceConnectionsScreenParams {
+    date: number,
+    station1: string | Location,
+    station2: string | Location,
+    via: string,
+    tripDetails: boolean,
+    compactifyPath: boolean;
+    profile: string,
+    journeyParams: JourneyParams,
+    days: number,
+}
+
 export interface RadarScreenParams {
     profile: string;
     duration: number;
@@ -129,6 +141,7 @@ export interface OpenStreetMapParams {
 export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
+    BestPriceConnections: BestPriceConnectionsScreenParams;
     Radar: RadarScreenParams;
     Nearby: NearbyScreenParams;
     Journeyplan: JourneyplanScreenParams;

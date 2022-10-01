@@ -3,7 +3,7 @@
     "skipLibCheck": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "jsx": "react",
     "lib": [
       "es6"
@@ -17,6 +17,9 @@
     "noImplicitAny": true,
     "baseUrl": ".",
     "paths": {
+      "db-prices": [
+        "types/db-prices"
+      ],
       "react-native-simple-radio-button": [
         "types/react-native-simple-radio-button"
       ],

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import HomeScreen from './Home';
 import DepartureScreen from './Departures';
 import ConnectionsScreen from './Connections';
+import BestPriceConnectionsScreen from './BestPriceConnections';
 import RadarScreen from './Radar';
 import NearbyScreen from './Nearby';
 import JourneyplanScreen from './Journeyplan';
@@ -38,6 +39,11 @@ function MainStackScreen() {
         name="Connections"
         component={ConnectionsScreen}
         options={({ route }) => ({ title: t('ConnectionsScreen.Title') + (route.params.journeyParams.regional ? ' regional' : '') })}
+      />
+      <MainStack.Screen
+        name="BestPriceConnections"
+        component={BestPriceConnectionsScreen}
+        options={{ title: t('BestPriceConnectionsScreen.Title') }}
       />
       <MainStack.Screen
         name="Radar"

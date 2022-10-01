@@ -126,6 +126,12 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     }
   }
 
+  const showBestPrice = () => {
+    console.log('searchConnections. profile:', profile);
+    navigation.navigate('BestPriceConnections', { profile: profile, station1: params.station1, station2: params.station2, via: params.via, date: date.valueOf(), tripDetails, compactifyPath: compactifyPath, journeyParams, days: 7 });
+  }
+
+
   const showDiffDays = (from: Date, to: Date) => {
     const diffDays = to.getFullYear() === from.getFullYear() ? moment(to).dayOfYear() - moment(from).dayOfYear() : 0;
     return diffDays > 0 ? t('ConnectionsScreen.DaysDifference', { count: diffDays }) : '';
@@ -174,7 +180,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
   return (
     <View style={styles.container}>
-      <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
+      <View style={stylesLandscape.containerButtons} >
         <TouchableOpacity style={styles.buttonConnection} onPress={() => showPrev()}>
           <Text style={styles.itemButtonText}>
             {t('ConnectionsScreen.Earlier')}
@@ -183,6 +189,11 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
         <TouchableOpacity style={styles.buttonConnection} onPress={() => showNext()}>
           <Text style={styles.itemButtonText}>
             {t('ConnectionsScreen.Later')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonConnection} onPress={() => showBestPrice()}>
+          <Text style={styles.itemButtonText}>
+            {t('ConnectionsScreen.BestPrice')}
           </Text>
         </TouchableOpacity>
       </View>

@@ -26,10 +26,20 @@
         "SingleStage": "einstufig",
         "DoubleStage": "zweistufig"
     },
+    "BestPriceConnectionsScreen": {
+        "Title": "Verbindungen (Bestpreise)",
+        "TitlePerDay": "Verbindungen (Bestpreise pro Tag)",
+        "Date": "Datum: {{date, dd}}. {{date, DD.MM.YY}}",
+        "Earlier": "{{days}} Tage früher",
+        "Later": "{{days}} Tage später",
+        "PrevDay": "1 Tag früher",
+        "NextDay": "1 Tag später"
+    },
     "ConnectionsScreen": {
         "Title": "Verbindungen",
         "Earlier": "früher",
         "Later": "später",
+        "BestPrice": "Bestpreise",
         "Date": "Datum: {{date, dd}}. {{date, DD.MM.YY}}, {{date, HH:mm}}",
         "DirectionTo": "nach",
         "TimeFrom": "ab: {{date, HH:mm}}",

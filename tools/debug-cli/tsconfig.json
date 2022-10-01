@@ -3,7 +3,7 @@
         "skipLibCheck": true,
         "allowJs": false,
         "allowSyntheticDefaultImports": true,
-        "isolatedModules": true,
+        "isolatedModules": false,
         "moduleResolution": "node",
         "noEmit": false,
         "strict": true,
@@ -12,7 +12,12 @@
         "noImplicitAny": false,
         "outDir": "dist",
         "module": "es6",
-        "sourceMap": true
+        "sourceMap": true,
+        "paths": {
+            "db-prices": [
+                "../../types/db-prices"
+            ]
+        }
     },
     "include": [
         "./*"

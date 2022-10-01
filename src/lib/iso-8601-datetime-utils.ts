@@ -53,7 +53,26 @@ export function parseDatestring(datestring: string): {
 
         return res;
     } else {
-        return undefined;
+        const dtNum = Date.parse(datestring);
+        if (!isNaN(dtNum)) {
+            const dt = new Date(dtNum);
+            return {
+                datestring,
+                dt: dt,
+                year: dt.getFullYear().toString(),
+                month: (dt.getMonth() + 1).toString(),
+                day: dt.getDate().toString(),
+                hour: dt.getHours().toString().padStart(2, '0'),
+                minute: dt.getMinutes().toString().padStart(2, '0'),
+                second: dt.getSeconds().toString().padStart(2, '0'),
+                tz_op: '',
+                tz_hour: '0',
+                tz_minute: '0',
+                timezoneOffset: 0
+            };
+        } else {
+            return undefined;
+        }
     }
 }
 

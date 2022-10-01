@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
@@ -317,42 +317,40 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                     {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
                 </Text>
             </View>
-            <ScrollView>
+            <FlatList
+                data={legs}
+                renderItem={({ item }) => (
+                    <Item item={item} />
+                )}
+                keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
+                ItemSeparatorComponent={renderSeparator}
+                ListFooterComponent={renderFooter}
+                onEndReachedThreshold={50}
+            />
+            <View style={{ paddingLeft: 0 }}>
                 <FlatList
-                    data={legs}
+                    data={journeyInfo.statusRemarks}
                     renderItem={({ item }) => (
-                        <Item item={item} />
+                        <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                            <ListItem.Content>
+                                <ListItem.Title>
+                                    <Text style={styles.summaryText}>
+                                        {item.summary}
+                                    </Text>
+                                </ListItem.Title>
+                                <ListItem.Subtitle>
+                                    <Text style={styles.contentText}>
+                                        {item.text}
+                                    </Text>
+                                </ListItem.Subtitle>
+                            </ListItem.Content>
+                        </ListItem>
                     )}
-                    keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
+                    keyExtractor={item => (item.summary ?? '') + item.text.length}
                     ItemSeparatorComponent={renderSeparator}
-                    ListFooterComponent={renderFooter}
                     onEndReachedThreshold={50}
                 />
-                <View style={{ paddingLeft: 20 }}>
-                    <FlatList
-                        data={journeyInfo.statusRemarks}
-                        renderItem={({ item }) => (
-                            <ListItem containerStyle={{ borderBottomWidth: 0 }}>
-                                <ListItem.Content>
-                                    <ListItem.Title>
-                                        <Text style={styles.summaryText}>
-                                            {item.summary}
-                                        </Text>
-                                    </ListItem.Title>
-                                    <ListItem.Subtitle>
-                                        <Text style={styles.contentText}>
-                                            {item.text}
-                                        </Text>
-                                    </ListItem.Subtitle>
-                                </ListItem.Content>
-                            </ListItem>
-                        )}
-                        keyExtractor={item => (item.summary ?? '') + item.text.length}
-                        ItemSeparatorComponent={renderSeparator}
-                        onEndReachedThreshold={50}
-                    />
-                </View>
-            </ScrollView>
+            </View>
         </View>
     );
 }

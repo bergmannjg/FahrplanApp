@@ -171,7 +171,6 @@ export function hafas(profileName: string): Hafas {
         let changes = journey.legs.filter(leg => leg?.line).length;
         const lineNames = journey.legs.reduce((acc, leg) => {
             const name = leg.line?.name ?? '';
-            console.log('name:', name);
             const found = name.match(/^[A-Z]+/i)
             if (found) return acc + (acc.length > 0 ? ', ' : '') + found[0];
             else return acc;
@@ -587,7 +586,7 @@ export function hafas(profileName: string): Hafas {
         stopsInLeg.forEach(s => {
             if (stopsInFcOrig.find(sFc => sFc.stop?.name === s.name) === undefined) {
                 const index = s.location && s.location?.latitude && s.location?.longitude ? findIndex(s.location?.latitude, s.location?.longitude, fc, 0.1) : undefined;
-                if (index && fc.features[index].properties !== undefined && fc.features[index].properties !== {}) {
+                if (index && fc.features[index].properties !== undefined) {
                     fc.features[index].properties = s;
                 }
             }

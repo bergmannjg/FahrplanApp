@@ -6,6 +6,7 @@ export const stylesPortrait = StyleSheet.create({
   containerButtons: {
     flexDirection: 'column',
     padding: 10,
+    borderWidth: 0,
   },
   containerHeaderText: {
     flexDirection: 'column',
@@ -40,6 +41,12 @@ export const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     flexDirection: 'column',
+  },
+  containerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 0,
+    borderWidth: 0,
   },
   containerDateTime: {
     alignSelf: 'stretch',
@@ -107,6 +114,10 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingLeft: 30
   },
+  priceText: {
+    textDecorationLine: 'underline',
+    borderWidth: 0,
+  },
   subtitleConnectionsColumn: {
     flexDirection: 'column',
     paddingLeft: 30,
@@ -172,7 +183,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     padding: 10,
     margin: 2,
-    minWidth: 200
+    minWidth: 100,
+    borderWidth: 0,
   },
   itemButtonText: {
     fontSize: 18,

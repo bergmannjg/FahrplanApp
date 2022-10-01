@@ -4,6 +4,7 @@
     "description": "",
     "main": "dist/cli.js",
     "dependencies": {
+        "db-prices": "^3.0.3",
         "fs-hafas-client": "https://github.com/bergmannjg/fshafas/releases/download/1.4.0/fs-hafas-client-1.4.0.tgz",
         "geolib": "^3.3.1",
         "google-polyline": "^1.0.3",
@@ -11,7 +12,7 @@
         "isomorphic-fetch": "^2.2.1",
         "md5": "^2.3.0",
         "minimist": "^1.2.5",
-        "moment": "^2.29.1",
+        "moment": "^2.29.4",
         "node-fetch": "^2.6.1"
     },
     "devDependencies": {

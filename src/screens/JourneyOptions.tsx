@@ -28,7 +28,7 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
     const [transfers, setTransfers] = useState(params.navigationParams.journeyParams.transfers);
     const [transferTime, setTransferTime] = useState(params.navigationParams.journeyParams.transferTime);
     const [regional, setRegional] = useState(params.navigationParams.journeyParams.regional);
-    const age = params.navigationParams.journeyParams.age;
+    const [age, setAge] = useState(params.navigationParams.journeyParams.age);
     const results = params.navigationParams.journeyParams.results;
 
     const onToggleTransfers = () => setTransfers(transfers == 0 ? -1 : 0);
@@ -55,6 +55,13 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
         { label: 'BC 25, 2. Klasse', value: '225' },
     ];
 
+    const radioAgeItems: ListItem[] = [
+        { label: '6-14 Jahre', value: '10' },
+        { label: '15-26 Jahre', value: '20' },
+        { label: '27-64 Jahre', value: '30' },
+        { label: 'ab 65 Jahre', value: '65' },
+    ];
+
     const radioClassItems: ListItem[] = [
         { label: '1. Klasse', value: 'true' },
         { label: '2. Klasse', value: 'false' },
@@ -70,6 +77,11 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
             <Text style={styles.radioButtonTitle}>Bahncard</Text>
             <RadioButton.Group onValueChange={newValue => setBahncard(parseInt(newValue))} value={bahncard.toString()}>
                 {radioItems(radioBahncardItems)}
+            </RadioButton.Group>
+
+            <Text style={styles.radioButtonTitle}>Alter</Text>
+            <RadioButton.Group onValueChange={newValue => setAge(parseInt(newValue))} value={age.toString()}>
+                {radioItems(radioAgeItems)}
             </RadioButton.Group>
 
             <Text style={styles.radioButtonTitle}>Klasse</Text>
@@ -121,7 +133,7 @@ const styles = StyleSheet.create({
         left: 0,
         position: 'absolute',
         right: 0,
-        top: 485,
+        top: 630,
     },
     container4: {
         backgroundColor: '#F5FCFF',
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 2,
         paddingLeft: 22,
-        paddingBottom: 5
+        paddingBottom: 2
     },
     radioButton: {
         flexDirection: 'row',

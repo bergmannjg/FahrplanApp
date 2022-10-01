@@ -23,6 +23,7 @@
     "acorn": "^8.7.0",
     "core-js": "^3.21.1",
     "csv2json": "^2.0.2",
+    "db-prices": "^3.0.3",
     "fs-hafas-client": "file:../fshafas/src/fshafas.javascript.package/fs-hafas-client-1.6.0.tgz",
     "fs-hafas-profiles": "file:../fshafas/src/fshafas.profiles.javascript.package/fs-hafas-profiles-1.0.0.tgz",
     "geolib": "^3.3.3",
