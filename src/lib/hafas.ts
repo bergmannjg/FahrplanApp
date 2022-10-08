@@ -12,6 +12,7 @@ import nahshProfile from 'hafas-client/p/nahsh';
 import nvvProfile from 'hafas-client/p/nvv';
 import oebbProfile from 'hafas-client/p/oebb';
 import pkpProfile from 'hafas-client/p/pkp';
+import rejseplanenProfile from 'hafas-client/p/rejseplanen';
 import rmvProfile from 'hafas-client/p/rmv';
 import rsagProfile from 'hafas-client/p/rsag';
 import saarfahrplanProfile from 'hafas-client/p/saarfahrplan';
@@ -51,6 +52,7 @@ const chooseProfile = (p: string): Profile => {
         case 'nvv': return nvvProfile;
         case 'oebb': return oebbProfile;
         case 'pkp': return pkpProfile;
+        case 'rejseplanen': return rejseplanenProfile;
         case 'rmv': return rmvProfile;
         case 'rsag': return rsagProfile;
         case 'saarfahrplan': return saarfahrplanProfile;

@@ -7,6 +7,7 @@ import moment from 'moment';
 import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import { RadioButton, Text } from 'react-native-paper';
+import DropDown from "react-native-paper-dropdown";
 
 import { RootStackParamList, MainStackParamList } from './ScreenTypes';
 
@@ -29,20 +30,30 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
         value: string;
     }
 
+    const fs_hafas_client = 'fs-hafas-client';
+    const hafas_client = 'hafas-client';
+
     const radioItems = (items: ListItem[]) =>
         items.map((item: ListItem) =>
             <RadioButton.Item style={styles.radioButtonItem} key={item.label} label={item.label} value={item.value} />
         );
 
     const radioProfileProps = [
-        { label: 'Deutsche Bahn (DB)', value: 'db' },
-        { label: 'Österreichische Bundesbahnen (ÖBB)', value: 'oebb' },
-        { label: 'Verbund Berlin-Brandenburg (BVG)', value: 'bvg' },
+        { label: 'Deutsche Bahn', value: 'db', fsEnabled: true },
+        { label: 'Österreichische Bundesbahnen', value: 'oebb', fsEnabled: false },
+        { label: 'Schweizerische Bundesbahnen', value: 'sbb', fsEnabled: false },
+        { label: 'Rejseplanen in Denmark', value: 'rejseplanen', fsEnabled: false },
+        { label: 'Berliner Verkehrsbetriebe', value: 'bvg', fsEnabled: true },
+        { label: 'Verkehrsverbund Berlin-Brandenburg', value: 'vbb', fsEnabled: false },
     ];
 
+    const radioProfilePropsChecked = (clientLib: string) => {
+        return radioProfileProps.filter(p => clientLib === hafas_client || (clientLib == fs_hafas_client && p.fsEnabled));
+    }
+
     const radioClientLib = [
-        { label: 'F#  ', value: 'fs-hafas-client' },
-        { label: 'JS', value: 'hafas-client' }
+        { label: 'F#  ', value: fs_hafas_client },
+        { label: 'JS', value: hafas_client }
     ];
 
     const radioTripDetailsProps = [
@@ -66,6 +77,7 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
     const [compactifyPath, setCompactifyPath] = useState(params.navigationParams.compactifyPath);
+    const [showDropDown, setShowDropDown] = useState(false);
 
     const getCompactifyPath = () => {
         return compactifyPath ? 'compact' : 'exact';
@@ -73,20 +85,44 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
 
     console.log('profile: ', profile, ', navigationParams: ', params.navigationParams);
 
+    const setCheckedClientLib = (newValue: string) => {
+        setClientLib(newValue);
+
+        if (newValue === fs_hafas_client && profile !== 'db' && profile !== 'bvg') {
+            console.log('change profile')
+            setProfile('db');
+        }
+    }
+
     const goback = () => {
-        console.log('goback OptionsScreen', profile, clientLib, tripDetails, compactifyPath);
-        navigation.navigate('Home', { clientLib, profile, tripDetails, compactifyPath });
+        let realClientLib = clientLib;
+        if (clientLib === fs_hafas_client && radioProfileProps.find(p => p.value === profile && !p.fsEnabled)) {
+            console.log('change clientLib to ', hafas_client)
+            realClientLib = hafas_client;
+        }
+        console.log('goback OptionsScreen', profile, realClientLib, tripDetails, compactifyPath);
+        navigation.navigate('Home', { clientLib: realClientLib, profile, tripDetails, compactifyPath });
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.radioButtonTitle}>{t('OptionsScreen.InformationSystem')}</Text>
-            <RadioButton.Group onValueChange={newValue => setProfile(newValue)} value={profile}>
-                {radioItems(radioProfileProps)}
-            </RadioButton.Group>
+
+            <View style={styles.safeContainerStyle}>
+                <DropDown
+                    label={t('OptionsScreen.InformationSystem')}
+                    mode={'outlined'}
+                    visible={showDropDown}
+                    showDropDown={() => setShowDropDown(true)}
+                    onDismiss={() => setShowDropDown(false)}
+                    value={profile}
+                    setValue={setProfile}
+                    list={radioProfilePropsChecked(clientLib)}
+                    dropDownContainerMaxHeight={300}
+                />
+            </View>
 
             <Text style={styles.radioButtonTitle}>Client Library</Text>
-            <RadioButton.Group onValueChange={newValue => setClientLib(newValue)} value={clientLib}>
+            <RadioButton.Group onValueChange={newValue => setCheckedClientLib(newValue)} value={clientLib}>
                 {radioItems(radioClientLib)}
             </RadioButton.Group>
 
@@ -124,6 +160,13 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 22,
         flexDirection: 'column',
+    },
+    safeContainerStyle: {
+        marginLeft: 20,
+        marginRight: 20,
+        marginBottom: 10,
+        justifyContent: "center",
+        borderWidth: 0,
     },
     container3: {
         backgroundColor: '#F5FCFF',

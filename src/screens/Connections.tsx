@@ -191,11 +191,13 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
             {t('ConnectionsScreen.Later')}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonConnection} onPress={() => showBestPrice()}>
-          <Text style={styles.itemButtonText}>
-            {t('ConnectionsScreen.BestPrice')}
-          </Text>
-        </TouchableOpacity>
+        {(profile === 'db' || profile === 'db-fsharp') &&
+          <TouchableOpacity style={styles.buttonConnection} onPress={() => showBestPrice()}>
+            <Text style={styles.itemButtonText}>
+              {t('ConnectionsScreen.BestPrice')}
+            </Text>
+          </TouchableOpacity>
+        }
       </View>
       <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
         <Text style={styles.itemHeaderText}>
