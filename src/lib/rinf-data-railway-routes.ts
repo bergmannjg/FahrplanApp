@@ -27,7 +27,7 @@ const öbbhaltestellen = require('../../öbb-data/uic-to-opid.json') as ÖBBHalt
 
 interface TunnelNode {
     name: string;
-    km: string;
+    km?: string;
     length: string;
 }
 
@@ -83,14 +83,15 @@ function rinfToLineNode(n: GraphNode): LineNode {
     const tunnelsOfLine: TunnelNode[] = tunnelInfos
         .filter(t =>
             t.Line === n.Edges[0].Line
-            && t.StartKm >= n.Edges[0].StartKm
-            && t.EndKm <= n.Edges[0].EndKm)
-        .sort((a, b) => a.StartKm - b.StartKm)
+            && (t.StartKm && t.EndKm
+                ? t.StartKm >= n.Edges[0].StartKm && t.EndKm <= n.Edges[0].EndKm
+                : n.Node == t.StartOP))
+        .sort((a, b) => a.StartKm && b.StartKm ? a.StartKm - b.StartKm : a.StartLat - b.StartLat)
         .map(t => {
             return {
                 name: t.Tunnel,
-                km: t.StartKm.toFixed(3),
-                length: ((t.EndKm - t.StartKm)).toFixed(3)
+                km: t.StartKm ? t.StartKm.toFixed(3) : undefined,
+                length: t.Length.toFixed(3)
             }
         }
         );
@@ -139,9 +140,25 @@ function findDs100PatternsForUicrefs(uicrefs: number[]) {
         });
 }
 
+function splitter(previous: GraphNode[][], current: GraphNode): GraphNode[][] {
+    if (["DE000HH", "DE000AH", "DE000NN", "DE000MH"].includes(current.Node)) {
+        previous.push([]);
+    }
+
+    previous[previous.length - 1] = previous[previous.length - 1].concat([current]);
+    return previous;
+}
+
+// split path to better compactify paths
+function splitPath(path: GraphNode[]): GraphNode[][] {
+    return path.reduce(splitter, [[]]);
+}
+
 function rinfFindRailwayRoutesOfTrip(ids: string[], compactifyPath: boolean): GraphNode[] {
     const spath = rinfgraph.Graph_getShortestPathFromGraph(g, graph, ids);
-    return compactifyPath ? rinfgraph.Graph_compactifyPath(spath, g) : spath;
+    return compactifyPath
+        ? splitPath(spath).map(p => rinfgraph.Graph_compactifyPath(p, g)).flat(1)
+        : spath;
 }
 
 function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {
@@ -153,8 +170,6 @@ function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {
 
 function rinfFindRailwayRoutesOfTripIBNRs(uic_refs: number[], compactifyPath: boolean): GraphNode[] {
     const ids = findDs100PatternsForUicrefs(removeDuplicates(uic_refs));
-    console.log('uic_refs:', uic_refs)
-    console.log('opids:', ids)
     return rinfFindRailwayRoutesOfTrip(ids, compactifyPath);
 }
 

@@ -1,5 +1,7 @@
-import { hafas } from "../../src/lib//hafas";
-import { Line, Journey } from 'hafas-client';
+import { hafas, isStopover4Routes } from "../../src/lib//hafas";
+import { rinfFindRailwayRoutesOfTripIBNRs } from "../../src/lib//rinf-data-railway-routes";
+import { Line, Journey, Stop } from 'hafas-client';
+import type { GraphNode } from 'rinf-graph/rinfgraph.bundle';
 import { dbPrices } from '../../src/lib/db-prices';
 import moment from 'moment';
 
@@ -93,6 +95,46 @@ const journeys = (from?: string, to?: string, via?: string) => {
         .catch(console.error);
 }
 
+const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
+    try {
+        const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
+        return rinfFindRailwayRoutesOfTripIBNRs(uics, true);
+    } catch (ex) {
+        console.error("findRailwayRoutesOfTrip", (ex as Error).message);
+        return [];
+    }
+}
+
+function reducer(previous: GraphNode[], current: GraphNode): GraphNode[] {
+    let next = previous;
+    if (previous.length === 0) {
+        next = previous.concat(current);
+    } else if (previous.length > 0 && previous[previous.length - 1].Edges[0].Line !== current.Edges[0].Line) {
+        next = previous.concat(current);
+    } else {
+        previous[previous.length - 1].Edges[0].Node = current.Edges[0].Node;
+    }
+    return next;
+}
+
+const routes = (from?: string, to?: string) => {
+    from && to && client.journeys(from, to, defaultJourneyParams)
+        .then(result => {
+            const j = result[0];
+            const ji = client.journeyInfo(j);
+            const stops = [] as Stop[];
+            ji.legs.forEach(leg => {
+                leg.stopovers?.forEach(stopover => {
+                    if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
+                        stops.push(stopover.stop);
+                    }
+                })
+            })
+            findRailwayRoutes(stops).reduce(reducer, []).forEach(node =>
+                console.log(node.Node, node.Edges[0].Node, node.Edges[0].Line));
+        })
+}
+
 const nearby = (lat?: string, lon?: string) => {
     lat && lon && client.nearby(parseFloat(lat), parseFloat(lon), 20000, ["train"], { nationalExpress: true, national: true, regionalExp: true, regional: true })
         .then(result => {
@@ -113,6 +155,9 @@ switch (myArgs[0]) {
         break;
     case 'journeys':
         journeys(myArgs[1], myArgs[2], myArgs[3]);
+        break;
+    case 'routes':
+        routes(myArgs[1], myArgs[2]);
         break;
     case 'nearby':
         nearby(myArgs[1], myArgs[2]);
