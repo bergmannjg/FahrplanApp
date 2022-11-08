@@ -49,7 +49,6 @@ export interface RailwayRoutesOfTripScreenParams {
     profile: string;
     originName: string;
     destinationName: string;
-    journeyInfo?: JourneyInfo;
     stops?: Stop[];
     tripDetails: boolean;
     compactifyPath: boolean;

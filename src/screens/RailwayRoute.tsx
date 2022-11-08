@@ -52,12 +52,14 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
 
     const tunnels = (tunnelNodes: TunnelNode[]) => {
         const nodes =
-            tunnelNodes.map(t =>
-                <Text key={t.name}
+            tunnelNodes.map(t => {
+                const km = t.km ? 'km: ' + t.km + ' ' : ''
+                return (<Text key={t.name}
                     onPress={() => Linking.openURL('https://www.google.de/search?q=+' + t.name)}
                 >
-                    {`km: ${t.km} ${t.name} (${t.length} km)`} {asLinkText('')}</Text>
-            )
+                    {`${km}${t.name} (${t.length} km)`} {asLinkText('')}
+                </Text>)
+            })
         return (
             <View style={styles.routeTunnelColumn}>
                 {nodes}

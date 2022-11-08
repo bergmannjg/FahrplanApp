@@ -6,7 +6,6 @@ import { ListItem } from "react-native-elements";
 import { Location } from 'hafas-client';
 import { useTranslation } from 'react-i18next';
 import { Stop } from 'hafas-client';
-import { hafas, Hafas } from '../lib/hafas';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
@@ -24,19 +23,13 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     const { t } = useTranslation();
 
     const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
-    const journeyInfo = params.journeyInfo;
     const stops = params.stops;
-    const showTransfers = params.tripDetails;
     const useMaxSpeed = params.useMaxSpeed;
     const compactifyPath = params.compactifyPath;
-    const profile = params.profile;
-    const client: Hafas = hafas(profile);
-    const trainModes = ["train", "watercraft"];
 
     const originName = params.originName;
     const destinationName = params.destinationName;
 
-    console.log('journeyInfo.legs.length: ', journeyInfo?.legs.length);
     console.log('stops.length: ', stops?.length);
     console.log('compactifyPath: ', compactifyPath);
 
@@ -83,27 +76,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     useEffect(() => {
         if (loading && path.length === 0) {
-            if (journeyInfo) {
-                client.stopssOfJourney(journeyInfo, trainModes, showTransfers, showTransfers)
-                    .then(stops => {
-                        const result = findRailwayRoutes(stops)
-                        setLoading(false);
-                        setPath(result);
-                        setCompactData(rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, []));
-                        const locations = rinfGetLocationsOfPath(result);
-                        setLocationsOfPath(locations);
-                        const indexes = [...locations.keys()];
-                        console.log('indexes:', indexes);
-                        setLocationsOfPathIndexes(indexes);
-                    })
-                    .catch((error) => {
-                        console.log('There has been a problem with your stopssOfJourney operation: ' + error);
-                        console.log(error.stack);
-                        setLoading(false);
-                        setPath([]);
-                        setLocationsOfPath([]);
-                    });
-            } else if (stops) {
+            if (stops) {
                 const result = findRailwayRoutes(stops)
                 setLoading(false);
                 const locations = rinfGetLocationsOfPath(result);
@@ -172,15 +145,15 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                     {firstNodeOfLine && <View style={styles.distanceColumn}>
                         <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
                         <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(element.Line))}>
-                                <Text style={styles.maxSpeedLinkText}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
-                            </TouchableOpacity>
+                            <Text style={styles.maxSpeedLinkText}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                        </TouchableOpacity>
                     </View>}
                     <View style={styles.routeViewMaxSpeedColumn}>
                         <Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
                         {isWalking ?
                             <Text style={styles.itemButtonTextMaxSpeed}>Fußweg</Text>
                             :
-                                <Text style={styles.itemButtonTextMaxSpeed}>{`${maxSpeedInfo}`}</Text>
+                            <Text style={styles.itemButtonTextMaxSpeed}>{`${maxSpeedInfo}`}</Text>
                         }
                         {lastNodeOfLine && <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>}
                     </View >

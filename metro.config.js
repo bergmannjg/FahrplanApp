@@ -4,13 +4,13 @@
  *
  * @format
  */
-
+ 
 'use strict';
 
 const nodelibs = require('node-libs-react-native');
 nodelibs.vm = require.resolve('vm-browserify');
-nodelibs.net = require.resolve('react-native-tcp');
-nodelibs.tls = require.resolve('react-native-tcp');
+nodelibs.net = require.resolve('react-native-tcp-socket');
+nodelibs.tls = require.resolve('react-native-tcp-socket');
 
 // https://forums.expo.io/t/error-eperm-operation-not-permitted-lstat/19221
 

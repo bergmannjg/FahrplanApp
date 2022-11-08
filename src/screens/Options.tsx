@@ -40,11 +40,13 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
 
     const radioProfileProps = [
         { label: 'Deutsche Bahn', value: 'db', fsEnabled: true },
-        { label: 'Österreichische Bundesbahnen', value: 'oebb', fsEnabled: false },
-        { label: 'Schweizerische Bundesbahnen', value: 'sbb', fsEnabled: false },
-        { label: 'Rejseplanen in Denmark', value: 'rejseplanen', fsEnabled: false },
+        { label: 'Österreichische Bundesbahnen', value: 'oebb', fsEnabled: true },
+        { label: 'Rejseplanen in Denmark', value: 'rejseplanen', fsEnabled: true },
+        { label: 'Belgian National Railways', value: 'sncb', fsEnabled: false },
         { label: 'Berliner Verkehrsbetriebe', value: 'bvg', fsEnabled: true },
         { label: 'Verkehrsverbund Berlin-Brandenburg', value: 'vbb', fsEnabled: false },
+        { label: 'Mobil.NRW', value: 'mobilnrw', fsEnabled: true },
+        { label: 'SaarFahrplan', value: 'saarfahrplan', fsEnabled: true },
     ];
 
     const radioProfilePropsChecked = (clientLib: string) => {

@@ -57,6 +57,7 @@ const chooseProfile = (p: string): Profile => {
         case 'rsag': return rsagProfile;
         case 'saarfahrplan': return saarfahrplanProfile;
         case 'sbahnmuenchen': return sbahnmuenchenProfile;
+        // case 'sncb': return sncbProfile;
         case 'svv': return svvProfile;
         case 'vbb': return vbbProfile;
         case 'vbn': return vbnProfile;
@@ -64,6 +65,10 @@ const chooseProfile = (p: string): Profile => {
         case 'vsn': return vsnProfile;
         case 'bvg-fsharp': return profiles.getProfile('bvg');
         case 'db-fsharp': return profiles.getProfile('db');
+        case 'mobilnrw-fsharp': return profiles.getProfile('mobilnrw');
+        case 'oebb-fsharp': return profiles.getProfile('oebb');
+        case 'saarfahrplan-fsharp': return profiles.getProfile('saarfahrplan');
+        case 'rejseplanen-fsharp': return profiles.getProfile('rejseplanen');
         default: {
             console.log('choose default');
             return dbProfile;

@@ -189,8 +189,9 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
 
     const onMessage = (d: unknown) => {
         if (locations.length > 1 && hasProperty(d, "distance")) {
+            const title = t('BRouterScreen.Route', { locations: locations.length, distance: d.distance });
             navigation.setOptions({
-                headerTitle: t('BRouterScreen.Route', { locations: locations.length, distance: d.distance })
+                headerTitle: title
             });
         }
     }

@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, TouchableOpacity, Text, Button } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import CustomAutocomplete from './components/CustomAutocomplete';
 import { useTranslation } from 'react-i18next';
 import { hafas } from '../lib/hafas';
@@ -43,7 +43,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const [clientLib, setClientLib] = useState('fs-hafas-client');
   const [profile, setProfile] = useState('db');
   const [tripDetails, setTripDetails] = useState(true);
-  const [compactifyPath, setCompactifyPath] = useState(false);
+  const [compactifyPath, setCompactifyPath] = useState(true);
   const [date, setDate] = useState(new Date(Date.now()));
   const [showDate, setShowDate] = useState(false);
   const [journeyParams, setJourneyParams] = useState(defaultJourneyParams);
@@ -62,8 +62,9 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   React.useEffect(() => {
     console.log('navigation.setOptions')
+    const title = t('HomeScreen.Header');
     navigation.setOptions({
-      headerTitle: t('HomeScreen.Header'),
+      headerTitle: title,
       headerRight: headerRight
     });
   }, [navigation, clientLib, profile, tripDetails]);
@@ -137,7 +138,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const client = hafas(clientProfile());
 
-  const onChangeDate = (event: Event, selectedDate: Date | undefined) => {
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowDate(false);
     if (selectedDate) setDate(selectedDate);
   }
