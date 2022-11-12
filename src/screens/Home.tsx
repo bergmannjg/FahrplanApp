@@ -29,7 +29,7 @@ type LocalData = {
 export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   console.log('home constructor, route: ', route);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const defaultJourneyParams = {
     bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 5, firstClass: false, transfers: -1, transferTime: 8, regional: false
@@ -67,7 +67,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       headerTitle: title,
       headerRight: headerRight
     });
-  }, [navigation, clientLib, profile, tripDetails]);
+  }, [navigation, clientLib, profile, tripDetails, i18n.language]);
 
   const orientation = useOrientation();
 
@@ -124,10 +124,15 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setJourneyParams(route.params.journeyParams);
   }
 
-  // route.params from NearbyScreen
+  // route.params from NearbyScreen or LineNetworkScreen
   if (route.params?.station !== undefined && route.params?.station !== nearbyStation) {
     setNearbyStation(route.params.station);
     setStation1(route.params.station);
+  }
+
+  // route.params from LineNetworkScreen
+  if (route.params?.station2 !== undefined && route.params?.station2 !== station2) {
+    setStation2(route.params.station2);
   }
 
   console.log('clientLib: ', clientLib);
@@ -174,6 +179,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   const searchRadar = () => {
     console.log('searchRadar, profile:', clientProfile());
     navigation.navigate('Radar', { profile: clientProfile(), duration: 10 });
+  }
+
+  const searchLineNetwork = () => {
+    console.log('LineNetwork');
+    navigation.navigate('LineNetwork', {  });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -353,6 +363,16 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
           <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchRadar()}>
             <Text style={styles.itemText}>
               {t('HomeScreen.Radar')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+      {
+        orientation === 'PORTRAIT' &&
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchLineNetwork()}>
+            <Text style={styles.itemText}>
+            Liniennetz
             </Text>
           </TouchableOpacity>
         </View>

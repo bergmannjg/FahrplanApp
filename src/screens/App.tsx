@@ -20,6 +20,7 @@ import OptionsScreen from './Options';
 import JourneyOptionsScreen from './JourneyOptions';
 import BRouterScreen from './BRouter';
 import TripScreen from './Trip';
+import LineNetworkScreen from './LineNetwork';
 import WebViewScreen from './WebView';
 import ThirdPartyLicensesScreen from './third-party-licenses';
 import { MainStackParamList, RootStackParamList } from './ScreenTypes';
@@ -54,6 +55,11 @@ function MainStackScreen() {
         name="Nearby"
         component={NearbyScreen}
         options={{ title: t('NearbyScreen.Title') }}
+      />
+      <MainStack.Screen
+        name="LineNetwork"
+        component={LineNetworkScreen}
+        options={{ title: 'Liniennetz' }}
       />
       <MainStack.Screen
         name="Departures"

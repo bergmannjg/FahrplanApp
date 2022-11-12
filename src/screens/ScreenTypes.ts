@@ -13,6 +13,7 @@ export interface HomeScreenParams {
     tripDetails?: boolean,
     compactifyPath?: boolean,
     station?: string | Location,
+    station2?: string | Location,
     journeyParams?: JourneyParams
 }
 
@@ -69,6 +70,10 @@ export interface TrainformationScreenParams {
 export interface WagonimageScreenParams {
     title: string;
     image: string;
+}
+
+export interface LineNetworkParams {
+    line?: number;
 }
 
 export interface ConnectionsScreenParams {
@@ -140,6 +145,7 @@ export interface OpenStreetMapParams {
 export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
+    LineNetwork: LineNetworkParams;
     BestPriceConnections: BestPriceConnectionsScreenParams;
     Radar: RadarScreenParams;
     Nearby: NearbyScreenParams;
