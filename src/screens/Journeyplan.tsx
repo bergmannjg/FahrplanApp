@@ -158,6 +158,9 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             if (leg.direction) {
                 name = name + ' -> ' + leg.direction;
             }
+            if (leg?.line?.matchId) {
+                name = name + ', Linie ' + leg?.line?.matchId;
+            }
         } else if (leg?.walking) {
             const dist = client.distanceOfLeg(leg);
             name = 'Fussweg';

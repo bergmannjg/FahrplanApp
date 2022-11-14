@@ -356,6 +356,7 @@ export function hafas(profileName: string): Hafas {
                 }
             }
             try {
+                console.log('departure: ', departure);
                 const products = getProductsFromModes(modes ?? [], journeyParams.regional);
                 const loyaltyCard = journeyParams.bahncardDiscount > 0 ? { type: 'Bahncard', discount: journeyParams.bahncardDiscount, class: journeyParams.bahncardClass } : undefined; // todo: per parameter
                 const res = await client.journeys(locationsFrom[0], locationsTo[0], { products, results: journeyParams.results, departure, via: viaId, transfers: journeyParams.transfers, transferTime: journeyParams.transferTime, polylines: true, stopovers: true, age: journeyParams.age, firstClass: journeyParams.firstClass, loyaltyCard });
