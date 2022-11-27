@@ -1,29 +1,18 @@
-import { rinfgraph } from 'rinf-graph/rinfgraph.bundle';
-import type { GraphNode, OpInfo, LineInfo, TunnelInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
-
-interface DBHaltestelle {
-    EVA_NR: number;
-    DS100: string;
-    Verkehr: string;
-}
-
-interface ÖBBHaltestelle {
-    EVA_NR: number;
-    DB640_CODE: string;
-}
+import { rinfgraph } from 'rinf-graph/rinfgraph.bundle.js';
+import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const g = require('rinf-graph/data/Graph.json') as GraphNode[];
+import g from 'rinf-graph/data/Graph.json' assert { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const opInfos = require('rinf-graph/data/OpInfos.json') as OpInfo[];
+import opInfos from 'rinf-graph/data/OpInfos.json' assert { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lineInfos = require('rinf-graph/data/LineInfos.json') as LineInfo[];
+import lineInfos from 'rinf-graph/data/LineInfos.json' assert { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const tunnelInfos = require('rinf-graph/data/TunnelInfos.json') as TunnelInfo[];
+import tunnelInfos from 'rinf-graph/data/TunnelInfos.json' assert { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const dbhaltestellen = require('../../db-data/uic-to-opid.json') as DBHaltestelle[];
+import dbhaltestellen from '../../db-data/uic-to-opid.json' assert { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const öbbhaltestellen = require('../../öbb-data/uic-to-opid.json') as ÖBBHaltestelle[];
+import öbbhaltestellen from '../../öbb-data/uic-to-opid.json' assert { type: 'json' };
 
 interface TunnelNode {
     name: string;
@@ -54,6 +43,9 @@ function ds100ToUOPID(ds100pattern: string) {
 function db640ToUOPID(ds640: string) {
     return 'AT' + ds640;
 }
+
+export const dbUicRefs : number [] = dbhaltestellen.map(h => h.EVA_NR)
+
 function findOPIDForUicRef(uicref: number): string {
     const haltestelle = dbhaltestellen.find(h => h.EVA_NR === uicref);
     if (haltestelle) return ds100ToUOPID(missingDS100.get(haltestelle.DS100) ?? haltestelle.DS100);
@@ -90,7 +82,7 @@ function rinfToLineNode(n: GraphNode): LineNode {
         .map(t => {
             return {
                 name: t.Tunnel,
-                km: t.StartKm ? t.StartKm.toFixed(3) : undefined,
+                km: t.StartKm ? Number(t.StartKm).toFixed(3) : undefined,
                 length: t.Length.toFixed(3)
             }
         }

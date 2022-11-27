@@ -13,7 +13,8 @@ export interface HomeScreenParams {
     tripDetails?: boolean,
     compactifyPath?: boolean,
     station?: string | Location,
-    station2?: string | Location,
+    station2?: string,
+    stationVia?: string,
     journeyParams?: JourneyParams
 }
 
@@ -74,6 +75,7 @@ export interface WagonimageScreenParams {
 
 export interface LineNetworkParams {
     line?: number;
+    profile: string
 }
 
 export interface ConnectionsScreenParams {

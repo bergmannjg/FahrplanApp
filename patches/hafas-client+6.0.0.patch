@@ -1,0 +1,674 @@
+diff --git a/node_modules/hafas-client/p/avv/index.js b/node_modules/hafas-client/p/avv/index.js
+index d79592b..6ddad50 100644
+--- a/node_modules/hafas-client/p/avv/index.js
++++ b/node_modules/hafas-client/p/avv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'regional-train',
+diff --git a/node_modules/hafas-client/p/bart/index.js b/node_modules/hafas-client/p/bart/index.js
+index 191e4f9..8c7d2c3 100644
+--- a/node_modules/hafas-client/p/bart/index.js
++++ b/node_modules/hafas-client/p/bart/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'bart',
+diff --git a/node_modules/hafas-client/p/bls/index.js b/node_modules/hafas-client/p/bls/index.js
+index ddf63b1..ee6e4b3 100644
+--- a/node_modules/hafas-client/p/bls/index.js
++++ b/node_modules/hafas-client/p/bls/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'ice',
+diff --git a/node_modules/hafas-client/p/bvg/index.js b/node_modules/hafas-client/p/bvg/index.js
+index 0e92abb..663e45c 100644
+--- a/node_modules/hafas-client/p/bvg/index.js
++++ b/node_modules/hafas-client/p/bvg/index.js
+@@ -1,7 +1,5 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {parseHook} from '../../lib/profile-hooks.js'
+ 
+@@ -13,7 +11,7 @@ import {parseDeparture as _parseDeparture} from '../../parse/departure.js'
+ import {parseStopover as _parseStopover} from '../../parse/stopover.js'
+ import {parseJourneyLeg as _parseJourneyLeg} from '../../parse/journey-leg.js'
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ // todo: there's also a referenced icon `{"res":"occup_fig_{low,mid}"}`
+diff --git a/node_modules/hafas-client/p/cfl/index.js b/node_modules/hafas-client/p/cfl/index.js
+index e8e380b..a3fb68e 100644
+--- a/node_modules/hafas-client/p/cfl/index.js
++++ b/node_modules/hafas-client/p/cfl/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/cmta/index.js b/node_modules/hafas-client/p/cmta/index.js
+index 3794782..e38d82d 100644
+--- a/node_modules/hafas-client/p/cmta/index.js
++++ b/node_modules/hafas-client/p/cmta/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/dart/index.js b/node_modules/hafas-client/p/dart/index.js
+index a99facc..ef3e960 100644
+--- a/node_modules/hafas-client/p/dart/index.js
++++ b/node_modules/hafas-client/p/dart/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'bus',
+diff --git a/node_modules/hafas-client/p/db-busradar-nrw/index.js b/node_modules/hafas-client/p/db-busradar-nrw/index.js
+index ecf3218..ed35b64 100644
+--- a/node_modules/hafas-client/p/db-busradar-nrw/index.js
++++ b/node_modules/hafas-client/p/db-busradar-nrw/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ // DB Busradar NRW app does not allow selecting specific modes of transport to filter results,
+ // so the bitmasks had to be determined by querying some stations and looking at the results..
+diff --git a/node_modules/hafas-client/p/db/index.js b/node_modules/hafas-client/p/db/index.js
+index d419ae8..a9a02f2 100644
+--- a/node_modules/hafas-client/p/db/index.js
++++ b/node_modules/hafas-client/p/db/index.js
+@@ -1,7 +1,5 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import trim from 'lodash/trim.js'
+ import uniqBy from 'lodash/uniqBy.js'
+@@ -19,7 +17,7 @@ import {parseLocation as _parseLocation} from '../../parse/location.js'
+ import {formatStation as _formatStation} from '../../format/station.js'
+ import {bike} from '../../format/filters.js'
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ import {formatLoyaltyCard} from './loyalty-cards.js'
+ import {ageGroup, ageGroupFromAge} from './ageGroup.js'
+diff --git a/node_modules/hafas-client/p/insa/index.js b/node_modules/hafas-client/p/insa/index.js
+index 882e6c6..fbc778f 100644
+--- a/node_modules/hafas-client/p/insa/index.js
++++ b/node_modules/hafas-client/p/insa/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/invg/index.js b/node_modules/hafas-client/p/invg/index.js
+index aa5c3f4..6c6aa9f 100644
+--- a/node_modules/hafas-client/p/invg/index.js
++++ b/node_modules/hafas-client/p/invg/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/irish-rail/index.js b/node_modules/hafas-client/p/irish-rail/index.js
+index e41ade1..bfd5505 100644
+--- a/node_modules/hafas-client/p/irish-rail/index.js
++++ b/node_modules/hafas-client/p/irish-rail/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/ivb/index.js b/node_modules/hafas-client/p/ivb/index.js
+index 337a70d..dc01b4b 100644
+--- a/node_modules/hafas-client/p/ivb/index.js
++++ b/node_modules/hafas-client/p/ivb/index.js
+@@ -1,11 +1,9 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {readFileSync} from 'fs'
+ import {Agent} from 'https'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'train-and-s-bahn',
+diff --git a/node_modules/hafas-client/p/kvb/index.js b/node_modules/hafas-client/p/kvb/index.js
+index f2103c8..d7f34a0 100644
+--- a/node_modules/hafas-client/p/kvb/index.js
++++ b/node_modules/hafas-client/p/kvb/index.js
+@@ -1,11 +1,9 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {readFileSync} from 'fs'
+ import {Agent} from 'https'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'stadtbahn',
+diff --git a/node_modules/hafas-client/p/mobil-nrw/index.js b/node_modules/hafas-client/p/mobil-nrw/index.js
+index 8cf5fdb..203e03a 100644
+--- a/node_modules/hafas-client/p/mobil-nrw/index.js
++++ b/node_modules/hafas-client/p/mobil-nrw/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/mobiliteit-lu/index.js b/node_modules/hafas-client/p/mobiliteit-lu/index.js
+index ea1847c..08423f5 100644
+--- a/node_modules/hafas-client/p/mobiliteit-lu/index.js
++++ b/node_modules/hafas-client/p/mobiliteit-lu/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/nahsh/index.js b/node_modules/hafas-client/p/nahsh/index.js
+index bfd528a..6da7d66 100644
+--- a/node_modules/hafas-client/p/nahsh/index.js
++++ b/node_modules/hafas-client/p/nahsh/index.js
+@@ -1,14 +1,12 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {parseHook} from '../../lib/profile-hooks.js'
+ 
+ import {parseLocation as _parseLocation} from '../../parse/location.js'
+ import {parseJourney as _parseJourney} from '../../parse/journey.js'
+ import {parseMovement as _parseMovement} from '../../parse/movement.js'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ // todo: journey prices
+diff --git a/node_modules/hafas-client/p/nvv/index.js b/node_modules/hafas-client/p/nvv/index.js
+index ea25393..3900d3c 100644
+--- a/node_modules/hafas-client/p/nvv/index.js
++++ b/node_modules/hafas-client/p/nvv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/oebb/index.js b/node_modules/hafas-client/p/oebb/index.js
+index 9736ada..b175df2 100644
+--- a/node_modules/hafas-client/p/oebb/index.js
++++ b/node_modules/hafas-client/p/oebb/index.js
+@@ -1,7 +1,5 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ // todo: https://gist.github.com/anonymous/a5fc856bc80ae7364721943243f934f4#file-haf_config_base-properties-L5
+ // todo: https://gist.github.com/anonymous/a5fc856bc80ae7364721943243f934f4#file-haf_config_base-properties-L47-L234
+@@ -10,7 +8,7 @@ import {parseHook} from '../../lib/profile-hooks.js'
+ 
+ import {parseLocation as _parseLocation} from '../../parse/location.js'
+ import {parseMovement as _parseMovement} from '../../parse/movement.js'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ // ÖBB has some 'stations' **in austria** with no departures/products,
+diff --git a/node_modules/hafas-client/p/ooevv/index.js b/node_modules/hafas-client/p/ooevv/index.js
+index dfc8ab3..621768b 100644
+--- a/node_modules/hafas-client/p/ooevv/index.js
++++ b/node_modules/hafas-client/p/ooevv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'train-and-s-bahn',
+diff --git a/node_modules/hafas-client/p/pkp/index.js b/node_modules/hafas-client/p/pkp/index.js
+index fdc3183..7dd3d11 100644
+--- a/node_modules/hafas-client/p/pkp/index.js
++++ b/node_modules/hafas-client/p/pkp/index.js
+@@ -1,12 +1,10 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {parseHook} from '../../lib/profile-hooks.js'
+ 
+ import {parseLocation} from '../../parse/location.js'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const trimStopName = ({parsed}, l) => {
+diff --git a/node_modules/hafas-client/p/rejseplanen/index.js b/node_modules/hafas-client/p/rejseplanen/index.js
+index 4f46dc2..710ddb7 100644
+--- a/node_modules/hafas-client/p/rejseplanen/index.js
++++ b/node_modules/hafas-client/p/rejseplanen/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/rmv/index.js b/node_modules/hafas-client/p/rmv/index.js
+index c61455b..e03198e 100644
+--- a/node_modules/hafas-client/p/rmv/index.js
++++ b/node_modules/hafas-client/p/rmv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/rsag/index.js b/node_modules/hafas-client/p/rsag/index.js
+index f3eba7a..5e41ebb 100644
+--- a/node_modules/hafas-client/p/rsag/index.js
++++ b/node_modules/hafas-client/p/rsag/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/saarfahrplan/index.js b/node_modules/hafas-client/p/saarfahrplan/index.js
+index 39fdc09..c136cb1 100644
+--- a/node_modules/hafas-client/p/saarfahrplan/index.js
++++ b/node_modules/hafas-client/p/saarfahrplan/index.js
+@@ -1,12 +1,10 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {parseHook} from '../../lib/profile-hooks.js'
+ 
+ import {parseMovement as _parseMovement} from '../../parse/movement.js'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const fixMovement = ({parsed}, m) => {
+diff --git a/node_modules/hafas-client/p/salzburg/index.js b/node_modules/hafas-client/p/salzburg/index.js
+index 9d94914..7cc821d 100644
+--- a/node_modules/hafas-client/p/salzburg/index.js
++++ b/node_modules/hafas-client/p/salzburg/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'train-and-s-bahn',
+diff --git a/node_modules/hafas-client/p/sbahn-muenchen/index.js b/node_modules/hafas-client/p/sbahn-muenchen/index.js
+index fdbc8ee..98531c4 100644
+--- a/node_modules/hafas-client/p/sbahn-muenchen/index.js
++++ b/node_modules/hafas-client/p/sbahn-muenchen/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/sncb/index.js b/node_modules/hafas-client/p/sncb/index.js
+index b94d6e3..99246f8 100644
+--- a/node_modules/hafas-client/p/sncb/index.js
++++ b/node_modules/hafas-client/p/sncb/index.js
+@@ -1,14 +1,12 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {readFileSync} from 'fs'
+ import {Agent} from 'https'
+ import {strictEqual as eql} from 'assert'
+ import {parseHook} from '../../lib/profile-hooks.js'
+ import {parseLine} from '../../parse/line.js'
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ // `www.belgianrail.be:443` doesn't provide the necessary CA certificate
+diff --git a/node_modules/hafas-client/p/stv/index.js b/node_modules/hafas-client/p/stv/index.js
+index 4f88b03..8f8ba30 100644
+--- a/node_modules/hafas-client/p/stv/index.js
++++ b/node_modules/hafas-client/p/stv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'train-and-s-bahn',
+diff --git a/node_modules/hafas-client/p/svv/index.js b/node_modules/hafas-client/p/svv/index.js
+index 24d1f18..307c7b4 100644
+--- a/node_modules/hafas-client/p/svv/index.js
++++ b/node_modules/hafas-client/p/svv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/tpg/index.js b/node_modules/hafas-client/p/tpg/index.js
+index 02f2eb2..065b72b 100644
+--- a/node_modules/hafas-client/p/tpg/index.js
++++ b/node_modules/hafas-client/p/tpg/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'tgv',
+diff --git a/node_modules/hafas-client/p/vbb/index.js b/node_modules/hafas-client/p/vbb/index.js
+index a172017..57b72c1 100644
+--- a/node_modules/hafas-client/p/vbb/index.js
++++ b/node_modules/hafas-client/p/vbb/index.js
+@@ -1,7 +1,5 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+ import {parseHook} from '../../lib/profile-hooks.js'
+ 
+@@ -11,7 +9,7 @@ import {parseLocation as _parseLocation} from '../../parse/location.js'
+ import {parseJourney as _parseJourney} from '../../parse/journey.js'
+ import {parseDeparture as _parseDeparture} from '../../parse/departure.js'
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const parseLineWithShortName = ({parsed}, p) => {
+diff --git a/node_modules/hafas-client/p/vbn/index.js b/node_modules/hafas-client/p/vbn/index.js
+index 5eeb568..e077c98 100644
+--- a/node_modules/hafas-client/p/vbn/index.js
++++ b/node_modules/hafas-client/p/vbn/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/vkg/index.js b/node_modules/hafas-client/p/vkg/index.js
+index f59ef35..a7bdc77 100644
+--- a/node_modules/hafas-client/p/vkg/index.js
++++ b/node_modules/hafas-client/p/vkg/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{ // todo: what is `8`?
+ 	id: 'trains',
+diff --git a/node_modules/hafas-client/p/vmt/index.js b/node_modules/hafas-client/p/vmt/index.js
+index 39fccee..565237b 100644
+--- a/node_modules/hafas-client/p/vmt/index.js
++++ b/node_modules/hafas-client/p/vmt/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/vor/index.js b/node_modules/hafas-client/p/vor/index.js
+index dfc8ab3..621768b 100644
+--- a/node_modules/hafas-client/p/vor/index.js
++++ b/node_modules/hafas-client/p/vor/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'train-and-s-bahn',
+diff --git a/node_modules/hafas-client/p/vos/index.js b/node_modules/hafas-client/p/vos/index.js
+index fbd07ba..5b2da33 100644
+--- a/node_modules/hafas-client/p/vos/index.js
++++ b/node_modules/hafas-client/p/vos/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'ice',
+diff --git a/node_modules/hafas-client/p/vrn/index.js b/node_modules/hafas-client/p/vrn/index.js
+index 4deb4c7..c437015 100644
+--- a/node_modules/hafas-client/p/vrn/index.js
++++ b/node_modules/hafas-client/p/vrn/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/vsn/index.js b/node_modules/hafas-client/p/vsn/index.js
+index efe9e61..58283bc 100644
+--- a/node_modules/hafas-client/p/vsn/index.js
++++ b/node_modules/hafas-client/p/vsn/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {
+diff --git a/node_modules/hafas-client/p/vvt/index.js b/node_modules/hafas-client/p/vvt/index.js
+index 368cdbb..bc88cc8 100644
+--- a/node_modules/hafas-client/p/vvt/index.js
++++ b/node_modules/hafas-client/p/vvt/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{ // todo: what is `8`?
+ 	id: 'trains',
+diff --git a/node_modules/hafas-client/p/vvv/index.js b/node_modules/hafas-client/p/vvv/index.js
+index 2a8da91..cf5a48f 100644
+--- a/node_modules/hafas-client/p/vvv/index.js
++++ b/node_modules/hafas-client/p/vvv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ 
+ const products = [{
+ 	id: 'train-and-s-bahn',
+diff --git a/node_modules/hafas-client/p/zvv/index.js b/node_modules/hafas-client/p/zvv/index.js
+index a59785a..2da1f5c 100644
+--- a/node_modules/hafas-client/p/zvv/index.js
++++ b/node_modules/hafas-client/p/zvv/index.js
+@@ -1,9 +1,7 @@
+ // todo: use import assertions once they're supported by Node.js & ESLint
+ // https://github.com/tc39/proposal-import-assertions
+-import {createRequire} from 'module'
+-const require = createRequire(import.meta.url)
+ 
+-const baseProfile = require('./base.json')
++import baseProfile from './base.json' assert { type: 'json' };
+ import {products} from './products.js'
+ 
+ const profile = {

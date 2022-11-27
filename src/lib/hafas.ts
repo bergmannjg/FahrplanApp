@@ -1,37 +1,34 @@
-import createClient, { Feature, Profile } from 'hafas-client';
+import { createClient, Feature, Profile } from 'hafas-client';
 
-import bvgProfile from 'hafas-client/p/bvg';
-import cflProfile from 'hafas-client/p/cfl';
-import cmtaProfile from 'hafas-client/p/cmta';
-import dbProfile from 'hafas-client/p/db';
-import dbbusradarnrwProfile from 'hafas-client/p/db-busradar-nrw';
-import hvvProfile from 'hafas-client/p/hvv';
-import insaProfile from 'hafas-client/p/insa';
-import invgProfile from 'hafas-client/p/invg';
-import nahshProfile from 'hafas-client/p/nahsh';
-import nvvProfile from 'hafas-client/p/nvv';
-import oebbProfile from 'hafas-client/p/oebb';
-import pkpProfile from 'hafas-client/p/pkp';
-import rejseplanenProfile from 'hafas-client/p/rejseplanen';
-import rmvProfile from 'hafas-client/p/rmv';
-import rsagProfile from 'hafas-client/p/rsag';
-import saarfahrplanProfile from 'hafas-client/p/saarfahrplan';
-import sbahnmuenchenProfile from 'hafas-client/p/sbahn-muenchen';
-// import sncbProfile from 'hafas-client/p/sncb';
-import svvProfile from 'hafas-client/p/svv';
-import vbbProfile from 'hafas-client/p/vbb';
-import vbnProfile from 'hafas-client/p/vbn';
-import vmtProfile from 'hafas-client/p/vmt';
-import vsnProfile from 'hafas-client/p/vsn';
+import  { profile as bvgProfile } from 'hafas-client/p/bvg';
+import  { profile as cflProfile } from 'hafas-client/p/cfl';
+import  { profile as cmtaProfile } from 'hafas-client/p/cmta';
+import { profile as dbProfile } from 'hafas-client/p/db/index.js';
+import  { profile as dbbusradarnrwProfile } from 'hafas-client/p/db-busradar-nrw';
+import  { profile as insaProfile } from 'hafas-client/p/insa';
+import  { profile as invgProfile } from 'hafas-client/p/invg';
+import  { profile as nahshProfile } from 'hafas-client/p/nahsh';
+import  { profile as nvvProfile } from 'hafas-client/p/nvv';
+import  { profile as oebbProfile } from 'hafas-client/p/oebb';
+import  { profile as pkpProfile } from 'hafas-client/p/pkp';
+import  { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen';
+import  { profile as rmvProfile } from 'hafas-client/p/rmv';
+import  { profile as rsagProfile } from 'hafas-client/p/rsag';
+import  { profile as saarfahrplanProfile } from 'hafas-client/p/saarfahrplan';
+import  { profile as sbahnmuenchenProfile } from 'hafas-client/p/sbahn-muenchen';
+// import { profile as sncbProfile  } from 'hafas-client/p/sncb';
+import  { profile as svvProfile } from 'hafas-client/p/svv';
+import  { profile as vbbProfile } from 'hafas-client/p/vbb';
+import  { profile as vbnProfile } from 'hafas-client/p/vbn';
+import  { profile as vmtProfile } from 'hafas-client/p/vmt';
+import  { profile as vsnProfile } from 'hafas-client/p/vsn';
 
 import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
 import { profiles } from "fs-hafas-profiles";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const geolib = require('geolib');
-
-require('isomorphic-fetch');
+import geolib from 'geolib';
 
 const chooseClient = (p: string, profile: Profile) => {
     if (p.endsWith('-fsharp')) return fshafas.createClient(profile);
@@ -41,28 +38,27 @@ const chooseClient = (p: string, profile: Profile) => {
 const chooseProfile = (p: string): Profile => {
     switch (p) {
         case 'bvg': return bvgProfile;
-        case 'cfl': return cflProfile;
-        case 'cmta': return cmtaProfile;
+        case'cfl': return cflProfile;
+        case'cmta': return cmtaProfile;
         case 'db': return dbProfile;
-        case 'dbbusradarnrw': return dbbusradarnrwProfile;
-        case 'hvv': return hvvProfile;
-        case 'insa': return insaProfile;
-        case 'invg': return invgProfile;
-        case 'nahsh': return nahshProfile;
-        case 'nvv': return nvvProfile;
-        case 'oebb': return oebbProfile;
-        case 'pkp': return pkpProfile;
-        case 'rejseplanen': return rejseplanenProfile;
-        case 'rmv': return rmvProfile;
-        case 'rsag': return rsagProfile;
-        case 'saarfahrplan': return saarfahrplanProfile;
-        case 'sbahnmuenchen': return sbahnmuenchenProfile;
+        case'dbbusradarnrw': return dbbusradarnrwProfile;
+        case'insa': return insaProfile;
+        case'invg': return invgProfile;
+        case'nahsh': return nahshProfile;
+        case'nvv': return nvvProfile;
+        case'oebb': return oebbProfile;
+        case'pkp': return pkpProfile;
+        case'rejseplanen': return rejseplanenProfile;
+        case'rmv': return rmvProfile;
+        case'rsag': return rsagProfile;
+        case'saarfahrplan': return saarfahrplanProfile;
+        case'sbahnmuenchen': return sbahnmuenchenProfile;
         // case 'sncb': return sncbProfile;
-        case 'svv': return svvProfile;
-        case 'vbb': return vbbProfile;
-        case 'vbn': return vbnProfile;
-        case 'vmt': return vmtProfile;
-        case 'vsn': return vsnProfile;
+        case'svv': return svvProfile;
+        case'vbb': return vbbProfile;
+        case'vbn': return vbnProfile;
+        case'vmt': return vmtProfile;
+        case'vsn': return vsnProfile;
         case 'bvg-fsharp': return profiles.getProfile('bvg');
         case 'db-fsharp': return profiles.getProfile('db');
         case 'mobilnrw-fsharp': return profiles.getProfile('mobilnrw');
@@ -115,6 +111,7 @@ export interface JourneyInfo {
 export interface Hafas {
     journeys: (from: string | Location, to: string | Location, journeyParams: JourneyParams, departure?: Date | undefined, via?: string, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
+    stopsOfIds: (ids: string[], preferredUicrefs: number[]) => Promise<ReadonlyArray<Stop>>,
     nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
     trip: (tripId?: string) => Promise<Trip>,
@@ -143,7 +140,7 @@ export function isStop4Routes(stop: Stop): boolean {
 
 export function isStopover4Routes(stopover: StopOver): boolean {
     return isStop(stopover.stop)
-        && (!!stopover.plannedDeparture || !!stopover.plannedArrival
+        && !stopover.cancelled && (!!stopover.plannedDeparture || !!stopover.plannedArrival
             // conditions for transit stations
             || isStop4Routes(stopover.stop))
 }
@@ -221,8 +218,8 @@ export function hafas(profileName: string): Hafas {
 
     const trip = async (tripId?: string): Promise<Trip> => {
         if (client.trip && tripId) {
-            const t: Trip = await client.trip(tripId, "ignored", {});
-            return t;
+            const { trip } = await client.trip(tripId, {});
+            return trip;
         } else {
             return Promise.reject();
         }
@@ -230,9 +227,9 @@ export function hafas(profileName: string): Hafas {
 
     const tripOfLeg = async (tripId: string, origin: Station | Stop | Location | undefined, destination: Station | Stop | Location | undefined, fc?: FeatureCollection): Promise<Trip> => {
         if (client.trip && tripId) {
-            const t: Trip = await client.trip(tripId, "ignored", {});
+            const { trip } = await client.trip(tripId, {});
 
-            const stopovers = stopoversOnLeg(t, origin, destination).filter(stopover => stopover.stop && isStop(stopover.stop));
+            const stopovers = stopoversOnLeg(trip, origin, destination).filter(stopover => stopover.stop && isStop(stopover.stop));
             const stopsInLeg = stopovers.map<Stop>(stopover => stopover.stop as Stop);
 
             if (fc) {
@@ -251,12 +248,12 @@ export function hafas(profileName: string): Hafas {
                 const plannedDeparture = stopoversInFeatureCollection[0].plannedDeparture;
                 const plannedArrival = stopoversInFeatureCollection[stopoversInFeatureCollection.length - 1].plannedArrival;
                 console.log('stopoversInFeatureCollection.length:', stopoversInFeatureCollection.length);
-                return { id: t.id, origin: t.origin, destination: t.destination, line: t.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
+                return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
             } else {
                 const plannedDeparture = stopovers[0].plannedDeparture;
                 const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
                 console.log('stopovers.length:', stopovers.length);
-                return { id: t.id, origin: t.origin, destination: t.destination, line: t.line, plannedDeparture, plannedArrival, stopovers };
+                return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers };
             }
         } else {
             return Promise.reject();
@@ -276,7 +273,7 @@ export function hafas(profileName: string): Hafas {
         const t = await trip(leg.tripId);
         if (t.line && modes.findIndex(m => m === t.line?.mode?.toString().toLowerCase()) >= 0) {
             return stopoversOnLeg(t, leg.origin, leg.destination)
-                .filter(stopover => stopover.stop && isStop(stopover.stop))
+                .filter(stopover => !stopover.cancelled && stopover.stop && isStop(stopover.stop))
                 .map<Stop>(stopover => stopover.stop as Stop);
         } else {
             return [];
@@ -382,6 +379,28 @@ export function hafas(profileName: string): Hafas {
         return await client.locations(from, { results });
     }
 
+    const addStop = async (s: string, preferredUicrefs: number[], stops: Stop[]) => {
+        const locs = await locations(s, 2);
+        if (locs.length > 1) {
+            if (isStop(locs[0]) && isStop(locs[1])) {
+                const id = Number(locs[0].id);
+                if (!preferredUicrefs.find((uicref => uicref === id))) stops.push(locs[1]);
+                else stops.push(locs[0]);
+            }
+        } else if (locs.length > 0) {
+            if (isStop(locs[0])) stops.push(locs[0]);
+        }
+    }
+
+    const stopsOfIds = async (ids: string[], preferredUicrefs: number[]): Promise<ReadonlyArray<Stop>> => {
+        const stops: Stop[] = [];
+        for (let n = 0; n < ids.length; n++) {
+            await addStop(ids[n], preferredUicrefs, stops);
+        }
+
+        return stops;
+    }
+
     const radar = async (loc: Location, duration?: number): Promise<ReadonlyArray<Movement>> => {
         if (client.radar && loc.latitude && loc.longitude) {
             const [southwest, northeast] = geolib.getBoundsOfDistance(
@@ -389,12 +408,13 @@ export function hafas(profileName: string): Hafas {
                 2000
             );
             console.log('southwest:', southwest, ', northeast:', northeast);
-            return await client.radar({
+            const radar = await client.radar({
                 north: northeast.latitude,
                 west: southwest.longitude,
                 south: southwest.latitude,
                 east: northeast.longitude
             }, { results: 20, duration: duration });
+            return radar.movements ?? [];
         } else {
             return Promise.reject();
         }
@@ -424,8 +444,8 @@ export function hafas(profileName: string): Hafas {
         const results = 20;
         console.log('station:', locationsOfStation[0].id, locationsOfStation[0].name);
         if (locationsOfStation[0].id) {
-            let alternatives = await client.departures(locationsOfStation[0], { duration, when });
-            alternatives = alternatives.filter(a => a.line && filterLine(a.line, modes, onlyLocalProducts));
+            const departures = await client.departures(locationsOfStation[0], { duration, when });
+            let alternatives = departures.departures.filter(a => a.line && filterLine(a.line, modes, onlyLocalProducts));
             if (alternatives.length > results) {
                 alternatives = alternatives.slice(0, results);
             }
@@ -628,5 +648,5 @@ export function hafas(profileName: string): Hafas {
         return [];
     }
 
-    return { journeys, locations, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
+    return { journeys, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
 }

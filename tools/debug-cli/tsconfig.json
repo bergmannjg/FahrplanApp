@@ -11,7 +11,7 @@
         "resolveJsonModule": true,
         "noImplicitAny": false,
         "outDir": "dist",
-        "module": "es6",
+        "module": "ESNext",
         "lib": [
             "es2019"
         ],

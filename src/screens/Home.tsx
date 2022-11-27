@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, TouchableOpacity, Text, Button } from "react-native";
+import { View, TouchableOpacity, Text, Button, Platform, PlatformAndroidStatic } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -59,6 +59,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
       </TouchableOpacity>
     </View>
   )
+
+  console.log('Platform.OS:', Platform.OS);
+  console.log('Platform.Model:', (Platform as PlatformAndroidStatic).constants.Model);
+  console.log('Platform.Release:', (Platform as PlatformAndroidStatic).constants.Release);
 
   React.useEffect(() => {
     console.log('navigation.setOptions')
@@ -135,6 +139,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     setStation2(route.params.station2);
   }
 
+  // route.params from LineNetworkScreen
+  if (route.params?.stationVia !== undefined && route.params?.stationVia !== stationVia) {
+    setStationVia(route.params.stationVia);
+  }
+
   console.log('clientLib: ', clientLib);
   console.log('profile: ', profile);
   console.log('tripDetails: ', tripDetails);
@@ -183,7 +192,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const searchLineNetwork = () => {
     console.log('LineNetwork');
-    navigation.navigate('LineNetwork', {  });
+    navigation.navigate('LineNetwork', { profile });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -233,6 +242,14 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     );
   }
 
+  const AVia = ({ s }: { s: string }) => {
+    return (
+      !loading ?
+        <CustomAutocomplete client={client} placeholder="via" query={s} onPress={(name) => { setStationVia(name); }} />
+        : <View />
+    );
+  }
+
   const A2 = ({ s }: { s: string }) => {
     return (
       !loading ?
@@ -270,7 +287,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
             </View>
           </View>
           <View style={styles.autocompleteContainerVia}>
-            <CustomAutocomplete client={client} placeholder="via" query={stationVia} onPress={(name) => { setStationVia(name); }} />
+            <AVia s={stationVia} />
             <View style={styles.switchbutton}>
               <TouchableOpacity onPress={() => switchStations()} >
                 <Text style={styles.switchText}>
@@ -372,7 +389,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         <View style={styles.containerSearch}>
           <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchLineNetwork()}>
             <Text style={styles.itemText}>
-            Liniennetz
+              Liniennetz
             </Text>
           </TouchableOpacity>
         </View>

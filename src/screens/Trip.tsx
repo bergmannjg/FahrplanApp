@@ -72,7 +72,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         const locations = [] as Location[];
         const pois = [] as Location[];
         trip.stopovers?.forEach(stopover => {
-            if (stopover.stop?.location) {
+            if (!stopover.cancelled && stopover.stop?.location) {
                 if (isStopover4Routes(stopover)) {
                     locations.push(stopover.stop.location);
                 } else {

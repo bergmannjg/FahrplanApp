@@ -6,7 +6,7 @@ import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { Hafas, JourneyInfo, isStopover4Routes } from '../lib/hafas';
-import { Location, Leg, Line, Stop } from 'hafas-client';
+import { Location, Leg, Line, Stop, Status } from 'fs-hafas-client/hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
@@ -31,6 +31,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const { params }: { params: JourneyplanScreenParams } = route;
     const journeyInfo: JourneyInfo = params.journey;
     const legs = journeyInfo.legs;
+    const data: (Leg | Status)[] = [...legs, ...journeyInfo.statusRemarks]
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const showTransfers = params.tripDetails;
@@ -181,11 +182,34 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         }
     }
 
-    interface ItemProps {
+    interface StatusItemProps {
+        item: Status
+    }
+
+    const StatusItem = ({ item }: StatusItemProps) => {
+        return (
+            <ListItem containerStyle={{ borderBottomWidth: 0 }}>
+                <ListItem.Content>
+                    <ListItem.Title>
+                        <Text style={styles.summaryText}>
+                            {item.summary}
+                        </Text>
+                    </ListItem.Title>
+                    <ListItem.Subtitle>
+                        <Text style={styles.contentText}>
+                            {item.text}
+                        </Text>
+                    </ListItem.Subtitle>
+                </ListItem.Content>
+            </ListItem>
+        )
+    }
+
+    interface LegItemProps {
         item: Leg
     }
 
-    const Item = ({ item }: ItemProps) => {
+    const LegItem = ({ item }: LegItemProps) => {
         return (
             <View style={styles.itemView}>
                 {item.cancelled ?
@@ -271,6 +295,29 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         );
     }
 
+    function isLeg(l: Leg | Status): l is Leg {
+        return 'object' === typeof l && !!(l as Leg).origin;
+    }
+
+    function isStatus(s: Leg | Status): s is Status {
+        return 'object' === typeof s && !!(s as Status).type;
+    }
+
+    interface ItemProps {
+        item: Leg | Status
+    }
+
+    const Item = ({ item }: ItemProps) => {
+        return isStatus(item) ? <StatusItem item={item} /> : isLeg(item) ? <LegItem item={item} /> : <View />
+    }
+
+    const keyExtractor = (item: Leg | Status) =>
+        isStatus(item)
+            ? (item.summary ?? '') + item.text.length
+            : isLeg(item)
+                ? item.origin?.name ?? "" + item.destination?.name
+                : ''
+
     const departure = momentWithTimezone(journeyInfo.originDeparture, journeyInfo.originLocation);
     const arrival = momentWithTimezone(journeyInfo.destinationArrival, journeyInfo.destinationLocation);
 
@@ -321,39 +368,15 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                 </Text>
             </View>
             <FlatList
-                data={legs}
+                data={data}
                 renderItem={({ item }) => (
                     <Item item={item} />
                 )}
-                keyExtractor={item => item.origin?.name ?? "" + item.destination?.name}
+                keyExtractor={keyExtractor}
                 ItemSeparatorComponent={renderSeparator}
                 ListFooterComponent={renderFooter}
                 onEndReachedThreshold={50}
             />
-            <View style={{ paddingLeft: 0 }}>
-                <FlatList
-                    data={journeyInfo.statusRemarks}
-                    renderItem={({ item }) => (
-                        <ListItem containerStyle={{ borderBottomWidth: 0 }}>
-                            <ListItem.Content>
-                                <ListItem.Title>
-                                    <Text style={styles.summaryText}>
-                                        {item.summary}
-                                    </Text>
-                                </ListItem.Title>
-                                <ListItem.Subtitle>
-                                    <Text style={styles.contentText}>
-                                        {item.text}
-                                    </Text>
-                                </ListItem.Subtitle>
-                            </ListItem.Content>
-                        </ListItem>
-                    )}
-                    keyExtractor={item => (item.summary ?? '') + item.text.length}
-                    ItemSeparatorComponent={renderSeparator}
-                    onEndReachedThreshold={50}
-                />
-            </View>
         </View>
     );
 }

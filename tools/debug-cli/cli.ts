@@ -1,17 +1,39 @@
-import { hafas, isStopover4Routes } from "../../src/lib//hafas";
-import { rinfFindRailwayRoutesOfTripIBNRs } from "../../src/lib//rinf-data-railway-routes";
+import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
+import { rinfFindRailwayRoutesOfTripIBNRs, dbUicRefs } from "../../src/lib/rinf-data-railway-routes.js";
 import { Line, Journey, Stop } from 'hafas-client';
-import type { GraphNode } from 'rinf-graph/rinfgraph.bundle';
-import { dbPrices } from '../../src/lib/db-prices';
+import type { GraphNode } from 'rinf-graph/rinfgraph.bundle.js';
+import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
-
-require('isomorphic-fetch');
+import { railwayLines, RailwayLine } from '../../src/lib/line-numbers.js';
 
 const myArgs = process.argv.slice(2);
 
 const profile = myArgs.indexOf("--fshafas") > 0 ? 'db-fsharp' : 'db';
 
 const client = hafas(profile);
+
+const locationsOfRailwayLine = async (r: RailwayLine) => {
+    const ids: string[] = [];
+
+    ids.push(r.StartStation);
+    ids.push(...r.ViaStations);
+    ids.push(r.EndStation);
+
+    console.log(ids);
+
+    const stops = await client.stopsOfIds(ids, dbUicRefs);
+    console.log('stops: ', stops.length);
+
+    stops.forEach(s => {
+        console.log(s.id, s.name);
+    });
+}
+
+const railwayLine = (line: number) => {
+    railwayLines
+        .filter(r => r.Line === line)
+        .forEach(r => locationsOfRailwayLine(r));
+}
 
 const locations = (name?: string) => {
     name && client.locations(name, 5)
@@ -49,7 +71,6 @@ const prices = async (from?: string, to?: string, date?: string, days?: string) 
     const locationsTo =
         client.isLocation(to) ? [to]
             : await client.locations(to, 1);
-
     if (locationsFrom[0].id !== undefined && locationsTo[0].id !== undefined) {
 
         dbPrices(locationsFrom[0].id, locationsTo[0].id, day.toDate(), ndays, defaultJourneyParams)
@@ -152,6 +173,9 @@ const nearby = (lat?: string, lon?: string) => {
 switch (myArgs[0]) {
     case 'locations':
         locations(myArgs[1]);
+        break;
+    case 'railwayline':
+        railwayLine(Number(myArgs[1]));
         break;
     case 'journeys':
         journeys(myArgs[1], myArgs[2], myArgs[3]);
