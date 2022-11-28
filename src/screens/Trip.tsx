@@ -5,7 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
-import { Location, Trip, StopOver, Line, Stop, Station } from 'hafas-client';
+import { Location, Trip, StopOver, Line, Stop, Station } from 'fs-hafas-client/hafas-client';
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
@@ -50,7 +50,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         else return PositionKind.Stop;
     }
     const data = trip.stopovers?.map((s, i): ItemType => { return { s: s, p: getPositionKind(i) } })
-    const operatorName = trip.line?.operator?.name ?? '';
+    const operatorName = trip.line?.operator?.name;
+    const fahrtName = trip.line?.product === 'regional' ? trip.line?.fahrtNr : undefined;
 
     const showRailwayRoutes = (longPress: boolean) => {
         console.log('Trip showRailwayRoutes');
@@ -158,6 +159,11 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         return cancelled ? "entfällt" : "";
     }
 
+    const additionalStopInfo = (item: StopOver): string => {
+        const additionalStop = item.additionalStop;
+        return additionalStop ? "zusätzlicher Halt" : "";
+    }
+
     const transitInfo = (so: StopOver): string => {
         if (so.plannedDeparture) {
             return t('TripScreen.Time', { date: extractTimeOfDatestring(so.plannedDeparture) })
@@ -191,9 +197,12 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                                 <Text style={styles.itemWarningText}>
                                     {` ${cancelledInfo(item.s)}`}
                                 </Text>
+                                <Text style={styles.itemInfoText}>
+                                    {` ${additionalStopInfo(item.s)}`}
+                                </Text>
                             </Text>
                         </TouchableOpacity>
-                        {line && hasTrainformation(line) && item.s.plannedDeparture &&
+                        {line && hasTrainformation(line) && item.s.plannedDeparture && !item.s.cancelled &&
                             <TouchableOpacity onPress={() => goToWagenreihung(line, item.s.plannedDeparture, item.s.stop)}>
                                 <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
                             </TouchableOpacity>
@@ -210,6 +219,9 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                         <Text style={styles.itemWarningText}>
                             {` ${cancelledInfo(item.s)}`}
                         </Text>
+                        <Text style={styles.itemInfoText}>
+                            {` ${additionalStopInfo(item.s)}`}
+                        </Text>
                     </Text>
                     <OptionalItemDelay item={item} />
                 </View>
@@ -223,6 +235,9 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                                 {`${transitInfo(item.s)} ${asLinkText(nameInfo(item.s) + distanceInfo(item.s))}`}
                                 <Text style={styles.itemWarningText}>
                                     {` ${cancelledInfo(item.s)}`}
+                                </Text>
+                                <Text style={styles.itemInfoText}>
+                                    {` ${additionalStopInfo(item.s)}`}
                                 </Text>
                             </Text>
                         </TouchableOpacity>
@@ -276,7 +291,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             </View>
             <View style={{ paddingLeft: 10 }}>
                 <Text style={styles.itemHeaderText}>
-                    {trip.line?.name ?? ''} ({operatorName}) {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
+                    {trip.line?.name ?? ''}{fahrtName ? (' (' + fahrtName + ')') : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
                 </Text>
             </View>
             {data && data.length > 1 &&

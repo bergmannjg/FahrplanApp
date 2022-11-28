@@ -1,6 +1,6 @@
 import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
 import { rinfFindRailwayRoutesOfTripIBNRs, dbUicRefs } from "../../src/lib/rinf-data-railway-routes.js";
-import { Line, Journey, Stop } from 'hafas-client';
+import { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
 import type { GraphNode } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
@@ -93,7 +93,7 @@ const journeys = (from?: string, to?: string, via?: string) => {
     from && to && client.journeys(from, to, defaultJourneyParams, undefined, via)
         .then(result => {
             result.forEach(j => {
-                console.log('price: ', j.price);
+                console.log('price: ', j.price?.amount);
                 j.legs.forEach(l => {
                     console.log('leg: ', l.tripId, l.origin?.name, l.destination?.name, l.line?.name, l.line?.product, l.line?.fahrtNr, l.plannedDeparture)
 
@@ -101,12 +101,12 @@ const journeys = (from?: string, to?: string, via?: string) => {
                         client.tripOfLeg(l.tripId, l.origin, l.destination, l.polyline)
                             .then(trip => {
                                 console.log('leg: ', l.tripId, l.origin?.name, l.destination?.name, l.line?.name, l.line?.product, l.line?.fahrtNr, l.plannedDeparture)
-                                trip.stopovers?.forEach(so => {
-                                    console.log('stop: ', so.stop?.name, so.stop?.location?.latitude, so.stop?.location?.longitude, so.stop?.distance?.toFixed(3), ' lines:', filterLines(so.stop?.lines).length);
+                                trip.stopovers?.forEach((so: StopOver) => {
+                                    console.log('stop: ', so.stop?.name, so.stop?.location?.latitude, so.stop?.location?.longitude, so.stop?.distance?.toFixed(3), ' lines:', filterLines(so.stop?.lines).length, so.cancelled ? 'cancelled' : '', so.additionalStop ? 'additionalStop' : '');
                                 })
                             })
                             .catch((error) => {
-                                console.log('There has been a problem with your tripsOfJourney operation: ' + error);
+                                console.log('There has been a problem with your tripOfLeg operation: ' + error.message, error.stack);
                             });
                     }
 

@@ -174,6 +174,8 @@ export const styles = StyleSheet.create({
     padding: 0,
     paddingBottom: 4
   },
+  itemInfoText: {
+  },
   itemWarningText: {
     color: 'red',
   },

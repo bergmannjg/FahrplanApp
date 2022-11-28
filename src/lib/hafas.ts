@@ -1,27 +1,27 @@
 import { createClient, Feature, Profile } from 'hafas-client';
 
-import  { profile as bvgProfile } from 'hafas-client/p/bvg';
-import  { profile as cflProfile } from 'hafas-client/p/cfl';
-import  { profile as cmtaProfile } from 'hafas-client/p/cmta';
+import { profile as bvgProfile } from 'hafas-client/p/bvg/index.js';
+import { profile as cflProfile } from 'hafas-client/p/cfl/index.js';
+import { profile as cmtaProfile } from 'hafas-client/p/cmta/index.js';
 import { profile as dbProfile } from 'hafas-client/p/db/index.js';
-import  { profile as dbbusradarnrwProfile } from 'hafas-client/p/db-busradar-nrw';
-import  { profile as insaProfile } from 'hafas-client/p/insa';
-import  { profile as invgProfile } from 'hafas-client/p/invg';
-import  { profile as nahshProfile } from 'hafas-client/p/nahsh';
-import  { profile as nvvProfile } from 'hafas-client/p/nvv';
-import  { profile as oebbProfile } from 'hafas-client/p/oebb';
-import  { profile as pkpProfile } from 'hafas-client/p/pkp';
-import  { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen';
-import  { profile as rmvProfile } from 'hafas-client/p/rmv';
-import  { profile as rsagProfile } from 'hafas-client/p/rsag';
-import  { profile as saarfahrplanProfile } from 'hafas-client/p/saarfahrplan';
-import  { profile as sbahnmuenchenProfile } from 'hafas-client/p/sbahn-muenchen';
-// import { profile as sncbProfile  } from 'hafas-client/p/sncb';
-import  { profile as svvProfile } from 'hafas-client/p/svv';
-import  { profile as vbbProfile } from 'hafas-client/p/vbb';
-import  { profile as vbnProfile } from 'hafas-client/p/vbn';
-import  { profile as vmtProfile } from 'hafas-client/p/vmt';
-import  { profile as vsnProfile } from 'hafas-client/p/vsn';
+import { profile as dbbusradarnrwProfile } from 'hafas-client/p/db-busradar-nrw/index.js';
+import { profile as insaProfile } from 'hafas-client/p/insa/index.js';
+import { profile as invgProfile } from 'hafas-client/p/invg/index.js';
+import { profile as nahshProfile } from 'hafas-client/p/nahsh/index.js';
+import { profile as nvvProfile } from 'hafas-client/p/nvv/index.js';
+import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js';
+import { profile as pkpProfile } from 'hafas-client/p/pkp/index.js';
+import { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen/index.js';
+import { profile as rmvProfile } from 'hafas-client/p/rmv/index.js';
+import { profile as rsagProfile } from 'hafas-client/p/rsag/index.js';
+import { profile as saarfahrplanProfile } from 'hafas-client/p/saarfahrplan/index.js';
+import { profile as sbahnmuenchenProfile } from 'hafas-client/p/sbahn-muenchen/index.js';
+// import { profile as sncbProfile  } from 'hafas-client/p/sncb/index.js';
+import { profile as svvProfile } from 'hafas-client/p/svv/index.js';
+import { profile as vbbProfile } from 'hafas-client/p/vbb/index.js';
+import { profile as vbnProfile } from 'hafas-client/p/vbn/index.js';
+import { profile as vmtProfile } from 'hafas-client/p/vmt/index.js';
+import { profile as vsnProfile } from 'hafas-client/p/vsn/index.js';
 
 import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
 import { fshafas } from "fs-hafas-client";
@@ -38,27 +38,27 @@ const chooseClient = (p: string, profile: Profile) => {
 const chooseProfile = (p: string): Profile => {
     switch (p) {
         case 'bvg': return bvgProfile;
-        case'cfl': return cflProfile;
-        case'cmta': return cmtaProfile;
+        case 'cfl': return cflProfile;
+        case 'cmta': return cmtaProfile;
         case 'db': return dbProfile;
-        case'dbbusradarnrw': return dbbusradarnrwProfile;
-        case'insa': return insaProfile;
-        case'invg': return invgProfile;
-        case'nahsh': return nahshProfile;
-        case'nvv': return nvvProfile;
-        case'oebb': return oebbProfile;
-        case'pkp': return pkpProfile;
-        case'rejseplanen': return rejseplanenProfile;
-        case'rmv': return rmvProfile;
-        case'rsag': return rsagProfile;
-        case'saarfahrplan': return saarfahrplanProfile;
-        case'sbahnmuenchen': return sbahnmuenchenProfile;
+        case 'dbbusradarnrw': return dbbusradarnrwProfile;
+        case 'insa': return insaProfile;
+        case 'invg': return invgProfile;
+        case 'nahsh': return nahshProfile;
+        case 'nvv': return nvvProfile;
+        case 'oebb': return oebbProfile;
+        case 'pkp': return pkpProfile;
+        case 'rejseplanen': return rejseplanenProfile;
+        case 'rmv': return rmvProfile;
+        case 'rsag': return rsagProfile;
+        case 'saarfahrplan': return saarfahrplanProfile;
+        case 'sbahnmuenchen': return sbahnmuenchenProfile;
         // case 'sncb': return sncbProfile;
-        case'svv': return svvProfile;
-        case'vbb': return vbbProfile;
-        case'vbn': return vbnProfile;
-        case'vmt': return vmtProfile;
-        case'vsn': return vsnProfile;
+        case 'svv': return svvProfile;
+        case 'vbb': return vbbProfile;
+        case 'vbn': return vbnProfile;
+        case 'vmt': return vmtProfile;
+        case 'vsn': return vsnProfile;
         case 'bvg-fsharp': return profiles.getProfile('bvg');
         case 'db-fsharp': return profiles.getProfile('db');
         case 'mobilnrw-fsharp': return profiles.getProfile('mobilnrw');
@@ -245,10 +245,16 @@ export function hafas(profileName: string): Hafas {
                     };
                     return stopover;
                 });
-                const plannedDeparture = stopoversInFeatureCollection[0].plannedDeparture;
-                const plannedArrival = stopoversInFeatureCollection[stopoversInFeatureCollection.length - 1].plannedArrival;
-                console.log('stopoversInFeatureCollection.length:', stopoversInFeatureCollection.length);
-                return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
+                if (stopoversInFeatureCollection.length > 0) {
+                    const plannedDeparture = stopoversInFeatureCollection[0].plannedDeparture;
+                    const plannedArrival = stopoversInFeatureCollection[stopoversInFeatureCollection.length - 1].plannedArrival;
+                    console.log('stopoversInFeatureCollection.length:', stopoversInFeatureCollection.length);
+                    return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
+                } else {
+                    const plannedDeparture = stopovers[0].plannedDeparture;
+                    const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
+                    return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers };
+                }
             } else {
                 const plannedDeparture = stopovers[0].plannedDeparture;
                 const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
@@ -608,44 +614,50 @@ export function hafas(profileName: string): Hafas {
     const stopsInFeatureCollection = async (fc0: FeatureCollection, stopsInLeg: Stop[], products?: Products): Promise<Stop[]> => {
         if (!fc0 || fc0.features.length < 2) return [];
 
-        const fc: FeatureCollection = JSON.parse(JSON.stringify(fc0));
+        try {
+            const fc: FeatureCollection = JSON.parse(JSON.stringify(fc0));
 
-        const stopsInFcOrig = findStops(fc);
-        stopsInLeg.forEach(s => {
-            if (stopsInFcOrig.find(sFc => sFc.stop?.name === s.name) === undefined) {
-                const index = s.location && s.location?.latitude && s.location?.longitude ? findIndex(s.location?.latitude, s.location?.longitude, fc, 0.1) : undefined;
-                if (index && fc.features[index].properties !== undefined) {
-                    fc.features[index].properties = s;
-                }
-            }
-        })
-
-        const stopsInFcOfLeg = findStops(fc);
-        if (stopsInFcOfLeg.length > 1) {
-            let from = stopsInFcOfLeg[0]
-            for (const curr of stopsInFcOfLeg) {
-                if (from.index < curr.index) {
-                    await stopsInFeatureCollectionSubset(from.index, curr.index, fc, stopsInFcOfLeg, products);
-                    from = curr;
-                }
-            }
-            const foundStopsInFc = findStops(fc);
-
-            let dist = 0;
-            fc.features.forEach((v, i) => {
-                if (i > 0) {
-                    dist = dist + getDistanceFromFeaturesInKm(fc.features[i - 1], fc.features[i]);
-
-                    const foundStopInFc = foundStopsInFc.find(f => f.index === i);
-                    if (foundStopInFc) {
-                        foundStopInFc.stop.distance = dist;
+            const stopsInFcOrig = findStops(fc);
+            stopsInLeg.forEach(s => {
+                if (stopsInFcOrig.find(sFc => sFc.stop?.name === s.name) === undefined) {
+                    const index = s.location && s.location?.latitude && s.location?.longitude ? findIndex(s.location?.latitude, s.location?.longitude, fc, 0.1) : undefined;
+                    if (index && fc.features[index].properties !== undefined) {
+                        fc.features[index].properties = s;
                     }
                 }
-            });
+            })
 
-            return foundStopsInFc.filter(si => stopsInFcOfLeg.find(sif => sif.stop.id === si.stop.id) || (!si.stop.station && filterLines(si.stop.lines).length > 0)).map(s => s.stop);
+            const stopsInFcOfLeg = findStops(fc);
+            if (stopsInFcOfLeg.length > 1) {
+                let from = stopsInFcOfLeg[0]
+                for (const curr of stopsInFcOfLeg) {
+                    if (from.index < curr.index) {
+                        await stopsInFeatureCollectionSubset(from.index, curr.index, fc, stopsInFcOfLeg, products);
+                        from = curr;
+                    }
+                }
+                const foundStopsInFc = findStops(fc);
+
+                let dist = 0;
+                fc.features.forEach((v, i) => {
+                    if (i > 0) {
+                        dist = dist + getDistanceFromFeaturesInKm(fc.features[i - 1], fc.features[i]);
+
+                        const foundStopInFc = foundStopsInFc.find(f => f.index === i);
+                        if (foundStopInFc) {
+                            foundStopInFc.stop.distance = dist;
+                        }
+                    }
+                });
+
+                return foundStopsInFc.filter(si => stopsInFcOfLeg.find(sif => sif.stop.id === si.stop.id) || (!si.stop.station && filterLines(si.stop.lines).length > 0)).map(s => s.stop);
+            }
+            else {
+                return [];
+            }
+        } catch (e) {
+            return [];
         }
-        return [];
     }
 
     return { journeys, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
