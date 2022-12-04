@@ -23,7 +23,7 @@ import { profile as vbnProfile } from 'hafas-client/p/vbn/index.js';
 import { profile as vmtProfile } from 'hafas-client/p/vmt/index.js';
 import { profile as vsnProfile } from 'hafas-client/p/vsn/index.js';
 
-import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'hafas-client';
+import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
 import { fshafas } from "fs-hafas-client";
 import { profiles } from "fs-hafas-profiles";
 
@@ -110,6 +110,7 @@ export interface JourneyInfo {
 
 export interface Hafas {
     journeys: (from: string | Location, to: string | Location, journeyParams: JourneyParams, departure?: Date | undefined, via?: string, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
+    journeyForRailwayLine: (line: string, train: string, from: string, to: string, departure: Date, via?: string) => Promise<Journey | undefined>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
     stopsOfIds: (ids: string[], preferredUicrefs: number[]) => Promise<ReadonlyArray<Stop>>,
     nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
@@ -379,6 +380,31 @@ export function hafas(profileName: string): Hafas {
         } else {
             return [];
         }
+    }
+
+    function addDays(date: Date, days: number) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    const journeyForRailwayLine = async (line: string, train: string, from: string, to: string, departure: Date, via?: string): Promise<Journey | undefined> => {
+
+        const journeyParams = {
+            bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 10, firstClass: false, transfers: 0, transferTime: 8, regional: false
+        }
+
+        for (let step = 0; step < 7; step++) {
+            const maybeJourneys = await journeys(from, to, journeyParams, addDays(departure, step), via, ["train"]);
+            if (maybeJourneys && maybeJourneys.length > 0) {
+                const filtered = maybeJourneys.find(j => {
+                    console.log('found journey: ', j.legs[0].tripId, j.legs[0].line?.name, j.legs[0].line?.matchId);
+                    return j.legs.filter(l => l.line?.matchId === line || l.line?.name === train).length > 0;
+                });
+                if (filtered) return filtered;
+            }
+        }
+        return undefined;
     }
 
     const locations = async (from: string, results: number): Promise<ReadonlyArray<Station | Stop | Location>> => {
@@ -660,5 +686,5 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    return { journeys, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
+    return { journeys, journeyForRailwayLine, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
 }

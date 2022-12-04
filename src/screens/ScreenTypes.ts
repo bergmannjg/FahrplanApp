@@ -74,7 +74,6 @@ export interface WagonimageScreenParams {
 }
 
 export interface LineNetworkParams {
-    line?: number;
     profile: string
 }
 

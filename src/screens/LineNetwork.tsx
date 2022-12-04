@@ -3,15 +3,13 @@ import { List as PaperList, Text } from 'react-native-paper';
 import { View, FlatList, ListRenderItem, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { railwayLines, railwayLineInfos, RailwayLine } from '../lib/line-numbers';
+import { railwayLines, railwayLineInfos, railwayLineTripIds, RailwayLine } from '../lib/line-numbers';
 import { MainStackParamList, LineNetworkParams } from './ScreenTypes';
-import { stylesPortrait, stylesLandscape, styles } from './styles';
-import { useTranslation } from 'react-i18next';
+import { styles } from './styles';
 import { hafas } from '../lib/hafas';
 import { Hafas } from '../lib/hafas';
-import { dbUicRefs } from '../lib/rinf-data-railway-routes';
-import { Location } from 'fs-hafas-client/hafas-client';
-import { useOrientation } from './useOrientation';
+import { uicRefs } from '../lib/rinf-data-railway-routes';
+import { Trip, StopOver } from 'fs-hafas-client/hafas-client';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'LineNetwork'>;
@@ -25,25 +23,45 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
         console.log('constructor LineNetworkScreen, params.date: ');
     }
 
-    const orientation = useOrientation();
-    const { t } = useTranslation();
-
     const profile = params.profile;
     const client: Hafas = hafas(profile);
 
-    const data = params.line ? railwayLines.filter(r => r.Line === params.line) : railwayLineInfos;
+    const data = railwayLineInfos;
 
-    const showRoute = async (item: RailwayLine) => {
-        const stops: string[] = [];
+    const tripData = (item: RailwayLine) => {
+        const info = railwayLineTripIds.find(r => r.Line === item.Line)
+        return info ? info.TripId : '';
+    }
 
-        stops.push(item.StartStation);
-        stops.push(...item.ViaStations);
-        stops.push(item.EndStation);
+    const goToTrip = async (item: RailwayLine) => {
+        const data = railwayLines.filter(r => r.Line ===item.Line);
+        const railwayLineTripId = railwayLineTripIds.find(r => r.Line === item.Line);
+        if (railwayLineTripId?.TripId) {
+            client.trip(railwayLineTripId.TripId)
+                .then(trip => {
+                    navigation.navigate('Trip', { trip, profile })
+                })
+                .catch((error) => {
+                    console.log('There has been a problem with your tripsOfJourney operation: ' + error);
+                });
+        } else if (data.length === 1) {
+            const r: RailwayLine = data[0];
+            const stopovers: StopOver[] = []
 
-        const locations = (await client.stopsOfIds(stops, dbUicRefs)).map(s => s.location).filter(l => !!l) as Location[];
-        console.log('locations: ', locations.length);
-        if (locations && locations.length > 0) {
-            navigation.navigate('BRouter', { locations, isLongPress: false });
+            const stopIds: string[] = [];
+
+            stopIds.push(r.StartStation);
+            stopIds.push(...r.ViaStations);
+            stopIds.push(r.EndStation);
+            const dt = new Date(Date.now());
+            const stops = await client.stopsOfIds(stopIds, uicRefs);
+            if (stops.length > 2) {
+                stopovers.push({ stop: stops[0], plannedDeparture: dt.toISOString() });
+                stopovers.push(...stops.slice(1, stops.length - 2).map(s => ({ stop: s, plannedArrival: dt.toISOString() })));
+                stopovers.push({ stop: stops[stops.length - 1], plannedArrival: dt.toISOString() });
+            }
+            const trip: Trip = { id: '', stopovers, line: { type: 'line', name: r.Train }, plannedArrival: dt.toISOString(), plannedDeparture: dt.toISOString() }
+            navigation.navigate('Trip', { trip, profile })
         }
     }
 
@@ -60,16 +78,6 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
         );
     };
 
-    const goToView = (item: RailwayLine) => {
-        if (!params.line) {
-            console.log('LineNetwork');
-            navigation.navigate('LineNetwork', { line: item.Line, profile });
-        } else {
-            console.log('Navigation router run to Home');
-            navigation.navigate('Home', { station: item.StartStation, station2: item.EndStation, stationVia: item.ViaStations[item.ViaStations.length / 2] })
-        }
-    };
-
     const renderFooter = () => {
         return null;
     };
@@ -78,53 +86,14 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
         <PaperList.Item
             style={{ borderWidth: 0, paddingLeft: 10 }}
             title={
-                () => <TouchableOpacity onPress={() => goToView(item)}>
-                    <Text style={styles.summaryText}>Linie {item.Line}: {item.StartStation} {'->'} {item.EndStation}</Text>
+                () => <TouchableOpacity onPress={() => goToTrip(item)}>
+                    <Text style={styles.summaryText}>Linie {item.Line}: {item.StartStation} {'->'} {item.EndStation} {tripData(item)}</Text>
                 </TouchableOpacity>
-            }
-            description={
-                () =>
-                    <View style={{ padding: params.line ? 20 : 0 }}>
-                        {params.line &&
-                            <Text style={styles.contentText}>Zug {item.Trains[0]}</Text>
-                        }
-                        {params.line &&
-                            <Text style={styles.contentText}></Text>
-                        }
-                        {params.line && item.ViaStations[0] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[0]}</Text>
-                        }
-                        {params.line && item.ViaStations[1] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[1]}</Text>
-                        }
-                        {params.line && item.ViaStations[2] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[2]}</Text>
-                        }
-                        {params.line && item.ViaStations[3] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[3]}</Text>
-                        }
-                        {params.line && item.ViaStations[4] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[4]}</Text>
-                        }
-                        {params.line && item.ViaStations[5] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[5]}</Text>
-                        }
-                        {params.line && item.ViaStations[6] &&
-                            <Text style={styles.contentText}>Via {item.ViaStations[6]}</Text>
-                        }
-                    </View>
             }
         />);
 
     return (
         <View style={styles.container}>
-            {params.line && <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(data[0])} >
-                    <Text style={styles.itemButtonText}>
-                        {t('JourneyplanScreen.ShowRoute')}
-                    </Text>
-                </TouchableOpacity>
-            </View>}
             <View>
                 <FlatList
                     data={data}

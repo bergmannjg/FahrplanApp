@@ -44,7 +44,7 @@ function db640ToUOPID(ds640: string) {
     return 'AT' + ds640;
 }
 
-export const dbUicRefs : number [] = dbhaltestellen.map(h => h.EVA_NR)
+export const uicRefs : number [] = [...dbhaltestellen.map(h => h.EVA_NR), ...öbbhaltestellen.map(h => h.EVA_NR)]
 
 function findOPIDForUicRef(uicref: number): string {
     const haltestelle = dbhaltestellen.find(h => h.EVA_NR === uicref);

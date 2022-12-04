@@ -1,17 +1,18 @@
 import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
-import { rinfFindRailwayRoutesOfTripIBNRs, dbUicRefs } from "../../src/lib/rinf-data-railway-routes.js";
+import { rinfFindRailwayRoutesOfTripIBNRs } from "../../src/lib/rinf-data-railway-routes.js";
 import { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
 import type { GraphNode } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
-import { railwayLines, RailwayLine } from '../../src/lib/line-numbers.js';
+import { railwayLines, railwayLineTripIds, RailwayLine, RailwayLineTripId } from '../../src/lib/line-numbers.js';
 
 const myArgs = process.argv.slice(2);
 
-const profile = myArgs.indexOf("--fshafas") > 0 ? 'db-fsharp' : 'db';
+const profile = myArgs.indexOf("--hafas") > 0 ? 'db' : 'db-fsharp';
 
 const client = hafas(profile);
 
+/*
 const locationsOfRailwayLine = async (r: RailwayLine) => {
     const ids: string[] = [];
 
@@ -21,18 +22,40 @@ const locationsOfRailwayLine = async (r: RailwayLine) => {
 
     console.log(ids);
 
-    const stops = await client.stopsOfIds(ids, dbUicRefs);
+    const stops = await client.stopsOfIds(ids, uicRefs);
     console.log('stops: ', stops.length);
 
     stops.forEach(s => {
         console.log(s.id, s.name);
     });
 }
+*/
+
+const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineTripId | undefined> => {
+    const via: string = r.ViaStations[Math.floor((r.ViaStations.length / 2))];
+    const journey = await client.journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 6, 0), via);
+    const leg = journey?.legs[0];
+    console.log('journey: ', leg?.origin?.name, leg?.destination?.name, leg?.line?.name);
+    return leg && leg.tripId ? { Line: r.Line, TripId: leg.tripId } : undefined;
+}
 
 const railwayLine = (line: number) => {
     railwayLines
         .filter(r => r.Line === line)
-        .forEach(r => locationsOfRailwayLine(r));
+        .forEach(r => journeyOfRailwayLine(r));
+}
+
+const infosOfrailwayLines = async () => {
+    const infos: RailwayLineTripId[] = [];
+    for (let step = 0; step < railwayLines.length; step++) {
+        const railwayLine = railwayLines[step];
+        if (!railwayLineTripIds.find(r => r.Line === railwayLine.Line)) {
+            console.log('railwayLine.Line: ', railwayLine.Line);
+            const info = await journeyOfRailwayLine(railwayLine);
+            if (info) infos.push(info);
+        }
+    }
+    console.log(JSON.stringify(infos));
 }
 
 const locations = (name?: string) => {
@@ -176,6 +199,9 @@ switch (myArgs[0]) {
         break;
     case 'railwayline':
         railwayLine(Number(myArgs[1]));
+        break;
+    case 'railwaylines':
+        infosOfrailwayLines();
         break;
     case 'journeys':
         journeys(myArgs[1], myArgs[2], myArgs[3]);

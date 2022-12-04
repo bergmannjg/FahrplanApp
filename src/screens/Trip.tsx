@@ -202,7 +202,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                                 </Text>
                             </Text>
                         </TouchableOpacity>
-                        {line && hasTrainformation(line) && item.s.plannedDeparture && !item.s.cancelled &&
+                        {line && line.fahrtNr && hasTrainformation(line) && item.s.plannedDeparture && !item.s.cancelled &&
                             <TouchableOpacity onPress={() => goToWagenreihung(line, item.s.plannedDeparture, item.s.stop)}>
                                 <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
                             </TouchableOpacity>
@@ -291,7 +291,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             </View>
             <View style={{ paddingLeft: 10 }}>
                 <Text style={styles.itemHeaderText}>
-                    {trip.line?.name ?? ''}{fahrtName ? (' (' + fahrtName + ')') : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
+                    {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
                 </Text>
             </View>
             {data && data.length > 1 &&

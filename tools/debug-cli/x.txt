@@ -1,0 +1,410 @@
+createClient, profile:  db-fsharp
+railwayLine.Line:  2
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-12T05:00:00.000Z
+found journey:  1|112020|0|81|12122022 ICE 728 41
+found journey:  1|112013|0|81|12122022 ICE 726 41
+found journey:  1|109114|0|81|12122022 ICE 1010 47
+found journey:  1|112007|0|81|12122022 ICE 724 41
+found journey:  1|112001|0|81|12122022 ICE 722 41
+found journey:  1|111995|0|81|12122022 ICE 720 41
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-13T05:00:00.000Z
+found journey:  1|112020|0|81|13122022 ICE 728 41
+found journey:  1|112013|0|81|13122022 ICE 726 41
+found journey:  1|109114|0|81|13122022 ICE 1010 47
+found journey:  1|112007|0|81|13122022 ICE 724 41
+found journey:  1|112001|0|81|13122022 ICE 722 41
+found journey:  1|111995|0|81|13122022 ICE 720 41
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-14T05:00:00.000Z
+found journey:  1|112020|0|81|14122022 ICE 728 41
+found journey:  1|112013|0|81|14122022 ICE 726 41
+found journey:  1|109114|0|81|14122022 ICE 1010 47
+found journey:  1|112007|0|81|14122022 ICE 724 41
+found journey:  1|112001|0|81|14122022 ICE 722 41
+found journey:  1|111995|0|81|14122022 ICE 720 41
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-15T05:00:00.000Z
+found journey:  1|112020|0|81|15122022 ICE 728 41
+found journey:  1|112013|0|81|15122022 ICE 726 41
+found journey:  1|109114|0|81|15122022 ICE 1010 47
+found journey:  1|112007|0|81|15122022 ICE 724 41
+found journey:  1|112001|0|81|15122022 ICE 722 41
+found journey:  1|111995|0|81|15122022 ICE 720 41
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-16T05:00:00.000Z
+found journey:  1|112020|0|81|16122022 ICE 728 41
+found journey:  1|112013|0|81|16122022 ICE 726 41
+found journey:  1|109115|0|81|16122022 ICE 1010 47
+found journey:  1|112007|0|81|16122022 ICE 724 41
+found journey:  1|112001|0|81|16122022 ICE 722 41
+found journey:  1|111995|0|81|16122022 ICE 720 41
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-17T05:00:00.000Z
+found journey:  1|109137|0|81|17122022 ICE 1012 47
+found journey:  1|112020|0|81|17122022 ICE 728 41
+found journey:  1|112013|0|81|17122022 ICE 726 41
+found journey:  1|109115|0|81|17122022 ICE 1010 47
+found journey:  1|112007|0|81|17122022 ICE 724 41
+found journey:  1|112001|0|81|17122022 ICE 722 41
+from: 8000261 München Hbf
+to: 8000085 Düsseldorf Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-18T05:00:00.000Z
+found journey:  1|112020|0|81|18122022 ICE 728 41
+found journey:  1|112013|0|81|18122022 ICE 726 41
+found journey:  1|109114|0|81|18122022 ICE 1010 47
+found journey:  1|112007|0|81|18122022 ICE 724 41
+found journey:  1|112001|0|81|18122022 ICE 722 41
+found journey:  1|111995|0|81|18122022 ICE 720 41
+journey:  undefined undefined undefined
+railwayLine.Line:  24
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-12T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-13T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-14T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-15T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-16T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-17T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8100044 Schwarzach-St.Veit
+to: 8096009 HAMBURG
+via: 8000013 Augsburg Hbf
+departure:  2022-12-18T05:00:00.000Z
+found journey:  1|143360|0|81|18122022 ICE 1284 1284
+journey:  Schwarzach-St.Veit Hamburg Hbf ICE 1284
+railwayLine.Line:  25
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-12T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-13T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-14T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-15T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-16T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-17T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8000237 Lübeck Hbf
+to: 8100044 Schwarzach-St.Veit
+via: 8000013 Augsburg Hbf
+departure:  2022-12-18T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+journey:  undefined undefined undefined
+railwayLine.Line:  27
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-12T05:00:00.000Z
+found journey:  1|144726|0|81|13122022 EC 252 252
+found journey:  1|144726|0|81|14122022 EC 252 252
+found journey:  1|144726|0|81|15122022 EC 252 252
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-13T05:00:00.000Z
+found journey:  1|144726|0|81|13122022 EC 252 252
+found journey:  1|144726|0|81|14122022 EC 252 252
+found journey:  1|144726|0|81|15122022 EC 252 252
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-14T05:00:00.000Z
+found journey:  1|144726|0|81|14122022 EC 252 252
+found journey:  1|144726|0|81|15122022 EC 252 252
+found journey:  1|144726|0|81|16122022 EC 252 252
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-15T05:00:00.000Z
+found journey:  1|144726|0|81|15122022 EC 252 252
+found journey:  1|144726|0|81|16122022 EC 252 252
+found journey:  1|144726|0|81|17122022 EC 252 252
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-16T05:00:00.000Z
+found journey:  1|144726|0|81|16122022 EC 252 252
+found journey:  1|144726|0|81|17122022 EC 252 252
+found journey:  1|144726|0|81|18122022 EC 252 252
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-17T05:00:00.000Z
+found journey:  1|144726|0|81|17122022 EC 252 252
+found journey:  1|144726|0|81|18122022 EC 252 252
+found journey:  1|144726|0|81|20122022 EC 252 252
+from: 5500728 Budapest-Nyugati
+to: 8002553 Hamburg-Altona
+via: 5400003 Decin hl.n.
+departure:  2022-12-18T05:00:00.000Z
+found journey:  1|144726|0|81|18122022 EC 252 252
+found journey:  1|144726|0|81|20122022 EC 252 252
+found journey:  1|144726|0|81|21122022 EC 252 252
+journey:  undefined undefined undefined
+railwayLine.Line:  34
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-12T05:00:00.000Z
+found journey:  1|111610|0|81|12122022 ICE 614 42
+found journey:  1|109135|0|81|12122022 ICE 1012 47
+found journey:  1|111598|0|81|12122022 ICE 612 42
+found journey:  1|109114|0|81|12122022 ICE 1010 47
+found journey:  1|111587|0|81|12122022 ICE 610 42
+found journey:  1|112486|0|81|12122022 ICE 918 47
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-13T05:00:00.000Z
+found journey:  1|111608|0|81|13122022 ICE 614 42
+found journey:  1|109135|0|81|13122022 ICE 1012 47
+found journey:  1|111597|0|81|13122022 ICE 612 42
+found journey:  1|109114|0|81|13122022 ICE 1010 47
+found journey:  1|111586|0|81|13122022 ICE 610 42
+found journey:  1|112486|0|81|13122022 ICE 918 47
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-14T05:00:00.000Z
+found journey:  1|111608|0|81|14122022 ICE 614 42
+found journey:  1|109135|0|81|14122022 ICE 1012 47
+found journey:  1|111597|0|81|14122022 ICE 612 42
+found journey:  1|109114|0|81|14122022 ICE 1010 47
+found journey:  1|111586|0|81|14122022 ICE 610 42
+found journey:  1|112486|0|81|14122022 ICE 918 47
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-15T05:00:00.000Z
+found journey:  1|111608|0|81|15122022 ICE 614 42
+found journey:  1|109135|0|81|15122022 ICE 1012 47
+found journey:  1|111597|0|81|15122022 ICE 612 42
+found journey:  1|109114|0|81|15122022 ICE 1010 47
+found journey:  1|111586|0|81|15122022 ICE 610 42
+found journey:  1|112486|0|81|15122022 ICE 918 47
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-16T05:00:00.000Z
+found journey:  1|111609|0|81|16122022 ICE 614 42
+found journey:  1|111599|0|81|16122022 ICE 612 42
+found journey:  1|109115|0|81|16122022 ICE 1010 47
+found journey:  1|111588|0|81|16122022 ICE 610 42
+found journey:  1|112488|0|81|16122022 ICE 918 47
+found journey:  1|111170|0|81|16122022 ICE 518 42
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-17T05:00:00.000Z
+found journey:  1|111609|0|81|17122022 ICE 614 42
+found journey:  1|109137|0|81|17122022 ICE 1012 47
+found journey:  1|111599|0|81|17122022 ICE 612 42
+found journey:  1|109115|0|81|17122022 ICE 1010 47
+found journey:  1|111588|0|81|17122022 ICE 610 42
+found journey:  1|112487|0|81|17122022 ICE 918 47
+from: 8000096 Stuttgart Hbf
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-18T05:00:00.000Z
+found journey:  1|111609|0|81|18122022 ICE 614 42
+found journey:  1|111599|0|81|18122022 ICE 612 42
+found journey:  1|111588|0|81|18122022 ICE 610 42
+found journey:  1|112487|0|81|18122022 ICE 918 47
+found journey:  1|111170|0|81|18122022 ICE 518 42
+found journey:  1|111157|0|81|18122022 ICE 516 42
+journey:  undefined undefined undefined
+railwayLine.Line:  75
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-12T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-13T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-14T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-15T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-16T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-17T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096009 HAMBURG
+to: 8601242 Koebenhavns Lufthavn st
+via: 8600623 Fredericia st
+departure:  2022-12-18T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+journey:  undefined undefined undefined
+railwayLine.Line:  76
+from: 8600087 Aarhus
+to: 8096009 HAMBURG
+via: 8601899 Padborg st
+departure:  2022-12-12T05:00:00.000Z
+found journey:  1|145555|0|81|12122022 IC 383 383
+journey:  Aarhus Hamburg Hbf IC 383
+railwayLine.Line:  84
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-12T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-13T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-14T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-15T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-16T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-17T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+from: 8096021 FRANKFURT(MAIN)
+to: 8700074 Marseille-St-Charles
+via: 8700023 Strasbourg
+departure:  2022-12-18T05:00:00.000Z
+HAFAS Kernel: No connection found , hafasErrorCode:  undefined
+journey:  undefined undefined undefined
+railwayLine.Line:  90
+from: 5500003 Budapest-Keleti
+to: 8000261 München Hbf
+via: 8100013 Linz Hbf
+departure:  2022-12-12T05:00:00.000Z
+found journey:  1|146806|0|81|12122022 RJX 60 60
+journey:  Budapest-Keleti München Hbf RJX 60
+railwayLine.Line:  91
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-12T05:00:00.000Z
+found journey:  1|144372|0|81|12122022 ICE 228 228
+found journey:  1|144958|0|81|12122022 ICE 28 28
+found journey:  1|144860|0|81|12122022 ICE 26 26
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-13T05:00:00.000Z
+found journey:  1|144372|0|81|13122022 ICE 228 228
+found journey:  1|144958|0|81|13122022 ICE 28 28
+found journey:  1|144860|0|81|13122022 ICE 26 26
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-14T05:00:00.000Z
+found journey:  1|144372|0|81|14122022 ICE 228 228
+found journey:  1|144958|0|81|14122022 ICE 28 28
+found journey:  1|144864|0|81|14122022 ICE 26 26
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-15T05:00:00.000Z
+found journey:  1|144372|0|81|15122022 ICE 228 228
+found journey:  1|144958|0|81|15122022 ICE 28 28
+found journey:  1|144864|0|81|15122022 ICE 26 26
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-16T05:00:00.000Z
+found journey:  1|144372|0|81|16122022 ICE 228 228
+found journey:  1|144958|0|81|16122022 ICE 28 28
+found journey:  1|144866|0|81|16122022 ICE 26 26
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-17T05:00:00.000Z
+found journey:  1|144373|0|81|17122022 ICE 228 228
+found journey:  1|144957|0|81|17122022 ICE 28 28
+found journey:  1|144863|0|81|17122022 ICE 26 26
+from: 8196001 WIEN
+to: 8000080 Dortmund Hbf
+via: 8070003 Frankfurt(M) Flughafen Fernbf
+departure:  2022-12-18T05:00:00.000Z
+found journey:  1|144373|0|81|18122022 ICE 228 228
+found journey:  1|144957|0|81|18122022 ICE 28 28
+found journey:  1|144865|0|81|18122022 ICE 26 26
+journey:  undefined undefined undefined
+[{"Line":24,"TripId":"1|143360|0|81|18122022"},{"Line":76,"TripId":"1|145555|0|81|12122022"},{"Line":90,"TripId":"1|146806|0|81|12122022"}]

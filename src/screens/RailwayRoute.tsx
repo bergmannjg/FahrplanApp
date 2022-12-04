@@ -30,10 +30,11 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const STRNAME = rinfGetLineName(railwayRouteNr);
 
     const queryText = () => {
-        console.log('imcode:', imcode);
-        if (imcode === '0081') return 'Streckennummer ÖBB "' + (railwayRouteNr / 100).toFixed(0) + ' '
-            + String(railwayRouteNr % 100).padStart(2, '0') + '" Wikipedia'; // öbb
-        else return 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
+        const q = (imcode === '0081') ? 'Streckennummer ÖBB ' + (railwayRouteNr / 100).toFixed(0) + ' '
+            + String(railwayRouteNr % 100).padStart(2, '0') + ' Wikipedia' // öbb
+            : 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
+        console.log('imcode:', imcode, ', query:', q);
+        return q;
     }
     const showRoute = async () => {
         if (data.length > 0) {
@@ -108,7 +109,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.name}
+                keyExtractor={item => item.name + item.km}
                 onEndReachedThreshold={50}
             />
         </View>
