@@ -21,9 +21,11 @@ import JourneyOptionsScreen from './JourneyOptions';
 import BRouterScreen from './BRouter';
 import TripScreen from './Trip';
 import LineNetworkScreen from './LineNetwork';
+import MyJourneysScreen from './MyJourneys';
 import WebViewScreen from './WebView';
 import ThirdPartyLicensesScreen from './third-party-licenses';
 import { MainStackParamList, RootStackParamList } from './ScreenTypes';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const MainStack = createStackNavigator<MainStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -60,6 +62,11 @@ function MainStackScreen() {
         name="LineNetwork"
         component={LineNetworkScreen}
         options={{ title: 'Liniennetz 2023' }}
+      />
+      <MainStack.Screen
+        name="MyJourneys"
+        component={MyJourneysScreen}
+        options={{ title: 'Meine Reisen' }}
       />
       <MainStack.Screen
         name="Departures"
@@ -149,8 +156,10 @@ function RootStackScreen(): JSX.Element {
 
 export default function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <RootStackScreen />
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <RootStackScreen />
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }

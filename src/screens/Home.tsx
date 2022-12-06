@@ -12,6 +12,10 @@ import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import RadioForm from 'react-native-simple-radio-button';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(["The provided value 'ms-stream' is not a valid 'responseType'."])
+LogBox.ignoreLogs(["The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'."])
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Home'>;
@@ -192,7 +196,12 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
   const searchLineNetwork = () => {
     console.log('LineNetwork');
-    navigation.navigate('LineNetwork', { profile });
+    navigation.navigate('LineNetwork', { profile: clientProfile() });
+  }
+
+  const searchMyJourneys = () => {
+    console.log('MyJourneys');
+    navigation.navigate('MyJourneys', { tripDetails, compactifyPath });
   }
 
   const showDeparturesQuery = (query: string) => {
@@ -215,9 +224,13 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
   }
 
   const switchStations = () => {
-    const tmp = station1;
-    setStation1(station2);
-    setStation2(tmp);
+    const s1 = station1;
+    const s2 = station2;
+    setStation1(s2);
+    setStation2(s1);
+    if ('string' === typeof s1 && 'string' === typeof s2) {
+      saveData({ station1: s2, station2: s1 });
+    }
   }
 
   const radioProps = [
@@ -390,6 +403,16 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
           <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchLineNetwork()}>
             <Text style={styles.itemText}>
               Liniennetz
+            </Text>
+          </TouchableOpacity>
+        </View>
+      }
+      {
+        orientation === 'PORTRAIT' &&
+        <View style={styles.containerSearch}>
+          <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchMyJourneys()}>
+            <Text style={styles.itemText}>
+              Meine Reisen
             </Text>
           </TouchableOpacity>
         </View>

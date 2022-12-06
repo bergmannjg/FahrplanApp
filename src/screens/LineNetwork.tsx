@@ -1,10 +1,10 @@
 import React from 'react';
 import { List as PaperList, Text } from 'react-native-paper';
-import { View, FlatList, ListRenderItem, TouchableOpacity } from 'react-native';
+import { View, FlatList, ListRenderItem, TouchableOpacity, Linking } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { railwayLines, railwayLineInfos, railwayLineTripIds, RailwayLine } from '../lib/line-numbers';
-import { MainStackParamList, LineNetworkParams } from './ScreenTypes';
+import { MainStackParamList, LineNetworkParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
 import { hafas } from '../lib/hafas';
 import { Hafas } from '../lib/hafas';
@@ -28,13 +28,13 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
 
     const data = railwayLineInfos;
 
-    const tripData = (item: RailwayLine) => {
+    const hasTripData = (item: RailwayLine) => {
         const info = railwayLineTripIds.find(r => r.Line === item.Line)
-        return info ? info.TripId : '';
+        return info !== undefined;
     }
 
     const goToTrip = async (item: RailwayLine) => {
-        const data = railwayLines.filter(r => r.Line ===item.Line);
+        const data = railwayLines.filter(r => r.Line === item.Line);
         const railwayLineTripId = railwayLineTripIds.find(r => r.Line === item.Line);
         if (railwayLineTripId?.TripId) {
             client.trip(railwayLineTripId.TripId)
@@ -87,23 +87,27 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
             style={{ borderWidth: 0, paddingLeft: 10 }}
             title={
                 () => <TouchableOpacity onPress={() => goToTrip(item)}>
-                    <Text style={styles.summaryText}>Linie {item.Line}: {item.StartStation} {'->'} {item.EndStation} {tripData(item)}</Text>
+                    <Text style={hasTripData(item) ? styles.summaryText : styles.summaryTextWarning}>Linie {item.Line}: {item.StartStation} {'->'} {item.EndStation}</Text>
                 </TouchableOpacity>
             }
         />);
 
     return (
         <View style={styles.container}>
-            <View>
-                <FlatList
-                    data={data}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.Line + item.StartStation + item.EndStation}
-                    ItemSeparatorComponent={renderSeparator}
-                    ListFooterComponent={renderFooter}
-                    onEndReachedThreshold={50}
-                />
+            <View style={{ paddingLeft: 10, paddingTop: 10 }}>
+                <Text style={styles.infoText}
+                    onPress={() => Linking.openURL('https://www.bahn.de/service/fahrplaene/streckennetz')}>
+                    Streckenkarten des Fernverkehrs {asLinkText('')}
+                </Text>
             </View>
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={item => item.Line + item.StartStation + item.EndStation}
+                ItemSeparatorComponent={renderSeparator}
+                ListFooterComponent={renderFooter}
+                onEndReachedThreshold={50}
+            />
         </View>
     );
 }

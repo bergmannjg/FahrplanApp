@@ -41,7 +41,8 @@ export interface DateTimeScreenParams {
 }
 
 export interface JourneyplanScreenParams {
-    journey: JourneyInfo,
+    journey?: JourneyInfo,
+    refreshToken?: string;
     tripDetails: boolean,
     compactifyPath: boolean;
     profile: string
@@ -75,6 +76,11 @@ export interface WagonimageScreenParams {
 
 export interface LineNetworkParams {
     profile: string
+}
+
+export interface MyJourneysParams {
+    tripDetails: boolean,
+    compactifyPath: boolean,
 }
 
 export interface ConnectionsScreenParams {
@@ -147,6 +153,7 @@ export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
     LineNetwork: LineNetworkParams;
+    MyJourneys: MyJourneysParams;
     BestPriceConnections: BestPriceConnectionsScreenParams;
     Radar: RadarScreenParams;
     Nearby: NearbyScreenParams;

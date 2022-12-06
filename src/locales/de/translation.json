@@ -85,6 +85,9 @@
         "Arrival": "Ankunft {{date, DD.MM.YY HH:mm}}",
         "Timezone": "({{date, Z z}})"
     },
+    "MyJourneysScreen": {
+        "Departure": "{{date, DD.MM.YY HH:mm}}"
+    },
     "DepartureScreen": {
         "Title": "Abfahrtsplan",
         "When": "Abfahrt {{date, HH:mm}}"
@@ -94,6 +97,7 @@
         "ShowRoute": "Route anzeigen",
         "Time": "{{date, HH:mm}}",
         "Timezone": "({{date, Z z}})",
+        "Departure": "{{date, DD.MM.YY}}",
         "Duration": "Dauer: {{duration, HH:mm}}"
     },
     "RailwayRoutesOfTripScreen": {

@@ -31,12 +31,41 @@ const locationsOfRailwayLine = async (r: RailwayLine) => {
 }
 */
 
+function addDays(date: Date, days: number) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+const journeyForRailwayLine = async (line: string, train: string, from: string, to: string, departure: Date, via?: string): Promise<Journey | undefined> => {
+
+    const journeyParams = {
+        bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 10, firstClass: false, transfers: 0, transferTime: 8, regional: false
+    }
+
+    for (let step = 0; step < 7; step++) {
+        const maybeJourneys = await client.journeys(from, to, journeyParams, addDays(departure, step), via, ["train"]);
+        if (maybeJourneys && maybeJourneys.length > 0) {
+            const filtered = maybeJourneys.find(j => {
+                console.log('found journey: ', j.legs[0].tripId, j.legs[0].line?.name, j.legs[0].line?.matchId);
+                return j.legs.filter(l => l.line?.matchId === line || l.line?.name === train).length > 0;
+            });
+            if (filtered) return filtered;
+        }
+    }
+    return undefined;
+}
+
 const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineTripId | undefined> => {
-    const via: string = r.ViaStations[Math.floor((r.ViaStations.length / 2))];
-    const journey = await client.journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 6, 0), via);
-    const leg = journey?.legs[0];
-    console.log('journey: ', leg?.origin?.name, leg?.destination?.name, leg?.line?.name);
-    return leg && leg.tripId ? { Line: r.Line, TripId: leg.tripId } : undefined;
+    const vias: string[] = [r.ViaStations[Math.floor((r.ViaStations.length / 2))], r.ViaStations[0]];
+    for (let step = 0; step < vias.length; step++) {
+        const journey = await journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 6, 0), vias[step]);
+        const leg = journey?.legs[0];
+        if (leg && leg.tripId) {
+            console.log('journey: ', leg?.origin?.name, leg?.destination?.name, leg?.line?.name, leg.tripId);
+            return { Line: r.Line, TripId: leg.tripId };
+        }
+    }
 }
 
 const railwayLine = (line: number) => {

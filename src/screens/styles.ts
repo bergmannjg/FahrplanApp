@@ -196,10 +196,21 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     paddingBottom: 10,
   },
+  infoText: {
+    fontWeight: "normal",
+    fontSize: 14,
+    paddingLeft: 18,
+  },
   summaryText: {
     fontWeight: 'bold',
     fontSize: 14,
     paddingLeft: 10,
+  },
+  summaryTextWarning: {
+    fontWeight: "normal",
+    fontSize: 14,
+    paddingLeft: 10,
+    color: 'red'
   },
   contentText: {
     paddingLeft: 20,
@@ -259,6 +270,10 @@ export const styles = StyleSheet.create({
   },
   titleView: {
     flexDirection: 'row'
+  },
+  myJourneyItem: {
+    flexDirection: 'row',
+    justifyContent: "space-between"
   },
   subtitleViewRow: {
     flexDirection: 'row',

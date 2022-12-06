@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { LogBox } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { saveItem, MyJourney } from './MyJourneys';
 
 LogBox.ignoreLogs([
     'VirtualizedLists should never be nested', // warning of FlatList in ScrollView, ignored cause list of legs is small 
@@ -29,25 +31,59 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const { t } = useTranslation();
 
     const { params }: { params: JourneyplanScreenParams } = route;
-    const journeyInfo: JourneyInfo = params.journey;
-    const legs = journeyInfo.legs;
-    const data: (Leg | Status)[] = [...legs, ...journeyInfo.statusRemarks]
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const showTransfers = params.tripDetails;
     const compactifyPath = params.compactifyPath;
     const modes = ["train", "watercraft", "bus"];
 
+    const [journeyInfo, setJourneyInfo] = useState<JourneyInfo | undefined>(params.journey);
+    const [refreshToken] = useState<string | undefined>(params.refreshToken);
+    const [data, setData] = useState<(Leg | Status)[]>(journeyInfo ? [...journeyInfo.legs, ...journeyInfo.statusRemarks] : []);
+    const [legs, setLegs] = useState(journeyInfo ? journeyInfo.legs : []);
     const [loading, setLoading] = useState(false);
+    const [count, setCount] = useState(0);
 
     const orientation = useOrientation();
 
     console.log('legs.length: ', legs.length);
 
+    const makeRemoteRequest = () => {
+        if (count === 0 && refreshToken || (count > 0 && journeyInfo?.refreshToken)) {
+            console.log('makeRemoteRequest, loading:', loading);
+            if (loading) return;
+            setLoading(true);
+            const token = journeyInfo?.refreshToken ?? refreshToken;
+            if (token) {
+                console.log('refreshJourney: ', token);
+                client.refreshJourney(token)
+                    .then(journey => {
+                        if (journey) {
+                            console.log('journey: ', journey);
+                            const info = client.journeyInfo(journey);
+                            setLoading(false);
+                            setJourneyInfo(info);
+                            setLegs(info.legs);
+                            setData([...info.legs, ...info.statusRemarks])
+                        }
+                    })
+                    .catch((error) => {
+                        console.log('There has been a problem with your refreshJourney operation: ' + error);
+                        console.log(error.stack);
+                        setLoading(false);
+                    });
+            }
+        }
+    };
+
+    useEffect(() => {
+        makeRemoteRequest();
+    }, [count]);
+
     const showRailwayRoutes = (longPress: boolean) => {
         console.log('Journeyplan showRailwayRoutes');
         const stops = [] as Stop[];
-        journeyInfo.legs.forEach(leg => {
+        legs.forEach(leg => {
             leg.stopovers?.forEach(stopover => {
                 if (client.isStop(stopover.stop)) {
                     console.log('stop of leg:', stopover.stop?.name);
@@ -62,14 +98,26 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         }
     }
 
+    const saveData = async () => {
+        try {
+            if (journeyInfo?.refreshToken) {
+                const myJourney: MyJourney = { originName: journeyInfo.originName, destinationName: journeyInfo.destinationName, plannedDeparture: journeyInfo.plannedDeparture, refreshToken: journeyInfo.refreshToken, profile };
+                await saveItem(myJourney);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const showRoute = async (isLongPress: boolean) => {
         console.log('showRoute.showTransfers: ', showTransfers);
-
-        const stops = await client.stopssOfJourney(journeyInfo, modes, false, false);
-        const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
-        console.log('locations: ', locations.length);
-        if (locations && locations.length > 0) {
-            navigation.navigate('BRouter', { isLongPress, locations });
+        if (journeyInfo) {
+            const stops = await client.stopssOfJourney(journeyInfo, modes, false, false);
+            const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
+            console.log('locations: ', locations.length);
+            if (locations && locations.length > 0) {
+                navigation.navigate('BRouter', { isLongPress, locations });
+            }
         }
     }
 
@@ -155,6 +203,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const legLineName = (leg: Leg) => {
         let name = '';
         if (leg?.line) {
+            console.log('leg?.line:', leg?.line);
             name = (leg.line.name ?? '');
             if (leg.direction) {
                 name = name + ' -> ' + leg.direction;
@@ -318,8 +367,8 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                 ? item.origin?.name ?? "" + item.destination?.name
                 : ''
 
-    const departure = momentWithTimezone(journeyInfo.originDeparture, journeyInfo.originLocation);
-    const arrival = momentWithTimezone(journeyInfo.destinationArrival, journeyInfo.destinationLocation);
+    const departure = journeyInfo ? momentWithTimezone(journeyInfo.originDeparture, journeyInfo.originLocation) : undefined;
+    const arrival = journeyInfo ? momentWithTimezone(journeyInfo.destinationArrival, journeyInfo.destinationLocation) : undefined;
 
     const renderFooter = () => {
         if (!loading) return null;
@@ -339,44 +388,56 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         );
     };
 
+    const longPressGesture = Gesture.Pan().onEnd((e, success) => {
+        if (success && journeyInfo?.refreshToken) {
+            setCount(count + 1);
+        }
+    });
 
     return (
-        <View style={styles.container}>
-            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
-                    <Text style={styles.itemButtonText}>
-                        {t('JourneyplanScreen.ShowRoute')}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
-                    <Text style={styles.itemButtonText}>
-                        {t('JourneyplanScreen.ShowRailwayRoutes')}
-                    </Text>
-                </TouchableOpacity>
+        <GestureDetector gesture={longPressGesture}>
+            <View style={styles.container}>
+                <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
+                    <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                        <Text style={styles.itemButtonText}>
+                            {t('JourneyplanScreen.ShowRoute')}
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
+                        <Text style={styles.itemButtonText}>
+                            {t('JourneyplanScreen.ShowRailwayRoutes')}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+                    {journeyInfo && <View style={styles.myJourneyItem}>
+                        <Text style={styles.itemHeaderText}>
+                            {journeyInfo.originName} {t('JourneyplanScreen.DirectionTo')} {journeyInfo.destinationName}
+                        </Text>
+                        {params.journey && <TouchableOpacity onPress={() => saveData()}>
+                            <Text style={styles.infoText}>Merken</Text>
+                        </TouchableOpacity>}
+                    </View>}
+                    {departure && <Text style={styles.itemHeaderText}>
+                        {t('JourneyplanScreen.Departure', { date: departure.moment })}
+                        {departure.hasTimezone ? t('JourneyplanScreen.Timezone', { date: departure.moment }) : ''}
+                    </Text>}
+                    {arrival && <Text style={styles.itemHeaderText}>
+                        {t('JourneyplanScreen.Arrival', { date: arrival.moment })}
+                        {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
+                    </Text>}
+                </View>
+                <FlatList
+                    data={data}
+                    renderItem={({ item }) => (
+                        <Item item={item} />
+                    )}
+                    keyExtractor={keyExtractor}
+                    ItemSeparatorComponent={renderSeparator}
+                    ListFooterComponent={renderFooter}
+                    onEndReachedThreshold={50}
+                />
             </View>
-            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
-                <Text style={styles.itemHeaderText}>
-                    {journeyInfo.originName} {t('JourneyplanScreen.DirectionTo')} {journeyInfo.destinationName}
-                </Text>
-                <Text style={styles.itemHeaderText}>
-                    {t('JourneyplanScreen.Departure', { date: departure.moment })}
-                    {departure.hasTimezone ? t('JourneyplanScreen.Timezone', { date: departure.moment }) : ''}
-                </Text>
-                <Text style={styles.itemHeaderText}>
-                    {t('JourneyplanScreen.Arrival', { date: arrival.moment })}
-                    {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
-                </Text>
-            </View>
-            <FlatList
-                data={data}
-                renderItem={({ item }) => (
-                    <Item item={item} />
-                )}
-                keyExtractor={keyExtractor}
-                ItemSeparatorComponent={renderSeparator}
-                ListFooterComponent={renderFooter}
-                onEndReachedThreshold={50}
-            />
-        </View>
+        </GestureDetector>
     );
 }

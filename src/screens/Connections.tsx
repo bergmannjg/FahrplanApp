@@ -12,6 +12,7 @@ import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { Location } from 'fs-hafas-client/hafas-client';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 type Props = {
   route: RouteProp<MainStackParamList, 'Connections'>;
@@ -95,7 +96,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     }
   }
 
-  const goToView = (item: JourneyInfo) => {
+  const goToView = async (item: JourneyInfo) => {
     console.log('Navigation router run to Journeyplan');
     navigation.navigate('Journeyplan', { journey: item, profile, tripDetails, compactifyPath })
   };
@@ -178,50 +179,59 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
       onPress={() => { goToView(item) }}
     />);
 
+  const longPressGesture = Gesture.Pan().onEnd((e, success) => {
+    if (success) {
+      setData([]);
+      setCount(count + 1);
+    }
+  });
+
   return (
-    <View style={styles.container}>
-      <View style={stylesLandscape.containerButtons} >
-        <TouchableOpacity style={styles.buttonConnection} onPress={() => showPrev()}>
-          <Text style={styles.itemButtonText}>
-            {t('ConnectionsScreen.Earlier')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonConnection} onPress={() => showNext()}>
-          <Text style={styles.itemButtonText}>
-            {t('ConnectionsScreen.Later')}
-          </Text>
-        </TouchableOpacity>
-        {(profile === 'db' || profile === 'db-fsharp') &&
-          <TouchableOpacity style={styles.buttonConnection} onPress={() => showBestPrice()}>
+    <GestureDetector gesture={longPressGesture}>
+      <View style={styles.container}>
+        <View style={stylesLandscape.containerButtons} >
+          <TouchableOpacity style={styles.buttonConnection} onPress={() => showPrev()}>
             <Text style={styles.itemButtonText}>
-              {t('ConnectionsScreen.BestPrice')}
+              {t('ConnectionsScreen.Earlier')}
             </Text>
           </TouchableOpacity>
-        }
-      </View>
-      <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
-        <Text style={styles.itemHeaderText}>
-          {toName(query1)} {t('JourneyplanScreen.DirectionTo')} {toName(query2)}
-        </Text>
-        <Text style={styles.itemHeaderText}>
-          {t('ConnectionsScreen.Date', { date })}
-        </Text>
-        {
-          !loading && data.length === 0 && <Text style={styles.itemHeaderText}>
-            keine Verbindungn gefunden
+          <TouchableOpacity style={styles.buttonConnection} onPress={() => showNext()}>
+            <Text style={styles.itemButtonText}>
+              {t('ConnectionsScreen.Later')}
+            </Text>
+          </TouchableOpacity>
+          {(profile === 'db' || profile === 'db-fsharp') &&
+            <TouchableOpacity style={styles.buttonConnection} onPress={() => showBestPrice()}>
+              <Text style={styles.itemButtonText}>
+                {t('ConnectionsScreen.BestPrice')}
+              </Text>
+            </TouchableOpacity>
+          }
+        </View>
+        <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+          <Text style={styles.itemHeaderText}>
+            {toName(query1)} {t('JourneyplanScreen.DirectionTo')} {toName(query2)}
           </Text>
-        }
+          <Text style={styles.itemHeaderText}>
+            {t('ConnectionsScreen.Date', { date })}
+          </Text>
+          {
+            !loading && data.length === 0 && <Text style={styles.itemHeaderText}>
+              keine Verbindungn gefunden
+            </Text>
+          }
+        </View>
+        <View style={styles.container}>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            ItemSeparatorComponent={renderSeparator}
+            ListFooterComponent={renderFooter}
+            onEndReachedThreshold={50}
+          />
+        </View>
       </View>
-      <View style={styles.container}>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          ItemSeparatorComponent={renderSeparator}
-          ListFooterComponent={renderFooter}
-          onEndReachedThreshold={50}
-        />
-      </View>
-    </View>
+    </GestureDetector>
   );
 }

@@ -6,11 +6,15 @@ import moment from 'moment';
 import 'moment/locale/de';
 import 'moment/locale/en-gb';
 import * as RNLocalize from "react-native-localize";
+import { Platform, PlatformAndroidStatic } from "react-native";
 
 const d = new Date();
 console.log('TimezoneOffset:', d.getTimezoneOffset());
 
-const currentLanguage = RNLocalize.getLocales()[0].languageCode == 'de' ? 'de' : 'en';
+const model = (Platform as PlatformAndroidStatic).constants.Model;
+  
+const currentLanguage = model.startsWith('Subsystem for Android') || RNLocalize.getLocales()[0].languageCode == 'de' ? 'de' : 'en';
+console.log('currentLanguage:', currentLanguage);
 
 moment.locale(currentLanguage);
 

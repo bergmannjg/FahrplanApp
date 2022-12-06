@@ -53,6 +53,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const operatorName = trip.line?.operator?.name;
     const fahrtName = trip.line?.product === 'regional' ? trip.line?.fahrtNr : undefined;
 
+    const departure = trip.plannedDeparture ? momentWithTimezone(trip.plannedDeparture) : undefined;
+
     const showRailwayRoutes = (longPress: boolean) => {
         console.log('Trip showRailwayRoutes');
         const stops = [] as Stop[];
@@ -291,7 +293,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             </View>
             <View style={{ paddingLeft: 10 }}>
                 <Text style={styles.itemHeaderText}>
-                    {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
+                    {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
                 </Text>
             </View>
             {data && data.length > 1 &&

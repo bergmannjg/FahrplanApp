@@ -105,12 +105,13 @@ export interface JourneyInfo {
     changes: number,
     lineNames: string,
     distance: number,
-    price?: string
+    price?: string,
+    refreshToken?: string
 }
 
 export interface Hafas {
     journeys: (from: string | Location, to: string | Location, journeyParams: JourneyParams, departure?: Date | undefined, via?: string, modes?: string[]) => Promise<ReadonlyArray<Journey>>,
-    journeyForRailwayLine: (line: string, train: string, from: string, to: string, departure: Date, via?: string) => Promise<Journey | undefined>,
+    refreshJourney: (refreshToken: string) => Promise<Journey | undefined>,
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
     stopsOfIds: (ids: string[], preferredUicrefs: number[]) => Promise<ReadonlyArray<Stop>>,
     nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
@@ -206,14 +207,14 @@ export function hafas(profileName: string): Hafas {
 
         const price = journey.price ? journey.price.amount?.toFixed(2) + ' ' + journey.price.currency : undefined;
         return {
-            type: 'journeyinfo', legs, id: originName + '+' + destinationName + '+' + originDeparture + '+' + destinationArrival,
+            type: 'journeyinfo', legs, id: originName + '+' + destinationName + '+' + originDeparture + + '+' + destinationArrival + '+' + legs[0].tripId,
             origin, originName, originDeparture, originLocation,
             destination, destinationName, destinationArrival, destinationLocation,
             countLegs: journey.legs.length,
             plannedDeparture, plannedArrival,
             reachable, cancelled,
             informationAvailable: statusRemarks && statusRemarks.length > 0 ? true : false, statusRemarks: statusRemarks ? statusRemarks : [],
-            changes, lineNames, distance: distanceOfJourney(journey), price
+            changes, lineNames, distance: distanceOfJourney(journey), price, refreshToken: journey.refreshToken
         };
     }
 
@@ -382,29 +383,12 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    function addDays(date: Date, days: number) {
-        const result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    }
+    const refreshJourney = async (refreshToken: string): Promise<Journey | undefined> => {
+        if (client.refreshJourney) {
+            const j = await client.refreshJourney(refreshToken, { stopovers: true });
 
-    const journeyForRailwayLine = async (line: string, train: string, from: string, to: string, departure: Date, via?: string): Promise<Journey | undefined> => {
-
-        const journeyParams = {
-            bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 10, firstClass: false, transfers: 0, transferTime: 8, regional: false
-        }
-
-        for (let step = 0; step < 7; step++) {
-            const maybeJourneys = await journeys(from, to, journeyParams, addDays(departure, step), via, ["train"]);
-            if (maybeJourneys && maybeJourneys.length > 0) {
-                const filtered = maybeJourneys.find(j => {
-                    console.log('found journey: ', j.legs[0].tripId, j.legs[0].line?.name, j.legs[0].line?.matchId);
-                    return j.legs.filter(l => l.line?.matchId === line || l.line?.name === train).length > 0;
-                });
-                if (filtered) return filtered;
-            }
-        }
-        return undefined;
+            return j.journey;
+        } else { return undefined }
     }
 
     const locations = async (from: string, results: number): Promise<ReadonlyArray<Station | Stop | Location>> => {
@@ -686,5 +670,5 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    return { journeys, journeyForRailwayLine, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
+    return { journeys, refreshJourney, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
 }

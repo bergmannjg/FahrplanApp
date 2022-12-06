@@ -16,7 +16,7 @@ interface RailwayLineTripId {
 import railwayLines from '../../db-data/compact-line-infos.json' assert { type: 'json' };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import _railwayLineTripIds from '../../db-data/line-tripids.json' assert { type: 'json' };
+import _railwayLineTripIds from './line-tripids.json' assert { type: 'json' };
 
 const railwayLineInfos: RailwayLine[] = railwayLines
 
