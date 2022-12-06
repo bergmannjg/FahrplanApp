@@ -4,11 +4,11 @@
 
 export type ILazyInitializer<T> = () => T
 
-function hasProperty<T, K extends string>(obj: T, prop: K): obj is T & Record<K, number> {
+function hasProperty<T extends object, K extends string>(obj: T, prop: K): obj is T & Record<K, number> {
     return prop in obj;
 }
 
-export class Lazy<T> {
+export class Lazy<T extends object> {
     private instance: T | null = null;
     private name: string | undefined = undefined;
     private initializer: ILazyInitializer<T>;

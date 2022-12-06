@@ -165,7 +165,7 @@ type Props = {
     navigation: StackNavigationProp<MainStackParamList, 'BRouter'>;
 };
 
-function hasProperty<T, K extends string>(obj: T, prop: K): obj is T & Record<K, number> {
+function hasProperty<T extends object, K extends string>(obj: T, prop: K): obj is T & Record<K, number> {
     return prop in obj;
 }
 
@@ -188,7 +188,7 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
     Clipboard.setString(uri);
 
     const onMessage = (d: unknown) => {
-        if (locations.length > 1 && hasProperty(d, "distance")) {
+        if (locations.length > 1 && typeof d === 'object' && d !== null && hasProperty(d, "distance")) {
             const title = t('BRouterScreen.Route', { locations: locations.length, distance: d.distance });
             navigation.setOptions({
                 headerTitle: title
