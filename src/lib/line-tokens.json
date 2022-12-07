@@ -1,0 +1,202 @@
+[
+    {
+        "Line": 2,
+        "RefreshToken": "T$A=1@O=München Hbf@L=8000261@a=128@$A=1@O=Düsseldorf Hbf@L=8000085@a=128@$202212060534$202212061006$ICE 1122$$1$$$$$$"
+    },
+    {
+        "Line": 4,
+        "RefreshToken": "T$A=1@O=Stuttgart Hbf@L=8000096@a=128@$A=1@O=Kiel Hbf@L=8000199@a=128@$202212121523$202212122141$ICE 1094$$1$$$$$$"
+    },
+    {
+        "Line": 9,
+        "RefreshToken": "T$A=1@O=Berlin Südkreuz@L=8011113@a=128@$A=1@O=Bonn-Bad Godesberg@L=8001082@a=128@$202212121133$202212121631$ICE 1156$$1$$$$$$"
+    },
+    {
+        "Line": 10,
+        "RefreshToken": "T$A=1@O=Köln Hbf@L=8000207@a=128@$A=1@O=Berlin Ostbahnhof@L=8010255@a=128@$202212121348$202212121827$ICE  951$$1$$$$$$"
+    },
+    {
+        "Line": 11,
+        "RefreshToken": "T$A=1@O=Berlin Gesundbrunnen@L=8011102@a=128@$A=1@O=Innsbruck Hbf@L=8100108@a=128@$202212161116$202212162118$ICE 1219$$1$$$$$$"
+    },
+    {
+        "Line": 12,
+        "RefreshToken": "T$A=1@O=Basel Bad Bf@L=8000026@a=128@$A=1@O=Berlin Ostbahnhof@L=8010255@a=128@$202212161422$202212162139$ICE  276$$1$$$$$$"
+    },
+    {
+        "Line": 13,
+        "RefreshToken": "T$A=1@O=Berlin Gesundbrunnen@L=8011102@a=128@$A=1@O=Stuttgart Hbf@L=8000096@a=128@$202212181542$202212182158$ICE 1095$$1$$$$$$"
+    },
+    {
+        "Line": 14,
+        "RefreshToken": "T$A=1@O=Ostseebad Binz@L=8011191@a=128@$A=1@O=Köln Hbf@L=8000207@a=128@$202212170955$202212171913$ICE  758$$1$$$$$$"
+    },
+    {
+        "Line": 15,
+        "RefreshToken": "T$A=1@O=Stuttgart Hbf@L=8000096@a=128@$A=1@O=Berlin Gesundbrunnen@L=8011102@a=128@$202212170903$202212171507$ICE  937$$1$$$$$$"
+    },
+    {
+        "Line": 17,
+        "RefreshToken": "T$A=1@O=Wien Hbf@L=8103000@a=128@$A=1@O=Rostock Hbf@L=8010304@a=128@$202212121913$202212130839$IC    94$$1$$$$$$"
+    },
+    {
+        "Line": 18,
+        "RefreshToken": "T$A=1@O=Kiel Hbf@L=8000199@a=128@$A=1@O=München Hbf@L=8000261@a=128@$202212121413$202212122244$ICE  801$$1$$$$$$"
+    },
+    {
+        "Line": 20,
+        "RefreshToken": "T$A=1@O=Chur@L=8509000@a=128@$A=1@O=Hamburg-Altona@L=8002553@a=128@$202212121237$202212122154$ICE   70$$1$$$$$$"
+    },
+    {
+        "Line": 22,
+        "RefreshToken": "T$A=1@O=Stuttgart Hbf@L=8000096@a=128@$A=1@O=Hamburg-Altona@L=8002553@a=128@$202212120717$202212121252$ICE  772$$1$$$$$$"
+    },
+    {
+        "Line": 24,
+        "RefreshToken": "T$A=1@O=Schwarzach-St.Veit@L=8100044@a=128@$A=1@O=Hamburg Hbf@L=8002549@a=128@$202212181000$202212182038$ICE 1284$$1$$$$$$"
+    },
+    {
+        "Line": 25,
+        "RefreshToken": "T$A=1@O=Hamburg-Altona@L=8002553@a=128@$A=1@O=München Hbf@L=8000261@a=128@$202212120644$202212121238$ICE  583$$1$$$$$$"
+    },
+    {
+        "Line": 26,
+        "RefreshToken": "T$A=1@O=Karlsruhe Hbf@L=8000191@a=128@$A=1@O=Stralsund Hbf@L=8010338@a=128@$202212171110$202212172029$ICE 1578$$1$$$$$$"
+    },
+    {
+        "Line": 27,
+        "RefreshToken": "T$A=1@O=Budapest-Nyugati@L=5500728@a=128@$A=1@O=Hamburg-Altona@L=8002553@a=128@$202212130729$202212132134$EC   252$$1$$$$$$"
+    },
+    {
+        "Line": 28,
+        "RefreshToken": "T$A=1@O=Ostseebad Binz@L=8011191@a=128@$A=1@O=München Hbf@L=8000261@a=128@$202212121021$202212121903$ICE 1711$$1$$$$$$"
+    },
+    {
+        "Line": 29,
+        "RefreshToken": "T$A=1@O=München Hbf@L=8000261@a=128@$A=1@O=Hamburg-Altona@L=8002553@a=128@$202212120755$202212121405$ICE 1006$$1$$$$$$"
+    },
+    {
+        "Line": 32,
+        "RefreshToken": "T$A=1@O=Münster(Westf)Hbf@L=8000263@a=128@$A=1@O=Klagenfurt Hbf@L=8100085@a=128@$202212120629$202212121916$EC   115$$1$$$$$$"
+    },
+    {
+        "Line": 34,
+        "RefreshToken": "T$A=1@O=Stuttgart Hbf@L=8000096@a=128@$A=1@O=Dortmund Hbf@L=8000080@a=128@$202212130226$202212130858$IC  2326$$1$$$$$$"
+    },
+    {
+        "Line": 35,
+        "RefreshToken": "T$A=1@O=Norddeich Mole@L=8007768@a=128@$A=1@O=Stuttgart Hbf@L=8000096@a=128@$202212171136$202212171946$ICE 1103$$1$$$$$$"
+    },
+    {
+        "Line": 39,
+        "RefreshToken": "T$A=1@O=Westerland(Sylt)@L=8006369@a=128@$A=1@O=München Hbf@L=8000261@a=128@$202212120926$202212122346$IC  2311$$1$$$$$$"
+    },
+    {
+        "Line": 41,
+        "RefreshToken": "T$A=1@O=Garmisch-Partenkirchen@L=8002187@a=128@$A=1@O=Dortmund Hbf@L=8000080@a=128@$202212171515$202212172227$ICE  528$$1$$$$$$"
+    },
+    {
+        "Line": 42,
+        "RefreshToken": "T$A=1@O=Kiel Hbf@L=8000199@a=128@$A=1@O=München Hbf@L=8000261@a=128@$202212121237$202212122226$ICE  613$$1$$$$$$"
+    },
+    {
+        "Line": 43,
+        "RefreshToken": "T$A=1@O=Interlaken Ost@L=8507492@a=128@$A=1@O=Hamburg-Altona@L=8002553@a=128@$202212121200$202212122332$EC     6$$1$$$$$$"
+    },
+    {
+        "Line": 45,
+        "RefreshToken": "T$A=1@O=Stuttgart Hbf@L=8000096@a=128@$A=1@O=Köln Hbf@L=8000207@a=128@$202212121435$202212121801$ICE  710$$1$$$$$$"
+    },
+    {
+        "Line": 47,
+        "RefreshToken": "T$A=1@O=München Hbf@L=8000261@a=128@$A=1@O=Dortmund Hbf@L=8000080@a=128@$202212120626$202212121236$ICE 1012$$1$$$$$$"
+    },
+    {
+        "Line": 49,
+        "RefreshToken": "T$A=1@O=Dortmund Hbf@L=8000080@a=128@$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$202212120649$202212120941$ICE  815$$1$$$$$$"
+    },
+    {
+        "Line": 50,
+        "RefreshToken": "T$A=1@O=Wiesbaden Hbf@L=8000250@a=128@$A=1@O=Dresden Hbf@L=8010085@a=128@$202212120826$202212121338$ICE 1557$$1$$$$$$"
+    },
+    {
+        "Line": 51,
+        "RefreshToken": "T$A=1@O=Gera Hbf@L=8010125@a=128@$A=1@O=Düsseldorf Hbf@L=8000085@a=128@$202212120604$202212121208$IC  2156$$1$$$$$$"
+    },
+    {
+        "Line": 55,
+        "RefreshToken": "T$A=1@O=Dresden Hbf@L=8010085@a=128@$A=1@O=Stuttgart Hbf@L=8000096@a=128@$202212120712$202212121827$IC  2046$$1$$$$$$"
+    },
+    {
+        "Line": 56,
+        "RefreshToken": "T$A=1@O=Emden Außenhafen@L=8001767@a=128@$A=1@O=Cottbus Hbf@L=8010073@a=128@$202212121201$202212122000$IC  2431$$1$$$$$$"
+    },
+    {
+        "Line": 60,
+        "RefreshToken": "T$A=1@O=München Hbf Gl.5-10@L=8098262@a=128@$A=1@O=Basel SBB@L=8500010@a=128@$202212141658$202212142156$ICE  266$$1$$$$$$"
+    },
+    {
+        "Line": 61,
+        "RefreshToken": "T$A=1@O=Leipzig Hbf@L=8010205@a=128@$A=1@O=Karlsruhe Hbf@L=8000191@a=128@$202212120749$202212121453$IC  2068$$1$$$$$$"
+    },
+    {
+        "Line": 62,
+        "RefreshToken": "T$A=1@O=Klagenfurt Hbf@L=8100085@a=128@$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$202212121027$202212121940$EC   112$$1$$$$$$"
+    },
+    {
+        "Line": 75,
+        "RefreshToken": "T$A=1@O=Hamburg Hbf@L=8002549@a=128@$A=1@O=Koebenhavn H@L=8601309@a=128@$202212120856$202212121334$IC   396$$1$$$$$$"
+    },
+    {
+        "Line": 76,
+        "RefreshToken": "T$A=1@O=Aarhus@L=8600087@a=128@$A=1@O=Hamburg Hbf@L=8002549@a=128@$202212120939$202212121406$IC   383$$1$$$$$$"
+    },
+    {
+        "Line": 77,
+        "RefreshToken": "T$A=1@O=Berlin Ostbahnhof@L=8010255@a=128@$A=1@O=Amsterdam Centraal@L=8400058@a=128@$202212120621$202212121300$IC   240$$1$$$$$$"
+    },
+    {
+        "Line": 78,
+        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Amsterdam Centraal@L=8400058@a=128@$202212120728$202212121129$ICE  220$$1$$$$$$"
+    },
+    {
+        "Line": 79,
+        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Bruxelles Midi@L=8800004@a=128@$202212081228$202212081535$ICE  314$$1$$$$$$"
+    },
+    {
+        "Line": 82,
+        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Paris Est@L=8700011@a=128@$202212120649$202212121038$ICE 9568$$1$$$$$$"
+    },
+    {
+        "Line": 83,
+        "RefreshToken": "T$A=1@O=München Hbf@L=8000261@a=128@$A=1@O=Paris Est@L=8700011@a=128@$202212120651$202212121231$TGV 9576$$1$$$$$$"
+    },
+    {
+        "Line": 84,
+        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Marseille-St-Charles@L=8700074@a=128@$202212081357$202212082149$TGV 9580$$1$$$$$$"
+    },
+    {
+        "Line": 87,
+        "RefreshToken": "T$A=1@O=Stuttgart Hbf@L=8000096@a=128@$A=1@O=Zürich HB@L=8503000@a=128@$202212120616$202212120923$IC   181$$1$$$$$$"
+    },
+    {
+        "Line": 88,
+        "RefreshToken": "T$A=1@O=München Hbf Gl.27-36@L=8098261@a=128@$A=1@O=Zürich HB@L=8503000@a=128@$202212120655$202212121027$ECE  198$$1$$$$$$"
+    },
+    {
+        "Line": 89,
+        "RefreshToken": "T$A=1@O=Hamburg-Altona@L=8002553@a=128@$A=1@O=St. Anton am Arlberg@L=8100064@a=128@$202212170545$202212171607$ICE 1201$$1$$$$$$"
+    },
+    {
+        "Line": 90,
+        "RefreshToken": "T$A=1@O=Budapest-Keleti@L=5500003@a=128@$A=1@O=München Hbf@L=8000261@a=128@$202212120740$202212121432$RJX   60$$1$$$$$$"
+    },
+    {
+        "Line": 91,
+        "RefreshToken": "T$A=1@O=Hamburg-Altona@L=8002553@a=128@$A=1@O=Wien Hbf@L=8103000@a=128@$202212120749$202212121747$ICE   93$$1$$$$$$"
+    },
+    {
+        "Line": 95,
+        "RefreshToken": "T$A=1@O=Przemysl Glowny@L=5100234@a=128@$A=1@O=Berlin Hbf@L=8011160@a=128@$202212120708$202212121705$EC    56$$1$$$$$$"
+    }
+]

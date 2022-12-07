@@ -3,7 +3,7 @@ import { List as PaperList, Text } from 'react-native-paper';
 import { View, FlatList, ListRenderItem, TouchableOpacity, Linking } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { railwayLines, railwayLineInfos, railwayLineTripIds, RailwayLine } from '../lib/line-numbers';
+import { railwayLines, railwayLineInfos, railwayLineTokens, RailwayLine } from '../lib/line-numbers';
 import { MainStackParamList, LineNetworkParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
 import { hafas } from '../lib/hafas';
@@ -29,20 +29,29 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
     const data = railwayLineInfos;
 
     const hasTripData = (item: RailwayLine) => {
-        const info = railwayLineTripIds.find(r => r.Line === item.Line)
+        const info = railwayLineTokens.find(r => r.Line === item.Line)
         return info !== undefined;
     }
 
     const goToTrip = async (item: RailwayLine) => {
         const data = railwayLines.filter(r => r.Line === item.Line);
-        const railwayLineTripId = railwayLineTripIds.find(r => r.Line === item.Line);
-        if (railwayLineTripId?.TripId) {
-            client.trip(railwayLineTripId.TripId)
-                .then(trip => {
-                    navigation.navigate('Trip', { trip, profile })
+        const railwayLineToken = railwayLineTokens.find(r => r.Line === item.Line);
+        if (railwayLineToken?.RefreshToken) {
+            client.refreshJourney(railwayLineToken?.RefreshToken)
+                .then(journey => {
+                    if (journey && journey.legs[0]?.tripId) {
+                        const leg = journey.legs[0];
+                        client.trip(leg.tripId)
+                            .then(trip => {
+                                navigation.navigate('Trip', { trip, line: leg.line, profile })
+                            })
+                            .catch((error) => {
+                                console.log('There has been a problem with your tripsOfJourney operation: ' + error);
+                            });
+                    }
                 })
                 .catch((error) => {
-                    console.log('There has been a problem with your tripsOfJourney operation: ' + error);
+                    console.log('There has been a problem with your refreshJourney operation: ' + error);
                 });
         } else if (data.length === 1) {
             const r: RailwayLine = data[0];

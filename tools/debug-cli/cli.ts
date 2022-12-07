@@ -4,7 +4,7 @@ import { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
 import type { GraphNode } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
-import { railwayLines, railwayLineTripIds, RailwayLine, RailwayLineTripId } from '../../src/lib/line-numbers.js';
+import { railwayLines, railwayLineTokens, RailwayLine, RailwayLineToken } from '../../src/lib/line-numbers.js';
 
 const myArgs = process.argv.slice(2);
 
@@ -47,7 +47,7 @@ const journeyForRailwayLine = async (line: string, train: string, from: string, 
         const maybeJourneys = await client.journeys(from, to, journeyParams, addDays(departure, step), via, ["train"]);
         if (maybeJourneys && maybeJourneys.length > 0) {
             const filtered = maybeJourneys.find(j => {
-                console.log('found journey: ', j.legs[0].tripId, j.legs[0].line?.name, j.legs[0].line?.matchId);
+                console.log('found caniddate journey:', j.legs[0].line?.name, j.legs[0].line?.matchId);
                 return j.legs.filter(l => l.line?.matchId === line || l.line?.name === train).length > 0;
             });
             if (filtered) return filtered;
@@ -56,14 +56,15 @@ const journeyForRailwayLine = async (line: string, train: string, from: string, 
     return undefined;
 }
 
-const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineTripId | undefined> => {
+const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineToken | undefined> => {
     const vias: string[] = [r.ViaStations[Math.floor((r.ViaStations.length / 2))], r.ViaStations[0]];
     for (let step = 0; step < vias.length; step++) {
         const journey = await journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 6, 0), vias[step]);
         const leg = journey?.legs[0];
-        if (leg && leg.tripId) {
-            console.log('journey: ', leg?.origin?.name, leg?.destination?.name, leg?.line?.name, leg.tripId);
-            return { Line: r.Line, TripId: leg.tripId };
+        if (leg && journey?.refreshToken) {
+            const result = { Line: r.Line, RefreshToken: journey?.refreshToken };
+            console.log(JSON.stringify(result));
+            return result;
         }
     }
 }
@@ -75,10 +76,10 @@ const railwayLine = (line: number) => {
 }
 
 const infosOfrailwayLines = async () => {
-    const infos: RailwayLineTripId[] = [];
+    const infos: RailwayLineToken[] = [];
     for (let step = 0; step < railwayLines.length; step++) {
         const railwayLine = railwayLines[step];
-        if (!railwayLineTripIds.find(r => r.Line === railwayLine.Line)) {
+        if (!railwayLineTokens.find(r => r.Line === railwayLine.Line)) {
             console.log('railwayLine.Line: ', railwayLine.Line);
             const info = await journeyOfRailwayLine(railwayLine);
             if (info) infos.push(info);

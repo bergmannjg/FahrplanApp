@@ -7,21 +7,21 @@ interface RailwayLine {
     ViaStations: string[];
 }
 
-interface RailwayLineTripId {
+interface RailwayLineToken {
     Line: number;
-    TripId: string;
+    RefreshToken: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import railwayLines from '../../db-data/compact-line-infos.json' assert { type: 'json' };
+import railwayLines from './compact-line-infos.json' assert { type: 'json' };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import _railwayLineTripIds from './line-tripids.json' assert { type: 'json' };
+import _railwayLineTokens from './line-tokens.json' assert { type: 'json' };
 
 const railwayLineInfos: RailwayLine[] = railwayLines
 
-const railwayLineTripIds: RailwayLineTripId[] = _railwayLineTripIds
+const railwayLineTokens: RailwayLineToken[] = _railwayLineTokens
 
-export { railwayLines, railwayLineInfos, railwayLineTripIds }
+export { railwayLines, railwayLineInfos, railwayLineTokens }
 
-export type { RailwayLine, RailwayLineTripId }
+export type { RailwayLine, RailwayLineToken }
