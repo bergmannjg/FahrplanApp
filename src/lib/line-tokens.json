@@ -1,7 +1,7 @@
 [
     {
         "Line": 2,
-        "RefreshToken": "T$A=1@O=München Hbf@L=8000261@a=128@$A=1@O=Düsseldorf Hbf@L=8000085@a=128@$202212060534$202212061006$ICE 1122$$1$$$$$$"
+        "RefreshToken": "T$A=1@O=München Hbf@L=8000261@a=128@$A=1@O=Düsseldorf Hbf@L=8000085@a=128@$202212120534$202212121006$ICE 1122$$1$$$$$$"
     },
     {
         "Line": 4,
@@ -161,7 +161,7 @@
     },
     {
         "Line": 79,
-        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Bruxelles Midi@L=8800004@a=128@$202212081228$202212081535$ICE  314$$1$$$$$$"
+        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Bruxelles Midi@L=8800004@a=128@$202212120628$202212120935$ICE   18$$1$$$$$$"
     },
     {
         "Line": 82,
@@ -173,7 +173,7 @@
     },
     {
         "Line": 84,
-        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Marseille-St-Charles@L=8700074@a=128@$202212081357$202212082149$TGV 9580$$1$$$$$$"
+        "RefreshToken": "T$A=1@O=Frankfurt(Main)Hbf@L=8000105@a=128@$A=1@O=Marseille-St-Charles@L=8700074@a=128@$202212221356$202212222148$TGV 9580$$1$$$$$$"
     },
     {
         "Line": 87,

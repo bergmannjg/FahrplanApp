@@ -601,7 +601,7 @@
     },
     {
         "Line": 79,
-        "Train": "ICE 314",
+        "Train": "ICE 18",
         "StartStation": "Frankfurt(Main)",
         "EndStation": "Bruxelles-Midi",
         "ViaStations": [

@@ -43,7 +43,7 @@ const journeyForRailwayLine = async (line: string, train: string, from: string, 
         bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 10, firstClass: false, transfers: 0, transferTime: 8, regional: false
     }
 
-    for (let step = 0; step < 7; step++) {
+    for (let step = 0; step < 14; step++) {
         const maybeJourneys = await client.journeys(from, to, journeyParams, addDays(departure, step), via, ["train"]);
         if (maybeJourneys && maybeJourneys.length > 0) {
             const filtered = maybeJourneys.find(j => {
@@ -59,7 +59,7 @@ const journeyForRailwayLine = async (line: string, train: string, from: string, 
 const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineToken | undefined> => {
     const vias: string[] = [r.ViaStations[Math.floor((r.ViaStations.length / 2))], r.ViaStations[0]];
     for (let step = 0; step < vias.length; step++) {
-        const journey = await journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 6, 0), vias[step]);
+        const journey = await journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 4, 0), vias[step]);
         const leg = journey?.legs[0];
         if (leg && journey?.refreshToken) {
             const result = { Line: r.Line, RefreshToken: journey?.refreshToken };
