@@ -8,7 +8,8 @@ import {
  * Returns true if the screen is in portrait mode
  */
 const isPortrait = () => {
-    const dim = Dimensions.get('screen');
+    const dim = Dimensions.get('window');
+    console.log('dim ', dim);
     return dim.height >= dim.width;
 };
 
@@ -35,6 +36,7 @@ export function useOrientation(): 'PORTRAIT' | 'LANDSCAPE' {
         };
     }, []);
 
+    console.log('setOrientation to ', orientation);
     return orientation;
 }
 
