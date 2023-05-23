@@ -203,7 +203,6 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const legLineName = (leg: Leg) => {
         let name = '';
         if (leg?.line) {
-            console.log('leg?.line:', leg?.line);
             name = (leg.line.name ?? '');
             if (leg.direction) {
                 name = name + ' -> ' + leg.direction;
@@ -395,49 +394,47 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     });
 
     return (
-        <GestureDetector gesture={longPressGesture}>
-            <View style={styles.container}>
-                <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
-                    <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
-                        <Text style={styles.itemButtonText}>
-                            {t('JourneyplanScreen.ShowRoute')}
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
-                        <Text style={styles.itemButtonText}>
-                            {t('JourneyplanScreen.ShowRailwayRoutes')}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
-                    {journeyInfo && <View style={styles.myJourneyItem}>
-                        <Text style={styles.itemHeaderText}>
-                            {journeyInfo.originName} {t('JourneyplanScreen.DirectionTo')} {journeyInfo.destinationName}
-                        </Text>
-                        {params.journey && <TouchableOpacity onPress={() => saveData()}>
-                            <Text style={styles.infoText}>Merken</Text>
-                        </TouchableOpacity>}
-                    </View>}
-                    {departure && <Text style={styles.itemHeaderText}>
-                        {t('JourneyplanScreen.Departure', { date: departure.moment })}
-                        {departure.hasTimezone ? t('JourneyplanScreen.Timezone', { date: departure.moment }) : ''}
-                    </Text>}
-                    {arrival && <Text style={styles.itemHeaderText}>
-                        {t('JourneyplanScreen.Arrival', { date: arrival.moment })}
-                        {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
-                    </Text>}
-                </View>
-                <FlatList
-                    data={data}
-                    renderItem={({ item }) => (
-                        <Item item={item} />
-                    )}
-                    keyExtractor={keyExtractor}
-                    ItemSeparatorComponent={renderSeparator}
-                    ListFooterComponent={renderFooter}
-                    onEndReachedThreshold={50}
-                />
+        <View style={styles.container}>
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                    <Text style={styles.itemButtonText}>
+                        {t('JourneyplanScreen.ShowRoute')}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
+                    <Text style={styles.itemButtonText}>
+                        {t('JourneyplanScreen.ShowRailwayRoutes')}
+                    </Text>
+                </TouchableOpacity>
             </View>
-        </GestureDetector>
+            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+                {journeyInfo && <View style={styles.myJourneyItem}>
+                    <Text style={styles.itemHeaderText}>
+                        {journeyInfo.originName} {t('JourneyplanScreen.DirectionTo')} {journeyInfo.destinationName}
+                    </Text>
+                    {params.journey && <TouchableOpacity onPress={() => saveData()}>
+                        <Text style={styles.infoText}>Merken</Text>
+                    </TouchableOpacity>}
+                </View>}
+                {departure && <Text style={styles.itemHeaderText}>
+                    {t('JourneyplanScreen.Departure', { date: departure.moment })}
+                    {departure.hasTimezone ? t('JourneyplanScreen.Timezone', { date: departure.moment }) : ''}
+                </Text>}
+                {arrival && <Text style={styles.itemHeaderText}>
+                    {t('JourneyplanScreen.Arrival', { date: arrival.moment })}
+                    {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
+                </Text>}
+            </View>
+            <FlatList
+                data={data}
+                renderItem={({ item }) => (
+                    <Item item={item} />
+                )}
+                keyExtractor={keyExtractor}
+                ItemSeparatorComponent={renderSeparator}
+                ListFooterComponent={renderFooter}
+                onEndReachedThreshold={50}
+            />
+        </View>
     );
 }
