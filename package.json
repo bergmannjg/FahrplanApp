@@ -47,7 +47,6 @@
     "react-native-elements": "^4.0.0-rc.2",
     "react-native-gesture-handler": "^2.6.0",
     "react-native-get-location": "^2.2.1",
-    "react-native-image-transformer": "^1.5.1",
     "react-native-localize": "^2.2.4",
     "react-native-paper": "4.12.5",
     "react-native-paper-dropdown": "^1.0.7",
