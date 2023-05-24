@@ -25,6 +25,7 @@ interface LineNode {
     opid: string;
     km: string;
     maxSpeed?: number;
+    electrified?: boolean;
     tunnelNodes: TunnelNode[];
 }
 
@@ -92,6 +93,7 @@ function rinfToLineNode(n: GraphNode): LineNode {
         opid: n.Node,
         km: n.Edges[0].StartKm.toFixed(3),
         maxSpeed: n.Edges[0].MaxSpeed,
+        electrified: n.Edges[0].Electrified,
         tunnelNodes: tunnelsOfLine
     }
 }

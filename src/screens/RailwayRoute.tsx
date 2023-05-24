@@ -77,6 +77,9 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                 {item.maxSpeed && <View style={styles.maxSpeedColumn}>
                     <Text>{`max: ${item.maxSpeed} km`}</Text>
                 </View >}
+                {item.electrified !== undefined && <View style={styles.maxSpeedColumn}>
+                    <Text>{`elektrifiziert: ${item.electrified ? 'ja' : 'nein'}`}</Text>
+                </View >}
                 {item.tunnelNodes.length > 0 && tunnels(item.tunnelNodes)}
             </View>
         );
