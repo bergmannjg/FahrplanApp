@@ -196,6 +196,11 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     paddingBottom: 10,
   },
+  itemHeaderTextLeft: {
+    fontSize: 14,
+    paddingBottom: 10,
+    paddingLeft: 10
+  },
   infoText: {
     fontWeight: "normal",
     fontSize: 14,

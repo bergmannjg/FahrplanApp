@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Linking } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +52,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     const data = trip.stopovers?.map((s, i): ItemType => { return { s: s, p: getPositionKind(i) } })
     const operatorName = trip.line?.operator?.name;
     const fahrtName = trip.line?.product === 'regional' ? trip.line?.fahrtNr : undefined;
+    const zugfinderUrl = trip.line?.productName && trip.line?.fahrtNr
+        ? 'https://www.zugfinder.net/de/zug-' + trip.line?.productName + '_' + trip.line?.fahrtNr : undefined;
 
     const departure = trip.plannedDeparture ? momentWithTimezone(trip.plannedDeparture) : undefined;
 
@@ -291,12 +293,27 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                     </Text>
                 </TouchableOpacity>
             </View>
-            <View style={{ paddingLeft: 10 }}>
-                <Text style={styles.itemHeaderText}>
-                    {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
-                </Text>
-            </View>
-            {data && data.length > 1 &&
+            {
+                zugfinderUrl
+                    ?
+                    <View style={{ flexDirection: 'row', paddingLeft: 10 }}>
+                        <Text style={styles.itemHeaderText}
+                            onPress={() => Linking.openURL(zugfinderUrl)}>
+                            {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''}{asLinkText('')},
+                        </Text>
+                        <Text style={styles.itemHeaderTextLeft}>
+                            {departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
+                        </Text>
+                    </View>
+                    :
+                    <View style={{ paddingLeft: 10 }}>
+                        <Text style={styles.itemHeaderText}>
+                            {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''} {departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
+                        </Text>
+                    </View>
+            }
+            {
+                data && data.length > 1 &&
                 < FlatList
                     data={data}
                     renderItem={({ item }) => <Item item={item} />}
@@ -305,6 +322,6 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                     onEndReachedThreshold={50}
                 />
             }
-        </View>
+        </View >
     );
 }
