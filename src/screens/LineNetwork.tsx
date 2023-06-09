@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { List as PaperList, Text } from 'react-native-paper';
 import { View, FlatList, ListRenderItem, TouchableOpacity, Linking } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { railwayLines, railwayLineInfos, railwayLineTokens, RailwayLine } from '../lib/line-numbers';
+import type { RailwayLine, RailwayLineToken } from '../lib/line-numbers';
 import { MainStackParamList, LineNetworkParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
 import { hafas } from '../lib/hafas';
-import { Hafas } from '../lib/hafas';
-import { uicRefs } from '../lib/rinf-data-railway-routes';
-import { Trip, StopOver } from 'fs-hafas-client/hafas-client';
+import type { Hafas } from '../lib/hafas';
+import type { Trip, StopOver } from 'fs-hafas-client/hafas-client';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'LineNetwork'>;
@@ -26,16 +25,25 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
     const profile = params.profile;
     const client: Hafas = hafas(profile);
 
-    const data = railwayLineInfos;
+    const [data, setData] = useState([] as RailwayLine[]);
+    const [tokens, setTokens] = useState([] as RailwayLineToken[]);
+    const [loading, setLoading] = useState(true);
 
-    const hasTripData = (item: RailwayLine) => {
-        const info = railwayLineTokens.find(r => r.Line === item.Line)
-        return info !== undefined;
-    }
+    useEffect(() => {
+        if (loading) {
+            import('../lib/line-numbers')
+                .then(line => {
+                    setData(line.railwayLineInfos);
+                    setTokens(line.railwayLineTokens);
+                    setLoading(false);
+                })
+                .catch(reason => { console.error(reason); setLoading(false); });
+        }
+    });
 
     const goToTrip = async (item: RailwayLine) => {
-        const data = railwayLines.filter(r => r.Line === item.Line);
-        const railwayLineToken = railwayLineTokens.find(r => r.Line === item.Line);
+        const lineData = data.filter(r => r.Line === item.Line);
+        const railwayLineToken = tokens.find(r => r.Line === item.Line);
         if (railwayLineToken?.RefreshToken) {
             client.refreshJourney(railwayLineToken?.RefreshToken)
                 .then(journey => {
@@ -53,8 +61,8 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
                 .catch((error) => {
                     console.log('There has been a problem with your refreshJourney operation: ' + error);
                 });
-        } else if (data.length === 1) {
-            const r: RailwayLine = data[0];
+        } else if (lineData.length === 1) {
+            const r: RailwayLine = lineData[0];
             const stopovers: StopOver[] = []
 
             const stopIds: string[] = [];
@@ -63,7 +71,10 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
             stopIds.push(...r.ViaStations);
             stopIds.push(r.EndStation);
             const dt = new Date(Date.now());
-            const stops = await client.stopsOfIds(stopIds, uicRefs);
+
+            const rinf = await import('../lib/rinf-data-railway-routes');
+
+            const stops = await client.stopsOfIds(stopIds, rinf.uicRefs);
             if (stops.length > 2) {
                 stopovers.push({ stop: stops[0], plannedDeparture: dt.toISOString() });
                 stopovers.push(...stops.slice(1, stops.length - 2).map(s => ({ stop: s, plannedArrival: dt.toISOString() })));
@@ -96,7 +107,7 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
             style={{ borderWidth: 0, paddingLeft: 10 }}
             title={
                 () => <TouchableOpacity onPress={() => goToTrip(item)}>
-                    <Text style={hasTripData(item) ? styles.summaryText : styles.summaryTextWarning}>Linie {item.Line}: {item.StartStation} {'->'} {item.EndStation}</Text>
+                    <Text style={styles.summaryText}>Linie {item.Line}: {item.StartStation} {'->'} {item.EndStation}</Text>
                 </TouchableOpacity>
             }
         />);

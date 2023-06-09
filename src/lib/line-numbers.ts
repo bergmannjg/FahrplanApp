@@ -22,6 +22,6 @@ const railwayLineInfos: RailwayLine[] = railwayLines
 
 const railwayLineTokens: RailwayLineToken[] = _railwayLineTokens
 
-export { railwayLines, railwayLineInfos, railwayLineTokens }
+export { railwayLineInfos, railwayLineTokens }
 
 export type { RailwayLine, RailwayLineToken }

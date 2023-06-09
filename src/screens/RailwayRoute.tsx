@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Linking } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -7,9 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { Location } from 'hafas-client';
 import { MainStackParamList, RailwayRouteScreenParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
-import { rinfFindRailwayRoutesOfLine, rinfGetLocationsOfPath, rinfToLineNodes, rinfGetLineName } from '../lib/rinf-data-railway-routes';
 import type { LineNode, TunnelNode } from '../lib/rinf-data-railway-routes';
-import type { GraphNode } from 'rinf-graph/rinfgraph.bundle';
+import type { GraphNode, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoute'>;
@@ -25,9 +24,23 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const railwayRouteNr = params.railwayRouteNr;
     const imcode = params.imcode;
 
-    const graphNodes: GraphNode[][] = rinfFindRailwayRoutesOfLine(railwayRouteNr);
-    const data: LineNode[] = rinfToLineNodes(graphNodes);
-    const STRNAME = rinfGetLineName(railwayRouteNr);
+    const [data, setData] = useState([] as LineNode[]);
+    const [lineName, setLineName] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (loading) {
+            import('../lib/rinf-data-railway-routes')
+                .then(rinf => {
+                    const graphNodes: GraphNode[][] = rinf.rinfFindRailwayRoutesOfLine(railwayRouteNr);
+                    const newData: LineNode[] = rinf.rinfToLineNodes(graphNodes);
+                    setData(newData);
+                    setLineName(rinf.rinfGetLineName(railwayRouteNr));
+                    setLoading(false);
+                })
+                .catch(reason => { console.error(reason); setLoading(false); });
+        }
+    });
 
     const queryText = () => {
         const q = (imcode === '0081') ? 'Streckennummer ÖBB ' + (railwayRouteNr / 100).toFixed(0) + ' '
@@ -39,7 +52,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const showRoute = async () => {
         if (data.length > 0) {
             // todo: more buttons
-            const locationsOfPath = rinfGetLocationsOfPath(graphNodes.reduce((accumulator, value) => accumulator.concat(value), []));
+            const locationsOfPath: RInfLocation[][] = []; //rinfGetLocationsOfPath(graphNodes.reduce((accumulator, value) => accumulator.concat(value), []));
             if (locationsOfPath.length > 0) {
                 const locations: Location[] = locationsOfPath[0].map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
                 navigation.navigate('BRouter', { isLongPress: false, locations });
@@ -96,7 +109,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
             </View>
             <View style={{ paddingLeft: 10 }}>
                 <Text style={styles.itemHeaderText}>
-                    {STRNAME}
+                    {lineName}
                 </Text>
                 <Text style={styles.itemHeaderText}
                     onPress={() => Linking.openURL('https://www.google.de/search?q=+' + queryText())}>

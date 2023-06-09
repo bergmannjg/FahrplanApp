@@ -1,10 +1,10 @@
 import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
 import { rinfFindRailwayRoutesOfTripIBNRs } from "../../src/lib/rinf-data-railway-routes.js";
 import { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
-import type { GraphNode } from 'rinf-graph/rinfgraph.bundle.js';
+import type { GraphNode, RInfGraph } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
-import { railwayLines, railwayLineTokens, RailwayLine, RailwayLineToken } from '../../src/lib/line-numbers.js';
+import { railwayLineInfos, railwayLineTokens, RailwayLine, RailwayLineToken } from '../../src/lib/line-numbers.js';
 
 const myArgs = process.argv.slice(2);
 
@@ -70,15 +70,15 @@ const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineToken | 
 }
 
 const railwayLine = (line: number) => {
-    railwayLines
+    railwayLineInfos
         .filter(r => r.Line === line)
         .forEach(r => journeyOfRailwayLine(r));
 }
 
 const infosOfrailwayLines = async () => {
     const infos: RailwayLineToken[] = [];
-    for (let step = 0; step < railwayLines.length; step++) {
-        const railwayLine = railwayLines[step];
+    for (let step = 0; step < railwayLineInfos.length; step++) {
+        const railwayLine = railwayLineInfos[step];
         if (!railwayLineTokens.find(r => r.Line === railwayLine.Line)) {
             console.log('railwayLine.Line: ', railwayLine.Line);
             const info = await journeyOfRailwayLine(railwayLine);
@@ -86,6 +86,24 @@ const infosOfrailwayLines = async () => {
         }
     }
     console.log(JSON.stringify(infos));
+}
+
+const importGraph = () => {
+    import('rinf-graph/data/Graph.json', { assert: { type: 'json' } })
+        .then(g => {
+            console.log('g:', g.default.length);
+        })
+        .catch(console.error);
+}
+
+const imports = () => {
+    import('rinf-graph/rinfgraph.bundle.js')
+        .then(module => {
+            const rinfgraph: RInfGraph = module.default.rinfgraph;
+            const path = rinfgraph.Graph_getCompactPath([{ Node: "x", Edges: [] }]);
+            console.log('path:', path.length);
+        })
+        .catch(console.error);
 }
 
 const locations = (name?: string) => {
@@ -224,6 +242,9 @@ const nearby = (lat?: string, lon?: string) => {
 }
 
 switch (myArgs[0]) {
+    case 'imports':
+        imports();
+        break;
     case 'locations':
         locations(myArgs[1]);
         break;

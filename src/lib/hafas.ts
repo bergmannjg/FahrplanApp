@@ -1,27 +1,10 @@
 import { createClient, Feature, Profile } from 'hafas-client';
 
 import { profile as bvgProfile } from 'hafas-client/p/bvg/index.js';
-import { profile as cflProfile } from 'hafas-client/p/cfl/index.js';
-import { profile as cmtaProfile } from 'hafas-client/p/cmta/index.js';
 import { profile as dbProfile } from 'hafas-client/p/db/index.js';
-import { profile as dbbusradarnrwProfile } from 'hafas-client/p/db-busradar-nrw/index.js';
-import { profile as insaProfile } from 'hafas-client/p/insa/index.js';
-import { profile as invgProfile } from 'hafas-client/p/invg/index.js';
-import { profile as nahshProfile } from 'hafas-client/p/nahsh/index.js';
-import { profile as nvvProfile } from 'hafas-client/p/nvv/index.js';
 import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js';
-import { profile as pkpProfile } from 'hafas-client/p/pkp/index.js';
 import { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen/index.js';
-import { profile as rmvProfile } from 'hafas-client/p/rmv/index.js';
-import { profile as rsagProfile } from 'hafas-client/p/rsag/index.js';
-import { profile as saarfahrplanProfile } from 'hafas-client/p/saarfahrplan/index.js';
-import { profile as sbahnmuenchenProfile } from 'hafas-client/p/sbahn-muenchen/index.js';
-// import { profile as sncbProfile  } from 'hafas-client/p/sncb/index.js';
-import { profile as svvProfile } from 'hafas-client/p/svv/index.js';
 import { profile as vbbProfile } from 'hafas-client/p/vbb/index.js';
-import { profile as vbnProfile } from 'hafas-client/p/vbn/index.js';
-import { profile as vmtProfile } from 'hafas-client/p/vmt/index.js';
-import { profile as vsnProfile } from 'hafas-client/p/vsn/index.js';
 
 import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
 import { fshafas } from "fs-hafas-client";
@@ -38,32 +21,14 @@ const chooseClient = (p: string, profile: Profile) => {
 const chooseProfile = (p: string): Profile => {
     switch (p) {
         case 'bvg': return bvgProfile;
-        case 'cfl': return cflProfile;
-        case 'cmta': return cmtaProfile;
         case 'db': return dbProfile;
-        case 'dbbusradarnrw': return dbbusradarnrwProfile;
-        case 'insa': return insaProfile;
-        case 'invg': return invgProfile;
-        case 'nahsh': return nahshProfile;
-        case 'nvv': return nvvProfile;
         case 'oebb': return oebbProfile;
-        case 'pkp': return pkpProfile;
         case 'rejseplanen': return rejseplanenProfile;
-        case 'rmv': return rmvProfile;
-        case 'rsag': return rsagProfile;
-        case 'saarfahrplan': return saarfahrplanProfile;
-        case 'sbahnmuenchen': return sbahnmuenchenProfile;
-        // case 'sncb': return sncbProfile;
-        case 'svv': return svvProfile;
         case 'vbb': return vbbProfile;
-        case 'vbn': return vbnProfile;
-        case 'vmt': return vmtProfile;
-        case 'vsn': return vsnProfile;
         case 'bvg-fsharp': return profiles.getProfile('bvg');
         case 'db-fsharp': return profiles.getProfile('db');
         case 'mobilnrw-fsharp': return profiles.getProfile('mobilnrw');
         case 'oebb-fsharp': return profiles.getProfile('oebb');
-        case 'saarfahrplan-fsharp': return profiles.getProfile('saarfahrplan');
         case 'rejseplanen-fsharp': return profiles.getProfile('rejseplanen');
         default: {
             console.log('choose default');

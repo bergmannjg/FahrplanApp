@@ -9,8 +9,7 @@ import { Stop } from 'hafas-client';
 import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
-import { rinfToPathElement, rinfIsWalkingPath, rinfFindRailwayRoutesOfTripIBNRs, rinfGetCompactPath, rinfGetLocationsOfPath } from '../lib/rinf-data-railway-routes';
-import type { GraphNode, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
+import type { GraphNode, PathElement, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -33,20 +32,12 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     console.log('stops.length: ', stops?.length);
     console.log('compactifyPath: ', compactifyPath);
 
-    const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
-        try {
-            const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
-            return rinfFindRailwayRoutesOfTripIBNRs(uics, compactifyPath);
-        } catch (ex) {
-            console.error("findRailwayRoutesOfTrip", (ex as Error).message);
-            return [];
-        }
-    }
-
     interface GraphNodeEx {
         TotalStartKm: number;
         TotalEndKm: number;
         node: GraphNode;
+        element: PathElement;
+        isWalking: boolean;
         prevNode?: GraphNode
         nextNode?: GraphNode
     }
@@ -61,33 +52,50 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     const distanceOfNode = (node: GraphNode): number => Math.abs(node.Edges[0].StartKm - node.Edges[0].EndKm)
 
-    const reducer = (previous: GraphNodeEx[], current: GraphNode): GraphNodeEx[] => {
-        const currTotal = previous.length > 0 ? previous[previous.length - 1].TotalEndKm : 0;
-        if (previous.length > 0) {
-            previous[previous.length - 1].nextNode = current;
-        }
-        return previous.concat([{
-            TotalStartKm: currTotal,
-            TotalEndKm: currTotal + distanceOfNode(current),
-            node: current,
-            prevNode: previous.length > 0 ? previous[previous.length - 1].node : undefined
-        }]);
-    }
-
     useEffect(() => {
         if (loading && path.length === 0) {
             if (stops) {
-                const result = findRailwayRoutes(stops)
-                setLoading(false);
-                const locations = rinfGetLocationsOfPath(result);
-                console.log('locations:', locations.length);
-                const indexes = [...locations.map((_, i) => i)];
-                console.log('indexes:', indexes);
+                import('../lib/rinf-data-railway-routes')
+                    .then(rinf => {
+                        const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
+                            try {
+                                const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
+                                return rinf.rinfFindRailwayRoutesOfTripIBNRs(uics, compactifyPath);
+                            } catch (ex) {
+                                console.error("findRailwayRoutesOfTrip", (ex as Error).message);
+                                return [];
+                            }
+                        }
 
-                setPath(result);
-                setCompactData(rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, []));
-                setLocationsOfPath(locations);
-                setLocationsOfPathIndexes(indexes);
+                        const result = findRailwayRoutes(stops)
+                        setLoading(false);
+                        const locations = rinf.rinfGetLocationsOfPath(result);
+                        console.log('locations:', locations.length);
+                        const indexes = [...locations.map((_, i) => i)];
+                        console.log('indexes:', indexes);
+
+                        setPath(result);
+
+                        const reducer = (previous: GraphNodeEx[], current: GraphNode): GraphNodeEx[] => {
+                            const currTotal = previous.length > 0 ? previous[previous.length - 1].TotalEndKm : 0;
+                            if (previous.length > 0) {
+                                previous[previous.length - 1].nextNode = current;
+                            }
+                            return previous.concat([{
+                                TotalStartKm: currTotal,
+                                TotalEndKm: currTotal + distanceOfNode(current),
+                                node: current,
+                                element: rinf.rinfToPathElement(current),
+                                isWalking: rinf.rinfIsWalkingPath(current),
+                                prevNode: previous.length > 0 ? previous[previous.length - 1].node : undefined
+                            }]);
+                        }
+
+                        setCompactData(rinf.rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, []));
+                        setLocationsOfPath(locations);
+                        setLocationsOfPathIndexes(indexes);
+                    })
+                    .catch(reason => { console.error(reason); setLoading(false); });
             } else {
                 setLoading(false);
             }
@@ -133,8 +141,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     }
 
     const Item = ({ item }: ItemProps) => {
-        const element = rinfToPathElement(item.node);
-        const isWalking = rinfIsWalkingPath(item.node); // todo
+        const element = item.element;
+        const isWalking = item.isWalking;
         const maxSpeedInfo = useMaxSpeed ? element.MaxSpeed.toString() + ' km ' : ''
         const firstNodeOfLine = item.TotalStartKm === 0 || (item.prevNode ? item.prevNode.Edges[0].Line !== item.node.Edges[0].Line : true);
         const lastNodeOfLine = item.nextNode ? item.nextNode.Edges[0].Line !== item.node.Edges[0].Line : true;

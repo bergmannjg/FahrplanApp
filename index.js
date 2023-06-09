@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-undef
+console.log('loading index.js');
+
 import * as React from 'react';
 import { AppRegistry } from 'react-native';
 import './src/global';
