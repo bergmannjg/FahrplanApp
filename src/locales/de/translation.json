@@ -30,6 +30,7 @@
         "Title": "Verbindungen (Bestpreise)",
         "TitlePerDay": "Verbindungen (Bestpreise pro Tag)",
         "Date": "Datum: {{date, dd}}. {{date, DD.MM.YY}}",
+        "DateRange": "Datum: {{date1, dd}}. {{date1, DD.MM.YY}} bis {{date2, dd}}. {{date2, DD.MM.YY}}",
         "Earlier": "{{days}} Tage früher",
         "Later": "{{days}} Tage später",
         "PrevDay": "1 Tag früher",
