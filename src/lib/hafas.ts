@@ -172,7 +172,7 @@ export function hafas(profileName: string): Hafas {
 
         const price = journey.price ? journey.price.amount?.toFixed(2) + ' ' + journey.price.currency : undefined;
         return {
-            type: 'journeyinfo', legs, id: originName + '+' + destinationName + '+' + originDeparture + + '+' + destinationArrival + '+' + legs[0].tripId,
+            type: 'journeyinfo', legs, id: journey.refreshToken ?? originName + '+' + destinationName + '+' + originDeparture + '+' + destinationArrival + '+' + legs[0].tripId,
             origin, originName, originDeparture, originLocation,
             destination, destinationName, destinationArrival, destinationLocation,
             countLegs: journey.legs.length,
