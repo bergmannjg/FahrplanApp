@@ -8,12 +8,22 @@ import { Location } from 'hafas-client';
 import { MainStackParamList, RailwayRouteScreenParams, asLinkText } from './ScreenTypes';
 import { styles } from './styles';
 import type { LineNode, TunnelNode } from '../lib/rinf-data-railway-routes';
-import type { GraphNode, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
+import type { GraphNode } from 'rinf-graph/rinfgraph.bundle';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoute'>;
     navigation: StackNavigationProp<MainStackParamList, 'RailwayRoute'>;
 };
+
+const toLocation = (item: LineNode): Location => {
+    return { type: 'location', latitude: item.latitude, longitude: item.longitude };
+}
+
+const lineNodeInfo = (nodes: LineNode[]): string => {
+    if (nodes.length > 1) {
+        return ', ' + nodes.length.toString() + ' Elemente, km: ' + nodes[0].km + ' bis ' + nodes[nodes.length - 1].km;
+    } else return '';
+}
 
 export default function RailwayRouteScreen({ route, navigation }: Props): JSX.Element {
     console.log('constructor RailwayRouteScreen');
@@ -25,6 +35,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const imcode = params.imcode;
 
     const [data, setData] = useState([] as LineNode[]);
+    const [locationsOfPath, setLocationsOfPath] = useState([] as Location[]);
     const [lineName, setLineName] = useState('');
     const [loading, setLoading] = useState(true);
 
@@ -33,9 +44,12 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
             import('../lib/rinf-data-railway-routes')
                 .then(rinf => {
                     const graphNodes: GraphNode[][] = rinf.rinfFindRailwayRoutesOfLine(railwayRouteNr);
-                    const newData: LineNode[] = rinf.rinfToLineNodes(graphNodes);
-                    setData(newData);
-                    setLineName(rinf.rinfGetLineName(railwayRouteNr));
+                    console.log('RailwayRouteScreen, railwayRouteNr:', railwayRouteNr, ', GraphNodes: ', graphNodes.length);
+                    const lineNodes: LineNode[] = rinf.rinfToLineNodes(graphNodes);
+                    console.log('RailwayRouteScreen, railwayRouteNr:', railwayRouteNr, ', LineNodes: ', lineNodes.length);
+                    setData(lineNodes);
+                    setLineName(rinf.rinfGetLineName(railwayRouteNr) + lineNodeInfo(lineNodes));
+                    setLocationsOfPath(lineNodes.map(toLocation));
                     setLoading(false);
                 })
                 .catch(reason => { console.error(reason); setLoading(false); });
@@ -43,21 +57,27 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     });
 
     const queryText = () => {
-        const q = (imcode === '0081') ? 'Streckennummer ÖBB ' + (railwayRouteNr / 100).toFixed(0) + ' '
-            + String(railwayRouteNr % 100).padStart(2, '0') + ' Wikipedia' // öbb
-            : 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
+        let q;
+        if (imcode === '0081') {
+            q = 'Streckennummer ÖBB ' + (railwayRouteNr / 100).toFixed(0) + ' ' + String(railwayRouteNr % 100).padStart(2, '0') + ' Wikipedia'; // öbb
+        } else if (imcode === '0087') {
+            q = 'streckennummer sncf (%22' + (railwayRouteNr / 1000).toFixed(0) + ' 000%22 OR %22' + railwayRouteNr.toFixed(0) + '%22) Wikipedia'; // sncf
+        } else {
+            q = 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
+        }
         console.log('imcode:', imcode, ', query:', q);
         return q;
     }
+
     const showRoute = async () => {
-        if (data.length > 0) {
-            // todo: more buttons
-            const locationsOfPath: RInfLocation[][] = []; //rinfGetLocationsOfPath(graphNodes.reduce((accumulator, value) => accumulator.concat(value), []));
-            if (locationsOfPath.length > 0) {
-                const locations: Location[] = locationsOfPath[0].map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
-                navigation.navigate('BRouter', { isLongPress: false, locations });
-            }
+        if (locationsOfPath.length > 0) {
+            navigation.navigate('BRouter', { isLongPress: false, locations: locationsOfPath });
         }
+    }
+
+    const showLocation = async (item: LineNode) => {
+        const locations: Location[] = [toLocation(item)]
+        navigation.navigate('BRouter', { isLongPress: false, locations });
     }
 
     interface ItemProps {
@@ -85,7 +105,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
         return (
             <View >
                 <View style={styles.routeViewColumn}>
-                    <Text>{`km: ${item.km} ${item.name}`}</Text>
+                    <Text onPress={() => showLocation(item)}>{`km: ${item.km} ${item.name} (${item.rinftype})`} {asLinkText('')}</Text>
                 </View >
                 {item.maxSpeed && <View style={styles.maxSpeedColumn}>
                     <Text>{`max: ${item.maxSpeed} km`}</Text>

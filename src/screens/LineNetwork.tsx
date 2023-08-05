@@ -72,9 +72,7 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
             stopIds.push(r.EndStation);
             const dt = new Date(Date.now());
 
-            const rinf = await import('../lib/rinf-data-railway-routes');
-
-            const stops = await client.stopsOfIds(stopIds, rinf.uicRefs);
+            const stops = await client.stopsOfIds(stopIds, []);
             if (stops.length > 2) {
                 stopovers.push({ stop: stops[0], plannedDeparture: dt.toISOString() });
                 stopovers.push(...stops.slice(1, stops.length - 2).map(s => ({ stop: s, plannedArrival: dt.toISOString() })));

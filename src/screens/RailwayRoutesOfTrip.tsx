@@ -59,8 +59,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                     .then(rinf => {
                         const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
                             try {
-                                const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
-                                return rinf.rinfFindRailwayRoutesOfTripIBNRs(uics, compactifyPath);
+                                return rinf.rinfFindRailwayRoutesOfTripStops(stopsOfRoute, compactifyPath);
                             } catch (ex) {
                                 console.error("findRailwayRoutesOfTrip", (ex as Error).message);
                                 return [];
@@ -110,7 +109,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
     }
 
     const showRailwayRoute = async (imcode: string, railwayRouteNr: number) => {
-        console.log('showRailwayRoute');
+        console.log('showRailwayRoute', imcode, railwayRouteNr);
 
         navigation.navigate('RailwayRoute', { railwayRouteNr, imcode });
     }
@@ -147,13 +146,14 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         const firstNodeOfLine = item.TotalStartKm === 0 || (item.prevNode ? item.prevNode.Edges[0].Line !== item.node.Edges[0].Line : true);
         const lastNodeOfLine = item.nextNode ? item.nextNode.Edges[0].Line !== item.node.Edges[0].Line : true;
         const lastNode = !item.nextNode;
+        const elementLine = element.Line.replace("-1", "");
         return (
             useMaxSpeed ?
                 <View>
                     {firstNodeOfLine && <View style={styles.distanceColumn}>
                         <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
-                        <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(element.Line))}>
-                            <Text style={styles.maxSpeedLinkText}>{`${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                        <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(elementLine))}>
+                            <Text style={styles.maxSpeedLinkText}>{`${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                         </TouchableOpacity>
                     </View>}
                     <View style={styles.routeViewMaxSpeedColumn}>
@@ -178,8 +178,8 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                         {isWalking ?
                             <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
                             :
-                            <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(element.Line))}>
-                                <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${element.Line} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                            <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(elementLine))}>
+                                <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                             </TouchableOpacity>
                         }
                         <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>

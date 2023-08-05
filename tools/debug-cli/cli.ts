@@ -1,5 +1,5 @@
 import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
-import { rinfFindRailwayRoutesOfTripIBNRs } from "../../src/lib/rinf-data-railway-routes.js";
+import { rinfFindRailwayRoutesOfTripStops } from "../../src/lib/rinf-data-railway-routes.js";
 import { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
 import type { GraphNode, RInfGraph } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
@@ -189,8 +189,7 @@ const journeys = (from?: string, to?: string, via?: string) => {
 
 const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
     try {
-        const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
-        return rinfFindRailwayRoutesOfTripIBNRs(uics, true);
+        return rinfFindRailwayRoutesOfTripStops(stopsOfRoute, true);
     } catch (ex) {
         console.error("findRailwayRoutesOfTrip", (ex as Error).message);
         return [];
