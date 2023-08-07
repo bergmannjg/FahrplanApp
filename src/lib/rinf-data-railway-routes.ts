@@ -195,11 +195,20 @@ function splitPath(path: GraphNode[]): GraphNode[][] {
     return path.reduce(splitter, [[]]);
 }
 
+const compactifiedPathCostRatio = 1.2;
+
 function rinfFindRailwayRoutesOfTrip(ids: string[], compactifyPath: boolean): GraphNode[] {
     const spath = rinfgraph.Graph_getShortestPathFromGraph(g, graph, ids);
-    return compactifyPath
-        ? splitPath(spath).map(p => rinfgraph.Graph_compactifyPath(p, g)).flat(1)
-        : spath;
+    if (compactifyPath) {
+        const compactifiedPath = splitPath(spath).map(p => rinfgraph.Graph_compactifyPath(p, g)).flat(1)
+        const costOfCompactifiedPath = rinfgraph.Graph_costOfPath(compactifiedPath);
+        const costOfPath = rinfgraph.Graph_costOfPath(spath);
+        const ratio = costOfCompactifiedPath / costOfPath;
+        console.log('route', ids[0], ids[ids.length - 1], 'costOfPath', costOfPath, 'costOfCompactified', costOfCompactifiedPath, 'ratio', ratio.toFixed(2));
+        return ratio < compactifiedPathCostRatio ? compactifiedPath : spath;
+    } else {
+        return spath;
+    }
 }
 
 function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {

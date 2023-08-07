@@ -48,8 +48,10 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
     const comp = (a: string, b: string) => a.toLowerCase().trim() === b.toLowerCase().trim();
 
     const getdata = (): Array<Station | Stop | Location> => {
-        return bahnhoefe.length === 1 && comp(query, bahnhoefe[0].name ?? "") ? [] : bahnhoefe as Array<Station | Stop | Location>;
+        const stops = bahnhoefe.length === 1 && comp(query, bahnhoefe[0].name ?? "") ? [] : bahnhoefe as Array<Station | Stop | Location>;
+        return stops.filter(s => s.name);
     }
+    
     return (
         <Autocomplete
             autoCapitalize="none"
