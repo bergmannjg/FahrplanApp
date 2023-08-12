@@ -4,13 +4,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
-import { Hafas } from '../lib/hafas';
 import { Stop, Location, Station } from 'hafas-client';
-import { MainStackParamList, NearbyScreenParams } from './ScreenTypes';
-import { hafas } from '../lib/hafas';
+import { MainStackParamList, NearbyScreenParams, rinfProfile } from './ScreenTypes';
+import { hafas, isLocation, getLocation } from '../lib/hafas';
 import { getCurrentAddress } from '../lib/location';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
+import { distance } from '../lib/distance';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Nearby'>;
@@ -22,10 +22,10 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
 
     const { t } = useTranslation();
 
-    const distance = params.distance;
+    const distanceInMeter = params.distance;
     const searchBusStops = params.searchBusStops;
     const profile = params.profile;
-    const client: Hafas = hafas(profile);
+    const client = profile !== rinfProfile ? hafas(profile) : undefined;
 
     const [data, setData] = useState([] as readonly (Stop | Station | Location)[]);
     const [loading, setLoading] = useState(false);
@@ -41,20 +41,45 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
         getCurrentAddress()
             .then(location => {
                 console.log(location);
+                const currLoc = [location] as readonly (Stop | Station | Location)[]
                 if (location.latitude && location.longitude) {
-                    const currLoc = [location] as readonly (Stop | Station | Location)[]
-                    client.nearby(location.latitude, location.longitude, distance, searchBusStops ? trainModes : busModes)
-                        .then(locations => {
-                            const stops = currLoc.concat(locations);
-                            setLoading(false);
-                            setData(stops);
-                        })
-                        .catch((error) => {
-                            console.log('There has been a problem with your nearby operation: ' + error);
-                            console.log(error.stack);
-                            setLoading(false);
-                            setData(currLoc);
-                        });
+                    if (profile === rinfProfile) {
+                        import('../lib/rinf-data-railway-routes')
+                            .then(rinf => {
+                                if (location.latitude && location.longitude) {
+                                    const locations: Location[] =
+                                        rinf.rinfNearby(location.latitude, location.longitude, distanceInMeter / 1000)
+                                            .map(op => {
+                                                const currdistance = location.latitude && location.longitude
+                                                    ? distance(location.latitude, location.longitude, op.Latitude, op.Longitude)
+                                                    : 0
+                                                return {
+                                                    type: 'location', name: op.Name, id: op.UOPID,
+                                                    latitude: op.Latitude, longitude: op.Longitude,
+                                                    distance: currdistance * 1000
+                                                };
+                                            });
+                                    setLoading(false);
+                                    setData(locations);
+                                } else {
+                                    setLoading(false);
+                                    setData([]);
+                                }
+                            })
+                    } else if (client) {
+                        client.nearby(location.latitude, location.longitude, distanceInMeter, searchBusStops ? trainModes : busModes)
+                            .then(locations => {
+                                const stops = currLoc.concat(locations);
+                                setLoading(false);
+                                setData(stops);
+                            })
+                            .catch((error) => {
+                                console.log('There has been a problem with your nearby operation: ' + error);
+                                console.log(error.stack);
+                                setLoading(false);
+                                setData(currLoc);
+                            });
+                    }
                 }
                 else {
                     setLoading(false);
@@ -105,7 +130,7 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
     };
 
     const showLocation = async (item: Stop | Station | Location) => {
-        const loc = client.getLocation(item);
+        const loc = getLocation(item);
         if (loc) {
             console.log('showLocation: ', loc);
             navigation.navigate('BRouter', { isLongPress: false, locations: [loc], titleSuffix: item.name });
@@ -115,37 +140,39 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
     const goToView = (item: Stop | Station | Location): void => {
         console.log('Navigation router', item.name);
         setCount(count + 1);
-        navigation.navigate('Home', { station: client.isLocation(item) ? item : item.name });
+        navigation.navigate('Home', { station: isLocation(item) ? item : item.name });
     };
 
     const incrDistance = (): void => {
         setCount(count + 1);
         setData([]);
-        navigation.navigate('Nearby', { profile, distance: distance * 2, searchBusStops: searchBusStops });
+        navigation.navigate('Nearby', { profile, distance: distanceInMeter * 2, searchBusStops: searchBusStops });
     };
 
     const switchMode = (): void => {
         setCount(count + 1);
         setData([]);
-        navigation.navigate('Nearby', { profile, distance: distance, searchBusStops: !searchBusStops });
+        navigation.navigate('Nearby', { profile, distance: distanceInMeter, searchBusStops: !searchBusStops });
     };
 
     return (
         <View style={styles.container}>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons} >
                 <Text style={styles.itemHeaderTextNearby}>
-                    {`${t('NearbyScreen.Distance')} ${distance} m`}
+                    {`${t('NearbyScreen.Distance')} ${distanceInMeter} m`}
                 </Text>
-                <TouchableOpacity style={styles.buttonNearby} onPress={() => incrDistance()} disabled={distance > 20000}>
+                <TouchableOpacity style={styles.buttonNearby} onPress={() => incrDistance()} disabled={distanceInMeter > 20000}>
                     <Text style={styles.itemButtonText}>
                         {t('NearbyScreen.IncrDistance')}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonNearby} onPress={() => switchMode()}>
-                    <Text style={styles.itemButtonText}>
-                        {`${searchBusStops ? 'auch Bushaltestellen anzeigen' : 'keine Bushaltestellen anzeigen'}`}
-                    </Text>
-                </TouchableOpacity>
+                {profile !== rinfProfile &&
+                    <TouchableOpacity style={styles.buttonNearby} onPress={() => switchMode()}>
+                        <Text style={styles.itemButtonText}>
+                            {`${searchBusStops ? 'auch Bushaltestellen anzeigen' : 'keine Bushaltestellen anzeigen'}`}
+                        </Text>
+                    </TouchableOpacity>
+                }
             </View>
             <FlatList
                 data={data}
@@ -159,7 +186,7 @@ export default function NearbyScreen({ route, navigation }: Props): JSX.Element 
                                     </TouchableOpacity>
                                     <Text>&#32;</Text>
                                     <TouchableOpacity onPress={() => goToView(item)}>
-                                        <Text>{`${item.name} ${item.distance} m`}</Text>
+                                        <Text>{`${item.name} ${item.distance?.toFixed(0)} m`}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </ListItem.Title>

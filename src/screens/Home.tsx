@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, TouchableOpacity, Text, Button, Platform, PlatformAndroidStatic } from "react-native";
+import { View, TouchableOpacity, Text, Button, Platform, PlatformAndroidStatic, Pressable } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import CustomAutocomplete from './components/CustomAutocomplete';
 import { useTranslation } from 'react-i18next';
-import { hafas } from '../lib/hafas';
+import { JourneyParams, isLocation } from '../lib/hafas';
 import type { Location } from 'hafas-client';
-import type { MainStackParamList, RootStackParamList } from './ScreenTypes';
+import type { MainStackParamList, RootStackParamList, RInfSearchParams } from './ScreenTypes';
+import { rinfProfile } from './ScreenTypes';
 import { useOrientation } from './useOrientation';
 import RadioGroup, { RadioButtonProps } from 'react-native-radio-buttons-group';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
@@ -35,8 +36,12 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
     const { t, i18n } = useTranslation();
 
-    const defaultJourneyParams = {
+    const defaultJourneyParams: JourneyParams = {
         bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 5, firstClass: false, transfers: -1, transferTime: 8, regional: false
+    }
+
+    const defaultRInfSearchParams: RInfSearchParams = {
+        textSearch: 'caseinsensitive'
     }
 
     const [nearbyStation, setNearbyStation] = useState<string | Location>('');
@@ -51,6 +56,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     const [date, setDate] = useState(new Date(Date.now()));
     const [showDate, setShowDate] = useState(false);
     const [journeyParams, setJourneyParams] = useState(defaultJourneyParams);
+    const [rinfSearchParams, setRInfSearchParams] = useState(defaultRInfSearchParams);
     const [searchType, setSearchType] = useState('1');
     const [mode, setMode] = useState<'date' | 'time'>('date');
 
@@ -104,7 +110,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     };
 
     const clientProfile = () => {
-        return profile + (clientLib === 'fs-hafas-client' ? '-fsharp' : '');
+        return profile !== rinfProfile ? profile + (clientLib === 'fs-hafas-client' ? '-fsharp' : '') : profile;
     }
 
     // route.params from OptionsScreen
@@ -115,6 +121,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     // route.params from OptionsScreen
     if (route.params?.profile !== undefined && route.params?.profile !== profile) {
         setProfile(route.params.profile);
+        if (route.params.profile === rinfProfile || profile === rinfProfile) {
+            setStation1('');
+            setStationVia('');
+            setStation2('');
+        }
     }
 
     // route.params from OptionsScreen
@@ -130,6 +141,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     // route.params from JourneyOptionsScreen
     if (route.params?.journeyParams !== undefined && route.params?.journeyParams !== journeyParams) {
         setJourneyParams(route.params.journeyParams);
+    }
+
+    // route.params from JourneyOptionsScreen
+    if (route.params?.rinfSearchParams !== undefined && route.params?.rinfSearchParams !== rinfSearchParams) {
+        setRInfSearchParams(route.params.rinfSearchParams);
     }
 
     // route.params from NearbyScreen or LineNetworkScreen
@@ -153,8 +169,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     console.log('tripDetails: ', tripDetails);
     console.log('compactifyfRoute: ', compactifyPath);
     console.log('date: ', date);
-
-    const client = hafas(clientProfile());
 
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
         setShowDate(false);
@@ -180,7 +194,27 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     const searchConnections = () => {
         if (station1 !== '' && station2 !== '') {
             console.log('searchConnections. profile:', clientProfile());
-            navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, compactifyPath: compactifyPath, journeyParams });
+            if (profile === rinfProfile) {
+                import('../lib/rinf-data-railway-routes')
+                    .then(rinf => {
+                        console.log('searchConnections', station1, station2);
+                        const _station1 = isLocation(station1) ? station1.name : station1;
+                        const _station2 = isLocation(station2) ? station2.name : station2;
+                        if (typeof _station1 === 'string' && typeof _station2 === 'string') {
+                            const opInfos1 = rinf.rinfOpInfos(_station1, 'first exact match');
+                            const opInfos2 = rinf.rinfOpInfos(_station2, 'first exact match');
+                            const opInfosVia = stationVia.length > 3 ? rinf.rinfOpInfos(stationVia, 'first exact match') : undefined;
+                            if (opInfos1.length > 0 && opInfos2.length > 0) {
+                                const ids: string[] = opInfosVia && opInfosVia.length > 0
+                                    ? [opInfos1[0].UOPID, opInfosVia[0].UOPID, opInfos2[0].UOPID]
+                                    : [opInfos1[0].UOPID, opInfos2[0].UOPID];
+                                navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: false, compactifyPath, useMaxSpeed: false, originName: _station1, destinationName: _station2, ids });
+                            }
+                        }
+                    })
+            } else {
+                navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, compactifyPath: compactifyPath, journeyParams });
+            }
         }
     }
 
@@ -215,7 +249,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
     const navigateToJourneyOptionsScreen = () => {
         console.log('navigateToJourneyOptionsScreen. journeyParams:', journeyParams);
-        navigation.navigate('JourneyOptions', { navigationParams: { journeyParams } });
+        navigation.navigate('JourneyOptions', {
+            profile: clientProfile(),
+            navigationParams: { journeyParams, rinfSearchParams }
+        });
     }
 
     const navigateToDateTimeScreen = (mode: 'date' | 'time') => {
@@ -232,12 +269,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
             saveData({ station1: s2, station2: s1 });
         }
     }
-
-    const radioProps = [
-        { label: 'Verbindungen ', value: 'Verbindungen' },
-        { label: 'Haltestellen in der Nähe ', value: 'Haltestellen' },
-        { label: 'Busse und Bahnen in der Nähe', value: 'BusseBahnen' }
-    ];
 
     const radioButtons: RadioButtonProps[] = useMemo(() => ([
         {
@@ -263,12 +294,12 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         else if (searchType === 'BusseBahnen' || searchType === '3') searchRadar();
     }
 
-    const searchEnabled = (client.isLocation(station1) || station1.length > 0) && (client.isLocation(station2) || station2.length > 0);
+    const searchEnabled = (isLocation(station1) || station1.length > 0) && (isLocation(station2) || station2.length > 0);
 
     const A1 = ({ s }: { s: string }) => {
         return (
             !loading ?
-                <CustomAutocomplete client={client} placeholder={t('HomeScreen.From')} query={s} onPress={(name) => { setAndSaveStation1(name); }} />
+                <CustomAutocomplete profile={clientProfile()} rinfSearchParams={rinfSearchParams} placeholder={t('HomeScreen.From')} query={s} onPress={(name) => { setAndSaveStation1(name); }} />
                 : <View />
         );
     }
@@ -276,7 +307,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     const AVia = ({ s }: { s: string }) => {
         return (
             !loading ?
-                <CustomAutocomplete client={client} placeholder="via" query={s} onPress={(name) => { setStationVia(name); }} />
+                <CustomAutocomplete profile={clientProfile()} rinfSearchParams={rinfSearchParams} placeholder="via" query={s} onPress={(name) => { setStationVia(name); }} />
                 : <View />
         );
     }
@@ -284,7 +315,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     const A2 = ({ s }: { s: string }) => {
         return (
             !loading ?
-                <CustomAutocomplete client={client} placeholder={t('HomeScreen.To')} query={s} onPress={(name) => { setAndSaveStation2(name); }} />
+                <CustomAutocomplete profile={clientProfile()} rinfSearchParams={rinfSearchParams} placeholder={t('HomeScreen.To')} query={s} onPress={(name) => { setAndSaveStation2(name); }} />
                 : <View />
         );
     }
@@ -308,7 +339,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
                 orientation === 'PORTRAIT' &&
                 <View style={stylesPortrait.containerButtons} >
                     <View style={styles.autocompleteContainerFrom}>
-                        <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
+                        <A1 s={isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
                         <View style={styles.switchbutton}>
                             <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station1 ? station1 : '')} disabled={!('string' === typeof station1 && station1.length > 0)} >
                                 <Text style={styles.switchText}>
@@ -328,7 +359,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
                         </View>
                     </View>
                     <View style={styles.autocompleteContainerTo}>
-                        <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
+                        <A2 s={isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
                         <View style={styles.switchbutton}>
                             <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
                                 <Text style={styles.switchText}>
@@ -343,9 +374,9 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
             {
                 orientation === 'LANDSCAPE' &&
                 <View style={stylesLandscape.containerButtons} >
-                    <A1 s={client.isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
+                    <A1 s={isLocation(station1) ? (station1.name ? station1.name : '') : station1} />
                     <Text style={{ paddingHorizontal: 5 }} />
-                    <A2 s={client.isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
+                    <A2 s={isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
                 </View>
             }
 
@@ -374,11 +405,17 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
             {
                 orientation === 'PORTRAIT' &&
                 <View style={styles.containerSearch}>
-                    <TouchableOpacity style={styles.buttonContained} disabled={!searchEnabled} onPress={() => searchConnections()}>
-                        <Text style={styles.itemText}>
-                            {t('HomeScreen.SearchConnections')}
-                        </Text>
-                    </TouchableOpacity>
+                    <Pressable style={styles.buttonJourneyPlan} disabled={!searchEnabled} onPress={() => searchConnections()}>
+                        {({ pressed }) => (
+                            pressed
+                                ? <Text style={styles.itemButtonTextPressed}>
+                                    {profile !== rinfProfile ? t('HomeScreen.SearchConnections') : 'Strecken suchen'}
+                                </Text>
+                                : <Text style={styles.itemButtonText}>
+                                    {profile !== rinfProfile ? t('HomeScreen.SearchConnections') : 'Strecken suchen'}
+                                </Text>
+                        )}
+                    </Pressable>
                 </View>
             }
 
@@ -408,7 +445,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
             {
                 orientation === 'PORTRAIT' &&
                 <View style={styles.containerSearch}>
-                    <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchRadar()}>
+                    <TouchableOpacity style={styles.buttonOutlined} disabled={profile === rinfProfile} onPress={() => searchRadar()}>
                         <Text style={styles.itemText}>
                             {t('HomeScreen.Radar')}
                         </Text>

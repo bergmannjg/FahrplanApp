@@ -102,7 +102,7 @@
         "Duration": "Dauer: {{duration, HH:mm}}"
     },
     "RailwayRoutesOfTripScreen": {
-        "Title": "Strecken",
+        "Title": "Strecke",
         "RailwayRoute": "Strecke"
     },
     "RailwayRouteScreen": {

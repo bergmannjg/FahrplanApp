@@ -9,6 +9,7 @@ import { profile as vbbProfile } from 'hafas-client/p/vbb/index.js';
 import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
 import { fshafas } from "fs-hafas-client";
 import { profiles } from "fs-hafas-profiles";
+import { distance } from './distance';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import geolib from 'geolib';
@@ -93,11 +94,11 @@ export interface Hafas {
     distanceOfLeg: (l: Leg) => number
 }
 
-function isStop(s: Station | Stop | Location | undefined): s is Stop {
+export function isStop(s: Station | Stop | Location | undefined): s is Stop {
     return 'object' === typeof s && s.type === 'stop';
 }
 
-function isLocation(s: string | Station | Stop | Location | undefined): s is Location {
+export function isLocation(s: string | Station | Stop | Location | undefined): s is Location {
     return 'object' === typeof s && s.type === 'location';
 }
 
@@ -116,24 +117,6 @@ export function getLocation(s: Station | Stop | Location | undefined): Location 
     if (isStop(s)) return s.location
     else if (isLocation(s)) return s
     else return undefined;
-}
-
-function deg2rad(deg: number) {
-    return deg * (Math.PI / 180)
-}
-
-export function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);  // deg2rad below
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        ;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
-    return d;
 }
 
 export function hafas(profileName: string): Hafas {
@@ -455,7 +438,7 @@ export function hafas(profileName: string): Hafas {
     }
 
     function getDistanceFromFeaturesInKm(f0: Feature, f1: Feature): number {
-        return getDistanceFromLatLonInKm(f0.geometry.coordinates[1], f0.geometry.coordinates[0], f1.geometry.coordinates[1], f1.geometry.coordinates[0]);
+        return distance(f0.geometry.coordinates[1], f0.geometry.coordinates[0], f1.geometry.coordinates[1], f1.geometry.coordinates[0]);
     }
 
     function distanceOfFeatureCollection(fc: FeatureCollection): number {
@@ -477,7 +460,7 @@ export function hafas(profileName: string): Hafas {
             if (i > 0) {
                 const prev = latLonPoints[i - 1]
                 const curr = latLonPoints[i]
-                return getDistanceFromLatLonInKm(prev.lat, prev.lon, curr.lat, curr.lon);
+                return distance(prev.lat, prev.lon, curr.lat, curr.lon);
             }
             else {
                 return 0.0;
@@ -495,32 +478,10 @@ export function hafas(profileName: string): Hafas {
         return parseFloat(dist.toFixed(0));
     }
 
-    const distance = (lat1: number, lon1: number, lat2: number, lon2: number, unit: string) => {
-        if ((lat1 === lat2) && (lon1 === lon2)) {
-            return 0;
-        }
-        else {
-            const radlat1 = Math.PI * lat1 / 180;
-            const radlat2 = Math.PI * lat2 / 180;
-            const theta = lon1 - lon2;
-            const radtheta = Math.PI * theta / 180;
-            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-            if (dist > 1) {
-                dist = 1;
-            }
-            dist = Math.acos(dist);
-            dist = dist * 180 / Math.PI;
-            dist = dist * 60 * 1.1515;
-            if (unit === "K") { dist = dist * 1.609344 }
-            if (unit === "N") { dist = dist * 0.8684 }
-            return dist;
-        }
-    }
-
     const coordinatesDistance = (lat: number, lon: number, coordinates: number[], maxDist: number): boolean => {
 
         if (coordinates.length === 2) {
-            const dist = distance(lat, lon, coordinates[1], coordinates[0], 'K')
+            const dist = distance(lat, lon, coordinates[1], coordinates[0])
             return dist <= maxDist;
         } else {
             return false;

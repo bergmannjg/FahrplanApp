@@ -91,7 +91,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="RailwayRoutesOfTrip"
         component={RailwayRoutesOfTripScreen}
-        options={{ title: t('RailwayRoutesOfTripScreen.Title') }}
+        options={({ route }) => ({ title: t('RailwayRoutesOfTripScreen.Title') + ' ' + route.params.originName.substring(0, 20) + ' nach ' + route.params.destinationName.substring(0, 20) })}
       />
       <MainStack.Screen
         name="RailwayRoute"

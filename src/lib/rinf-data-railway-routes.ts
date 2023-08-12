@@ -1,7 +1,7 @@
 import { rinfgraph } from 'rinf-graph/rinfgraph.bundle.js';
 import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
 import { Stop } from 'hafas-client';
-import { getDistanceFromLatLonInKm } from './hafas';
+import { distance } from './distance';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import g from 'rinf-graph/data/Graph.json' assert { type: 'json' };
@@ -39,6 +39,11 @@ const graph = rinfgraph.Graph_toGraph(g);
 function rinfTypeToString(t?: number): string {
     switch (t) {
         case operationalPointType.station: return 'station';
+        case operationalPointType.smallstation: return 'smallstation';
+        case operationalPointType.passengerterminal: return 'passengerterminal';
+        case operationalPointType.freightterminal: return 'freightterminal';
+        case operationalPointType.depotorworkshop: return 'depotorworkshop';
+        case operationalPointType.traintechnicalservices: return 'traintechnicalservices';
         case operationalPointType.junction: return 'junction';
         case operationalPointType.passengerstop: return 'passengerstop';
         case operationalPointType.switch: return 'switch';
@@ -60,7 +65,7 @@ function getOpIdWithMinDistanceFromLatLon(s: Stop): string | undefined {
 
     const opid = opInfos.reduce((state: OpIdDist, op: OpInfo) => {
         if (s.location?.latitude && s.location?.longitude && nearby(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude)) {
-            const dist = getDistanceFromLatLonInKm(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude);
+            const dist = distance(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude);
             if (dist < state.km) {
                 state.name = op.UOPID;
                 state.km = dist;
@@ -79,8 +84,8 @@ function findOPIDForStop(s: Stop): string {
     return '';
 }
 
-function rinfGetLineName(line: number): string {
-    const lineInfo = mapLines.get(line.toString()) || mapLines.get(line.toString() + "-1");
+function rinfGetLineName(line: string): string {
+    const lineInfo = mapLines.get(line);
     return lineInfo?.Name ?? line.toString();
 }
 
@@ -139,11 +144,10 @@ function toLineNodes(nodes: GraphNode[]): LineNode[] {
     return nodes.map(n => rinfToLineNode(n)).filter((item): item is LineNode => !!item).concat([lastElement]);
 }
 
-
 function removeLineNodeDuplicates(arr: Array<LineNode>) {
     const temp: Array<LineNode> = [];
     for (let i = 0; i < arr.length; i++) {
-        if (!temp.find(t => t.name === arr[i].name)) { temp.push(arr[i]); }
+        if (!temp.find(t => t.opid === arr[i].opid)) { temp.push(arr[i]); }
     }
     return temp;
 }
@@ -211,9 +215,9 @@ function rinfFindRailwayRoutesOfTrip(ids: string[], compactifyPath: boolean): Gr
     }
 }
 
-function rinfFindRailwayRoutesOfLine(line: number): GraphNode[][] {
+function rinfFindRailwayRoutesOfLine(line: string): GraphNode[][] {
     return lineInfos
-        .filter(li => li.Line === line.toString() || li.Line === line.toString() + "-1")
+        .filter(li => li.Line === line)
         .map(li => rinfgraph.Graph_getPathOfLineFromGraph(g, graph, li))
         .sort((a, b) => a[0].Edges[0].StartKm - b[0].Edges[0].StartKm);
 }
@@ -238,6 +242,43 @@ function rinfComputeDistanceOfPath(path: GraphNode[]): number {
     }, 0)
 }
 
-export { rinfTypeToString, rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripStops, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
+function rinfOpInfos(q: string, textSearch: 'first exact match' | 'exact' | 'caseinsensitive' | 'regex'): OpInfo[] {
+    if (q.length < 3) {
+        return [];
+    } else if (textSearch === 'first exact match') {
+        const found = opInfos.find(op => op.Name === q);
+        return found ? [found] : [];
+    } else {
+        let re: RegExp;
+        if (textSearch === 'regex')
+            try {
+                re = new RegExp(q);
+            } catch (error) {
+                return [];
+            }
+        const qLowerCase = textSearch === 'caseinsensitive' ? q.toLowerCase() : q;
+
+        const findMatch = (s: string): boolean => {
+            if (textSearch === 'exact') return s.includes(q);
+            else if (textSearch === 'caseinsensitive') return s.toLowerCase().includes(qLowerCase);
+            else return re.test(s);
+        }
+
+        return opInfos.reduce((acc: OpInfo[], op) => {
+            if (acc.length < 10) {
+                if (!acc.find(v => v.Name === op.Name) && findMatch(op.Name)) {
+                    acc.push(op);
+                }
+            }
+            return acc;
+        }, []);
+    }
+}
+
+function rinfNearby(latitude: number, longitude: number, maxdistance: number): OpInfo[] {
+    return opInfos.filter(op => distance(latitude, longitude, op.Latitude, op.Longitude) < maxdistance);
+}
+
+export { rinfNearby, rinfOpInfos, rinfTypeToString, rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripStops, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
 
 export type { PathElement, LineNode, TunnelNode }

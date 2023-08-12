@@ -12,6 +12,7 @@ import { getCurrentPosition } from '../lib/location';
 import { Movement, StopOver, Location } from 'hafas-client';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
+import { distance } from '../lib/distance';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'Radar'>;
@@ -60,28 +61,6 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
         else return undefined;
     }
 
-    const distance = (lat1: number, lon1: number, lat2: number, lon2: number, unit: string) => {
-        if ((lat1 === lat2) && (lon1 === lon2)) {
-            return 0;
-        }
-        else {
-            const radlat1 = Math.PI * lat1 / 180;
-            const radlat2 = Math.PI * lat2 / 180;
-            const theta = lon1 - lon2;
-            const radtheta = Math.PI * theta / 180;
-            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-            if (dist > 1) {
-                dist = 1;
-            }
-            dist = Math.acos(dist);
-            dist = dist * 180 / Math.PI;
-            dist = dist * 60 * 1.1515;
-            if (unit === "K") { dist = dist * 1.609344 }
-            if (unit === "N") { dist = dist * 0.8684 }
-            return dist;
-        }
-    }
-
     const stripName = (s: string | undefined) => {
         if (s && s.length > 40) return s.substr(0, 40);
         else return s;
@@ -94,7 +73,7 @@ export default function RadarScreen({ route, navigation }: Props): JSX.Element {
             const mode = unionToString(m.line?.mode);
             const plannedDeparture = nextStopover?.plannedDeparture ? extractTimeOfDatestring(nextStopover?.plannedDeparture) : undefined;
             const stop = stripName(nextStopover?.stop?.name);
-            const dist = m.location && m.location.latitude && m.location.longitude && location.latitude && location.longitude ? distance(m.location.latitude, m.location.longitude, location.latitude, location.longitude, 'K') : -1;
+            const dist = m.location && m.location.latitude && m.location.longitude && location.latitude && location.longitude ? distance(m.location.latitude, m.location.longitude, location.latitude, location.longitude) : -1;
             const nextStop =
                 line && plannedDeparture && stop
                     ? { line: line, mode: mode, tripId: m.tripId, distance: dist, direction: m.direction, location: m.location, plannedDeparture: plannedDeparture, stop: stop }

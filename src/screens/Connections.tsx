@@ -55,6 +55,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
                 const infos = [] as JourneyInfo[];
                 journeys.forEach(journey => {
                     const info = client.journeyInfo(journey);
+                    console.log('destination', info.origin)
                     infos.push(info);
                 });
                 console.log('journeyInfos', infos.length);
@@ -190,6 +191,13 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
         return (new Date()) < date;
     }
 
+    const hasBestPrice = () => {
+        if (data.length === 0) return false;
+        else return (data[0].origin?.id?.startsWith('80') || data[0].destination?.id?.startsWith('80'))
+            && isFutureDate()
+            && (profile === 'db' || profile === 'db-fsharp');
+    }
+
     return (
         <GestureDetector gesture={longPressGesture}>
             <View style={styles.container}>
@@ -204,7 +212,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
                             {t('ConnectionsScreen.Later')}
                         </Text>
                     </TouchableOpacity>
-                    {isFutureDate() && (profile === 'db' || profile === 'db-fsharp') &&
+                    {hasBestPrice() &&
                         <TouchableOpacity style={styles.buttonConnection} onPress={() => showBestPrice()}>
                             <Text style={styles.itemButtonText}>
                                 {t('ConnectionsScreen.BestPrice')}

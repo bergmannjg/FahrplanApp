@@ -23,6 +23,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
     const stops = params.stops;
+    const ids = params.ids;
     const useMaxSpeed = params.useMaxSpeed;
     const compactifyPath = params.compactifyPath;
 
@@ -42,6 +43,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         nextNode?: GraphNode
     }
 
+    const [totalKm, setTotalKm] = useState(0.0);
     const [path, setPath] = useState([] as GraphNode[]);
     const [compactPath, setCompactData] = useState([] as GraphNodeEx[]);
     const [loading, setLoading] = useState(true);
@@ -54,7 +56,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 
     useEffect(() => {
         if (loading && path.length === 0) {
-            if (stops) {
+            if (stops || ids) {
                 import('../lib/rinf-data-railway-routes')
                     .then(rinf => {
                         const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
@@ -66,8 +68,10 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                             }
                         }
 
-                        const result = findRailwayRoutes(stops)
-                        setLoading(false);
+                        const result = stops ? findRailwayRoutes(stops)
+                            : ids ? rinf.rinfFindRailwayRoutesOfTrip(ids, compactifyPath)
+                                : [];
+
                         const locations = rinf.rinfGetLocationsOfPath(result);
                         console.log('locations:', locations.length);
                         const indexes = [...locations.map((_, i) => i)];
@@ -89,10 +93,15 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                                 prevNode: previous.length > 0 ? previous[previous.length - 1].node : undefined
                             }]);
                         }
-
-                        setCompactData(rinf.rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, []));
+                        const compactResult = rinf.rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, [])
+                        setCompactData(compactResult);
                         setLocationsOfPath(locations);
                         setLocationsOfPathIndexes(indexes);
+
+                        if (compactResult.length > 0) {
+                            setTotalKm(compactResult[compactResult.length - 1].TotalEndKm);
+                        }
+                        setLoading(false);
                     })
                     .catch(reason => { console.error(reason); setLoading(false); });
             } else {
@@ -108,10 +117,10 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         }
     }
 
-    const showRailwayRoute = async (imcode: string, railwayRouteNr: number) => {
-        console.log('showRailwayRoute', imcode, railwayRouteNr);
+    const showRailwayRoute = async (country: string, railwayRouteNr: string) => {
+        console.log('showRailwayRoute', country, railwayRouteNr);
 
-        navigation.navigate('RailwayRoute', { railwayRouteNr, imcode });
+        navigation.navigate('RailwayRoute', { railwayRouteNr, country });
     }
 
     const renderFooter = () => {
@@ -146,13 +155,13 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         const firstNodeOfLine = item.TotalStartKm === 0 || (item.prevNode ? item.prevNode.Edges[0].Line !== item.node.Edges[0].Line : true);
         const lastNodeOfLine = item.nextNode ? item.nextNode.Edges[0].Line !== item.node.Edges[0].Line : true;
         const lastNode = !item.nextNode;
-        const elementLine = element.Line.replace("-1", "");
+        const elementLine = element.Line;
         return (
             useMaxSpeed ?
-                <View>
+                <View style={{ flex: 1 }}>
                     {firstNodeOfLine && <View style={styles.distanceColumn}>
                         <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
-                        <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(elementLine))}>
+                        <TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
                             <Text style={styles.maxSpeedLinkText}>{`${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                         </TouchableOpacity>
                     </View>}
@@ -178,14 +187,14 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                         {isWalking ?
                             <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
                             :
-                            <TouchableOpacity onPress={() => showRailwayRoute(element.IMCode, parseInt(elementLine))}>
+                            <TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
                                 <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                             </TouchableOpacity>
                         }
                         <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>
                     </View >
                     <View style={styles.distanceColumn}>
-                        <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`}</Text>
+                        <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`} ({(item.TotalEndKm * 100 / totalKm).toFixed(1)} %)</Text>
                     </View>
                 </View>
         );
@@ -210,6 +219,14 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         );
     }
 
+    if(loading){
+        return(
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator size="large"/>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
@@ -226,7 +243,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
             </View>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
                 <Text style={styles.itemHeaderText}>
-                    {originName} {t('JourneyplanScreen.DirectionTo')} {destinationName}
+                    {originName} {t('JourneyplanScreen.DirectionTo')} {destinationName}, {totalKm.toFixed(3)} km
                 </Text>
             </View>
             <FlatList
@@ -234,7 +251,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                 renderItem={({ item }) => (
                     <ListItem containerStyle={{ borderBottomWidth: 0, borderWidth: 0, padding: 0 }}>
                         <ListItem.Content>
-                            <ListItem.Title><Item item={item} /></ListItem.Title>
+                            <ListItem.Title style={{ width: "100%" }}><Item item={item} /></ListItem.Title>
                         </ListItem.Content>
                     </ListItem>
                 )}

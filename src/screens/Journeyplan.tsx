@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Pressable, FlatList, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from "react-native-elements";
@@ -161,8 +161,19 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         }
     }
 
-    const hasTrainformation = (line?: Line) => {
-        return line?.product === 'nationalExpress' || line?.name?.startsWith('IC');
+    const hasTrainformation = (line?: Line, departure?: string) => {
+        if (departure) {
+            const dt = new Date(departure);
+            const today = new Date(Date.now());
+            if (dt.getFullYear() != today.getFullYear()
+                || dt.getMonth() != today.getMonth()
+                || dt.getDate() != today.getDate())
+                return false;
+            else
+                return line?.product === 'nationalExpress' && line?.operator?.name === 'DB Fernverkehr AG' || line?.name?.startsWith('IC');
+        } else {
+            return false;
+        }
     }
 
     const goToWagenreihung = (leg: Leg) => {
@@ -276,7 +287,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name} ${platform(item.departurePlatform)}`}</Text>
 
-                            {hasTrainformation(item.line) &&
+                            {hasTrainformation(item.line, item.departure || item.plannedDeparture) &&
                                 <TouchableOpacity onPress={() => goToWagenreihung(item)}>
                                     <Text style={styles.itemDetailsText}>{asLinkText(railwayCar)}</Text>
                                 </TouchableOpacity>
@@ -387,25 +398,25 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         );
     };
 
-    const longPressGesture = Gesture.Pan().onEnd((e, success) => {
-        if (success && journeyInfo?.refreshToken) {
-            setCount(count + 1);
-        }
-    });
-
     return (
         <View style={styles.container}>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
+                <Pressable style={styles.buttonJourneyPlan} onPress={() => showRoute(false)} onLongPress={() => showRoute(true)}>
                     <Text style={styles.itemButtonText}>
                         {t('JourneyplanScreen.ShowRoute')}
                     </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
-                    <Text style={styles.itemButtonText}>
-                        {t('JourneyplanScreen.ShowRailwayRoutes')}
-                    </Text>
-                </TouchableOpacity>
+                </Pressable>
+                <Pressable style={styles.buttonJourneyPlan} onPress={() => showRailwayRoutes(false)} onLongPress={() => showRailwayRoutes(true)} >
+                    {({ pressed }) => (
+                        pressed
+                            ? <Text style={styles.itemButtonTextPressed}>
+                                {t('JourneyplanScreen.ShowRailwayRoutes')}
+                            </Text>
+                            : <Text style={styles.itemButtonText}>
+                                {t('JourneyplanScreen.ShowRailwayRoutes')}
+                            </Text>
+                    )}
+                </Pressable>
             </View>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
                 {journeyInfo && <View style={styles.myJourneyItem}>

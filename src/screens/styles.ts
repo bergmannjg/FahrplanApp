@@ -128,7 +128,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 18,
     paddingTop: 5,
-    borderWidth: 0
+    borderWidth: 0,
   },
   routeTunnelColumn: {
     flexDirection: 'column',
@@ -191,6 +191,11 @@ export const styles = StyleSheet.create({
   itemButtonText: {
     fontSize: 18,
     textAlign: 'center',
+  },
+  itemButtonTextPressed: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: 'grey',
   },
   itemHeaderText: {
     fontSize: 14,

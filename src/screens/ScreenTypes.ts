@@ -7,6 +7,12 @@ export function asLinkText(s: string): string {
     return s + ' ' + nortEastArrow;
 }
 
+export interface RInfSearchParams {
+    textSearch: 'first exact match' | 'exact' | 'caseinsensitive' | 'regex';
+}
+
+export const rinfProfile = 'rinf/strecken';
+
 export interface HomeScreenParams {
     clientLib?: string;
     profile?: string,
@@ -15,7 +21,8 @@ export interface HomeScreenParams {
     station?: string | Location,
     station2?: string,
     stationVia?: string,
-    journeyParams?: JourneyParams
+    journeyParams?: JourneyParams,
+    rinfSearchParams?: RInfSearchParams,
 }
 
 export interface OptionScreenParams {
@@ -28,8 +35,10 @@ export interface OptionScreenParams {
 }
 
 export interface JourneyOptionScreenParams {
+    profile: string,
     navigationParams: {
         journeyParams: JourneyParams
+        rinfSearchParams: RInfSearchParams,
     }
 }
 
@@ -53,14 +62,15 @@ export interface RailwayRoutesOfTripScreenParams {
     originName: string;
     destinationName: string;
     stops?: Stop[];
+    ids?: string[];
     tripDetails: boolean;
     compactifyPath: boolean;
     useMaxSpeed: boolean;
 }
 
 export interface RailwayRouteScreenParams {
-    railwayRouteNr: number;
-    imcode: string;
+    railwayRouteNr: string;
+    country: string;
 }
 
 export interface TrainformationScreenParams {

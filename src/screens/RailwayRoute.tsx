@@ -19,9 +19,13 @@ const toLocation = (item: LineNode): Location => {
     return { type: 'location', latitude: item.latitude, longitude: item.longitude };
 }
 
-const lineNodeInfo = (nodes: LineNode[]): string => {
+const lineNodeInfo = (nodes: LineNode[], eletrified?: boolean): string => {
     if (nodes.length > 1) {
-        return ', ' + nodes.length.toString() + ' Elemente, km: ' + nodes[0].km + ' bis ' + nodes[nodes.length - 1].km;
+        let eletrifiedInfo = '';
+        if (eletrified != undefined) {
+            eletrifiedInfo = ', ' + (eletrified ? '' : 'nicht ') + 'elektrifiziert';
+        }
+        return nodes.length.toString() + ' Elemente, km: ' + nodes[0].km + ' bis ' + nodes[nodes.length - 1].km + eletrifiedInfo;
     } else return '';
 }
 
@@ -32,12 +36,14 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
 
     const { params }: { params: RailwayRouteScreenParams } = route;
     const railwayRouteNr = params.railwayRouteNr;
-    const imcode = params.imcode;
+    const country = params.country;
 
     const [data, setData] = useState([] as LineNode[]);
     const [locationsOfPath, setLocationsOfPath] = useState([] as Location[]);
     const [lineName, setLineName] = useState('');
+    const [lineExtra, setLineExtra] = useState('');
     const [loading, setLoading] = useState(true);
+    const [showEletrifiedInfo, setShowEletrifiedInfo] = useState(false);
 
     useEffect(() => {
         if (loading) {
@@ -48,7 +54,16 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                     const lineNodes: LineNode[] = rinf.rinfToLineNodes(graphNodes);
                     console.log('RailwayRouteScreen, railwayRouteNr:', railwayRouteNr, ', LineNodes: ', lineNodes.length);
                     setData(lineNodes);
-                    setLineName(rinf.rinfGetLineName(railwayRouteNr) + lineNodeInfo(lineNodes));
+                    setLineName(rinf.rinfGetLineName(railwayRouteNr));
+
+                    const foundElectrified = lineNodes.find(line => line.electrified);
+                    const foundNotElectrified = lineNodes.find(line => line.electrified !== undefined && !line.electrified);
+                    let isEletrified: boolean | undefined = undefined;
+                    if (foundElectrified && foundNotElectrified) setShowEletrifiedInfo(true);
+                    else if (foundElectrified && !foundNotElectrified) isEletrified = true;
+                    else if (!foundElectrified && foundNotElectrified) isEletrified = false;
+
+                    setLineExtra(lineNodeInfo(lineNodes, isEletrified));
                     setLocationsOfPath(lineNodes.map(toLocation));
                     setLoading(false);
                 })
@@ -58,14 +73,15 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
 
     const queryText = () => {
         let q;
-        if (imcode === '0081') {
-            q = 'Streckennummer ÖBB ' + (railwayRouteNr / 100).toFixed(0) + ' ' + String(railwayRouteNr % 100).padStart(2, '0') + ' Wikipedia'; // öbb
-        } else if (imcode === '0087') {
-            q = 'streckennummer sncf (%22' + (railwayRouteNr / 1000).toFixed(0) + ' 000%22 OR %22' + railwayRouteNr.toFixed(0) + '%22) Wikipedia'; // sncf
+        const iRailwayRouteNr = parseInt(railwayRouteNr);
+        if (country === 'AUT') {
+            q = 'Streckennummer ÖBB ' + (iRailwayRouteNr / 100).toFixed(0) + ' ' + String(iRailwayRouteNr % 100).padStart(2, '0') + ' Wikipedia';
+        } else if (country === 'FRA') {
+            q = 'streckennummer sncf (%22' + (iRailwayRouteNr / 1000).toFixed(0) + ' 000%22 OR %22' + iRailwayRouteNr.toFixed(0) + '%22) Wikipedia';
         } else {
             q = 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
         }
-        console.log('imcode:', imcode, ', query:', q);
+        console.log('country:', country, ', query:', q);
         return q;
     }
 
@@ -77,7 +93,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
 
     const showLocation = async (item: LineNode) => {
         const locations: Location[] = [toLocation(item)]
-        navigation.navigate('BRouter', { isLongPress: false, locations });
+        navigation.navigate('BRouter', { isLongPress: false, locations, zoom: 14 });
     }
 
     interface ItemProps {
@@ -110,7 +126,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                 {item.maxSpeed && <View style={styles.maxSpeedColumn}>
                     <Text>{`max: ${item.maxSpeed} km`}</Text>
                 </View >}
-                {item.electrified !== undefined && <View style={styles.maxSpeedColumn}>
+                {showEletrifiedInfo && item.electrified !== undefined && <View style={styles.maxSpeedColumn}>
                     <Text>{`elektrifiziert: ${item.electrified ? 'ja' : 'nein'}`}</Text>
                 </View >}
                 {item.tunnelNodes.length > 0 && tunnels(item.tunnelNodes)}
@@ -131,6 +147,9 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                 <Text style={styles.itemHeaderText}>
                     {lineName}
                 </Text>
+                <Text style={styles.itemHeaderText}>
+                    {lineExtra}
+                </Text>
                 <Text style={styles.itemHeaderText}
                     onPress={() => Linking.openURL('https://www.google.de/search?q=+' + queryText())}>
                     Suche nach Bahnstecke {railwayRouteNr} {asLinkText('')}
@@ -145,7 +164,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.name + item.km}
+                keyExtractor={item => item.opid + item.km}
                 onEndReachedThreshold={50}
             />
         </View>

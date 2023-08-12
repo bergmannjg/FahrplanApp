@@ -2,20 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Text, TextInput, Keyboard } from "react-native";
 import Autocomplete from 'react-native-autocomplete-input';
 import useDebounce from './use-debounce';
-import { Hafas } from '../../lib/hafas';
+import { hafas } from '../../lib/hafas';
 import { Station, Stop, Location } from 'hafas-client';
 import { styles } from '../styles';
+import { rinfProfile, RInfSearchParams } from './../ScreenTypes';
 
 export interface CustomAutocompleteProps {
     placeholder: string,
     query: string,
     onPress: (name: string) => void,
-    client: Hafas
+    profile: string,
+    rinfSearchParams: RInfSearchParams
 }
 
 export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.Element {
 
-    const client = props.client;
+    const profile = props.profile;
+    const client = profile !== rinfProfile ? hafas(profile) : undefined;
     const onPress = props.onPress;
 
     const [query, setQuery] = useState(props.query);
@@ -27,7 +30,19 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
     const asyncFindBahnhoefe = (queryParam: string, callback: (q: string, arr: ReadonlyArray<Station | Stop | Location>) => void) => {
         if (queryParam === '' || queryParam.length < 3) {
             callback(queryParam, []);
-        } else {
+        } else if (profile === rinfProfile) {
+            import('../../lib/rinf-data-railway-routes')
+                .then(rinf => {
+                    const locations: Location[] = rinf.rinfOpInfos(queryParam, props.rinfSearchParams.textSearch)
+                        .map(op => {
+                            return {
+                                type: 'location', name: op.Name, id: op.UOPID,
+                                latitude: op.Latitude, longitude: op.Longitude
+                            };
+                        });
+                    callback(queryParam, locations);
+                })
+        } else if (client) {
             client.locations(queryParam, 12)
                 .then(locations => callback(queryParam, locations))
                 .catch(error => {
@@ -51,7 +66,7 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
         const stops = bahnhoefe.length === 1 && comp(query, bahnhoefe[0].name ?? "") ? [] : bahnhoefe as Array<Station | Stop | Location>;
         return stops.filter(s => s.name);
     }
-    
+
     return (
         <Autocomplete
             autoCapitalize="none"
@@ -66,7 +81,7 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
             placeholder={props.placeholder}
             flatListProps={{
                 keyboardShouldPersistTaps: 'always',
-                keyExtractor: (item) => item.name ?? "",
+                keyExtractor: (item) => item.name ?? "" + item.id ?? "",
                 renderItem: ({ item }) =>
                     <TouchableOpacity onPress={() => {
                         const x = item.name ?? '';

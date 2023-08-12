@@ -9,7 +9,7 @@ import 'moment/locale/en-gb';
 import { RadioButton, Text } from 'react-native-paper';
 import DropDown from "react-native-paper-dropdown";
 
-import { RootStackParamList, MainStackParamList } from './ScreenTypes';
+import { RootStackParamList, MainStackParamList, rinfProfile } from './ScreenTypes';
 
 type Props = {
     route: RouteProp<RootStackParamList, 'Options'>;
@@ -45,6 +45,7 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
         { label: 'Berliner Verkehrsbetriebe', value: 'bvg', fsEnabled: true },
         { label: 'Verkehrsverbund Berlin-Brandenburg', value: 'vbb', fsEnabled: false },
         { label: 'Mobil.NRW', value: 'mobilnrw', fsEnabled: true },
+        { label: 'RINF Streckendaten', value: rinfProfile, fsEnabled: true },
     ];
 
     const radioProfilePropsChecked = (clientLib: string) => {
