@@ -77,7 +77,7 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
         if (country === 'AUT') {
             q = 'Streckennummer ÖBB ' + (iRailwayRouteNr / 100).toFixed(0) + ' ' + String(iRailwayRouteNr % 100).padStart(2, '0') + ' Wikipedia';
         } else if (country === 'FRA') {
-            q = 'streckennummer sncf (%22' + (iRailwayRouteNr / 1000).toFixed(0) + ' 000%22 OR %22' + iRailwayRouteNr.toFixed(0) + '%22) Wikipedia';
+            q = 'streckennummer sncf (%22' + (iRailwayRouteNr / 1000).toFixed(0).padStart(3, '0') + ' 000%22 OR %22' + iRailwayRouteNr.toFixed(0).padStart(6, '0') + '%22) Wikipedia';
         } else {
             q = 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
         }
@@ -150,13 +150,22 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                 <Text style={styles.itemHeaderText}>
                     {lineExtra}
                 </Text>
-                <Text style={styles.itemHeaderText}
-                    onPress={() => Linking.openURL('https://www.google.de/search?q=+' + queryText())}>
-                    Suche nach Bahnstecke {railwayRouteNr} {asLinkText('')}
-                </Text>
+                <View style={styles.containerText}>
+                    <Text style={styles.itemHeaderText}
+                        onPress={() => Linking.openURL('https://www.google.de/search?q=+' + queryText())}>
+                        Suche nach Bahnstecke {railwayRouteNr} {asLinkText('')}
+                    </Text>
+                    {country === 'DEU' &&
+                        <Text style={styles.itemHeaderTextLeft}
+                            onPress={() => Linking.openURL('https://stellwerke.info/stw/index.php?status%5B%5D=0&status%5B%5D=1&status%5B%5D=100&str=' + railwayRouteNr + '&filter-submit=1')}>
+                            Stellwerke für {railwayRouteNr} {asLinkText('')}
+                        </Text>
+                    }
+                </View>
             </View>
             <FlatList
                 data={data}
+                initialNumToRender={15}
                 renderItem={({ item }) => (
                     <ListItem containerStyle={{ borderBottomWidth: 0, padding: 0 }}>
                         <ListItem.Content>

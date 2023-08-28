@@ -59,7 +59,7 @@
     "react-native-tcp-socket": "^6.0.2",
     "react-native-vector-icons": "^9.2.0",
     "react-native-webview": "^11.23.1",
-    "rinf-graph": "https://github.com/bergmannjg/RInfData/releases/download/1.11.0/rinf-graph-1.11.0.tgz",
+    "rinf-graph": "https://github.com/bergmannjg/RInfData/releases/download/1.12.0/rinf-graph-1.12.0.tgz",
     "slugg": "^1.2.1",
     "stream-browserify": "^3.0.0",
     "tz-lookup": "^6.1.25",

@@ -41,7 +41,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     }
 
     const defaultRInfSearchParams: RInfSearchParams = {
-        textSearch: 'caseinsensitive'
+        textSearch: 'caseinsensitive',
+        railwaRoutesAllItems: false,
     }
 
     const [nearbyStation, setNearbyStation] = useState<string | Location>('');
@@ -226,6 +227,11 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     const searchRadar = () => {
         console.log('searchRadar, profile:', clientProfile());
         navigation.navigate('Radar', { profile: clientProfile(), duration: 10 });
+    }
+
+    const searchRailwayRouteNetwork = () => {
+        console.log('searchRailwayRouteNetwork, profile:', clientProfile());
+        navigation.navigate('RailwayRouteNetwork', { railwaRoutesAllItems: rinfSearchParams.railwaRoutesAllItems });
     }
 
     const searchLineNetwork = () => {
@@ -437,7 +443,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
                 <View style={styles.containerSearch}>
                     <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchNearby()}>
                         <Text style={styles.itemText}>
-                            {t('HomeScreen.Nearby')}
+                            {profile !== rinfProfile ? t('HomeScreen.Nearby') : 'Streckenpunkte in der Nähe suchen'}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -445,11 +451,26 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
             {
                 orientation === 'PORTRAIT' &&
                 <View style={styles.containerSearch}>
-                    <TouchableOpacity style={styles.buttonOutlined} disabled={profile === rinfProfile} onPress={() => searchRadar()}>
-                        <Text style={styles.itemText}>
-                            {t('HomeScreen.Radar')}
-                        </Text>
-                    </TouchableOpacity>
+                    {profile !== rinfProfile &&
+                        <TouchableOpacity style={styles.buttonOutlined} onPress={() => searchRadar()}>
+                            <Text style={styles.itemText}>
+                                {t('HomeScreen.Radar')}
+                            </Text>
+                        </TouchableOpacity>
+                    }
+                    {profile == rinfProfile &&
+                        <Pressable style={styles.buttonOutlined} onPress={() => searchRailwayRouteNetwork()}>
+                            {({ pressed }) => (
+                                pressed
+                                    ? <Text style={styles.itemButtonTextPressed}>
+                                        Schnellfahrstrecken
+                                    </Text>
+                                    : <Text style={styles.itemButtonText}>
+                                        Schnellfahrstrecken
+                                    </Text>
+                            )}
+                        </Pressable>
+                    }
                 </View>
             }
             {

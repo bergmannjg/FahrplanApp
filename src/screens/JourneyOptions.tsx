@@ -31,6 +31,7 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
     const [regional, setRegional] = useState(params.navigationParams.journeyParams.regional);
     const [age, setAge] = useState(params.navigationParams.journeyParams.age);
     const [textSearch, setTextSearch] = useState(params.navigationParams.rinfSearchParams?.textSearch);
+    const [railwaRoutesAllItems, setRailwaRoutesAllItems] = useState(params.navigationParams.rinfSearchParams?.railwaRoutesAllItems);
     const results = params.navigationParams.journeyParams.results;
 
     const onToggleTransfers = () => setTransfers(transfers == 0 ? -1 : 0);
@@ -40,7 +41,7 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
         console.log('goback JourneyOptionsScreen', transferTime);
         navigation.navigate('Home', {
             journeyParams: { bahncardDiscount: bahncard % 100, bahncardClass: Math.floor(bahncard / 100), age, results, firstClass, transfers, transferTime, regional },
-            rinfSearchParams: { textSearch }
+            rinfSearchParams: { textSearch, railwaRoutesAllItems }
         });
     }
 
@@ -83,12 +84,22 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
         { label: 'regular expression', value: 'regex' },
     ];
 
+    const radioRailwaRoutesAllItems: ListItem[] = [
+        { label: 'alle', value: 'true' },
+        { label: 'nur länger als 10 km', value: 'false' },
+    ];
+
     if (isRInfProfile)
         return (
             <View style={styles.container}>
                 <Text style={styles.radioButtonTitle}>Textsuche</Text>
                 <RadioButton.Group onValueChange={newValue => setTextSearch(newValue as 'exact' | 'caseinsensitive' | 'regex')} value={textSearch}>
                     {radioItems(radioTextSearchItems)}
+                </RadioButton.Group>
+
+                <Text style={styles.radioButtonTitle}>Anzeige Schnellfahrstrecken</Text>
+                <RadioButton.Group onValueChange={newValue => setRailwaRoutesAllItems(newValue === 'true')} value={railwaRoutesAllItems.toString()}>
+                    {radioItems(radioRailwaRoutesAllItems)}
                 </RadioButton.Group>
 
                 <View style={styles.container3}>

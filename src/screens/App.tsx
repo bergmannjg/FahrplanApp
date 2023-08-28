@@ -21,6 +21,7 @@ import JourneyOptionsScreen from './JourneyOptions';
 import BRouterScreen from './BRouter';
 import TripScreen from './Trip';
 import LineNetworkScreen from './LineNetwork';
+import RailwayRouteNetworkScreen from './RailwayRouteNetwork';
 import MyJourneysScreen from './MyJourneys';
 import WebViewScreen from './WebView';
 import ThirdPartyLicensesScreen from './third-party-licenses';
@@ -62,6 +63,11 @@ function MainStackScreen() {
         name="LineNetwork"
         component={LineNetworkScreen}
         options={{ title: 'Liniennetz 2023' }}
+      />
+      <MainStack.Screen
+        name="RailwayRouteNetwork"
+        component={RailwayRouteNetworkScreen}
+        options={{ title: 'Schnellfahrstrecken' }}
       />
       <MainStack.Screen
         name="MyJourneys"

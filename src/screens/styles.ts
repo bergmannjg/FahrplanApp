@@ -48,6 +48,12 @@ export const styles = StyleSheet.create({
     padding: 0,
     borderWidth: 0,
   },
+  containerText: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    padding: 0,
+    borderWidth: 0,
+  },
   containerDateTime: {
     alignSelf: 'stretch',
     minWidth: 200,

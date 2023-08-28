@@ -219,10 +219,10 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
         );
     }
 
-    if(loading){
-        return(
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator size="large"/>
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
             </View>
         );
     }

@@ -5,13 +5,8 @@
     "main": "dist/cli.js",
     "type": "module",
     "dependencies": {
-        "db-prices": "^3.0.3",
-        "fs-hafas-client": "https://github.com/bergmannjg/fshafas/releases/download/2.1.0/fs-hafas-client-2.1.0.tgz",
-        "fs-hafas-profiles": "https://github.com/bergmannjg/fshafas/releases/download/2.1.0/fs-hafas-profiles-2.1.0.tgz",
         "geolib": "^3.3.1",
         "google-polyline": "^1.0.3",
-        "hafas-client": "^6.0.0",
-        "rinf-graph": "https://github.com/bergmannjg/RInfData/releases/download/1.8.0/rinf-graph-1.8.0.tgz",
         "isomorphic-fetch": "^3.0.0",
         "md5": "^2.3.0",
         "minimist": "^1.2.5",

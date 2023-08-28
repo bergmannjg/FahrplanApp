@@ -9,6 +9,7 @@ export function asLinkText(s: string): string {
 
 export interface RInfSearchParams {
     textSearch: 'first exact match' | 'exact' | 'caseinsensitive' | 'regex';
+    railwaRoutesAllItems: boolean;
 }
 
 export const rinfProfile = 'rinf/strecken';
@@ -88,6 +89,10 @@ export interface LineNetworkParams {
     profile: string
 }
 
+export interface RailwayRouteNetworkParams {
+    railwaRoutesAllItems: boolean;
+}
+
 export interface MyJourneysParams {
     tripDetails: boolean,
     compactifyPath: boolean,
@@ -163,6 +168,7 @@ export type MainStackParamList = {
     Home: HomeScreenParams;
     Connections: ConnectionsScreenParams;
     LineNetwork: LineNetworkParams;
+    RailwayRouteNetwork: RailwayRouteNetworkParams;
     MyJourneys: MyJourneysParams;
     BestPriceConnections: BestPriceConnectionsScreenParams;
     Radar: RadarScreenParams;

@@ -1,5 +1,5 @@
 import { rinfgraph } from 'rinf-graph/rinfgraph.bundle.js';
-import type { GraphNode, OpInfo, LineInfo, Location, PathElement } from 'rinf-graph/rinfgraph.bundle';
+import type { GraphNode, OpInfo, LineInfo, Location, PathElement, GraphEdge } from 'rinf-graph/rinfgraph.bundle';
 import { Stop } from 'hafas-client';
 import { distance } from './distance';
 
@@ -32,9 +32,51 @@ interface LineNode {
     tunnelNodes: TunnelNode[];
 }
 
+// todo: move to LineInfo
+interface LineInfoExtra {
+    lineInfo: LineInfo;
+    maxSpeed: number;
+    lengthWithHighSpeed: number; // speed >= 200 km/h
+}
+
 const mapOps = opInfos.reduce((map: Map<string, OpInfo>, op: OpInfo) => map.set(op.UOPID, op), new Map());
 const mapLines = lineInfos.reduce((map: Map<string, LineInfo>, line: LineInfo) => map.set(line.Line, line), new Map());
 const graph = rinfgraph.Graph_toGraph(g);
+
+function addLengthWithHighSpeed(li: LineInfoExtra, node: GraphNode, edge: GraphEdge) {
+    const nodeIndex = li.lineInfo.UOPIDs.findIndex(id => id === node.Node);
+    const edgeIndex = li.lineInfo.UOPIDs.findIndex(id => id === edge.Node);
+    if (nodeIndex >= 0 && edgeIndex >= 0 && nodeIndex + 1 === edgeIndex) {
+        li.lengthWithHighSpeed += edge.Length;
+    }
+}
+
+export function getLineInfoExtra(): LineInfoExtra[] {
+    const lineInfoExtras = (g as GraphNode[]).reduce(((acc: LineInfoExtra[], node: GraphNode) => {
+        node.Edges.forEach(edge => {
+            const found = acc.find(li => li.lineInfo.Line === edge.Line && li.lineInfo.Country === edge.Country);
+            if (found) {
+                if (found.maxSpeed < edge.MaxSpeed) {
+                    found.maxSpeed = edge.MaxSpeed;
+                }
+                if (edge.MaxSpeed >= 200) {
+                    addLengthWithHighSpeed(found, node, edge);
+                }
+            } else if (edge.MaxSpeed >= 200) {
+                const lineInfo = lineInfos.find(li => li.Line === edge.Line && li.Country === edge.Country);
+                if (lineInfo) {
+                    const li = { lineInfo, maxSpeed: edge.MaxSpeed, lengthWithHighSpeed: 0 };
+                    addLengthWithHighSpeed(li, node, edge);
+                    acc.push(li)
+                }
+            }
+        });
+        return acc;
+    }), []);
+    console.log('lineInfoExtras', lineInfoExtras.length);
+    lineInfoExtras.sort((a, b) => (a.lineInfo.Country + a.lineInfo.Line).localeCompare(b.lineInfo.Country + b.lineInfo.Line))
+    return lineInfoExtras;
+}
 
 function rinfTypeToString(t?: number): string {
     switch (t) {
@@ -53,6 +95,7 @@ function rinfTypeToString(t?: number): string {
 }
 
 interface OpIdDist {
+    uopid?: string;
     name?: string;
     km: number;
 }
@@ -61,20 +104,38 @@ function nearby(lat1: number, lon1: number, lat2: number, lon2: number): boolean
     return Math.abs(lat1 - lat2) < 1 && Math.abs(lon1 - lon2) < 1;
 }
 
-function getOpIdWithMinDistanceFromLatLon(s: Stop): string | undefined {
+function prefix(words: string[]): string {
+    // check border cases size 1 array and empty first word)
+    if (!words[0] || words.length == 1) return words[0] || "";
+    let i = 0;
+    // while all words have the same character at position i, increment i
+    while (words[0][i] && words.every(w => w[i] === words[0][i]))
+        i++;
 
+    // prefix is the substring from the beginning to the last successfully checked i
+    return words[0].substring(0, i);
+}
+
+function getOpIdWithMinDistanceFromLatLon(s: Stop): string | undefined {
+    const maxKm = 2;
     const opid = opInfos.reduce((state: OpIdDist, op: OpInfo) => {
         if (s.location?.latitude && s.location?.longitude && nearby(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude)) {
             const dist = distance(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude);
-            if (dist < state.km) {
-                state.name = op.UOPID;
-                state.km = dist;
+            if (dist < maxKm) {
+                const prefixWithCandidate = prefix([s.name ?? '', op.Name])
+                const prefixWithState = prefix([s.name ?? '', state.name ?? ''])
+                if (dist < state.km || prefixWithState.length === 0 && prefixWithCandidate.length > op.Name.length / 2) {
+                    console.log('OpId search, dist', dist.toFixed(3), op.Name);
+                    state.uopid = op.UOPID;
+                    state.name = op.Name;
+                    state.km = dist;
+                }
             }
         }
         return state;
-    }, { name: undefined, km: 2 });
-    console.log('OpId found', opid.name, ', km ', opid.km.toFixed(3), ' for stop ', s.name);
-    return opid.name;
+    }, { uopid: undefined, km: maxKm });
+    console.log('OpId found', opid.uopid, '/', opid.name, ', km ', opid.km.toFixed(3), ' for stop ', s.name, s.location?.longitude, ',', s.location?.latitude);
+    return opid.uopid;
 }
 
 function findOPIDForStop(s: Stop): string {
@@ -281,4 +342,4 @@ function rinfNearby(latitude: number, longitude: number, maxdistance: number): O
 
 export { rinfNearby, rinfOpInfos, rinfTypeToString, rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripStops, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
 
-export type { PathElement, LineNode, TunnelNode }
+export type { PathElement, LineNode, TunnelNode, LineInfoExtra }
