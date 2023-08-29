@@ -10,8 +10,8 @@ Android App to get timetable information for public transportation in germany an
 
 ## Installation
 
-* restore db-data: `./scripts/restore-data.sh`
 * install packages: `npm install`
+* load EraKG data: `./node_modules/rinf-graph/bin/EraKGLoader <countries>`, for instance "DEU;FRA;BEL"
 * compile: `tsc`
 * run tests: `npm test`
 * install on device: `npm run android-release -- --deviceId <id of device>`

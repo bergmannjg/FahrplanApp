@@ -34,15 +34,26 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
     const [count, setCount] = useState(0);
     const [days, setDays] = useState(params.days);
 
-    console.log('data.length: ', data.length);
+    console.log('data.length: ', data.length, 'loading:', loading, 'date: ', date);
 
     const query1 = params.station1;
     const query2 = params.station2;
+    const via = params.via;
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const tripDetails = params.tripDetails;
     const journeyParams = params.journeyParams;
     const compactifyPath = params.compactifyPath;
+
+    const isFutureDate = (date: Date): boolean => {
+        return (new Date()) < date;
+    }
+
+    function addDays(date: Date, days: number): Date {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
 
     const makeRemoteRequest = async () => {
         console.log('makeRemoteRequest, loading:', loading);
@@ -54,14 +65,19 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
                 client.isLocation(query1) ? [query1] :
                     await client.locations(query1, 1);
             console.log('from:', locationsFrom[0].id, locationsFrom[0].name);
+
+            const locationsVia = via && via.length > 0 ?
+                (await client.locations(via, 1)) : [{ id: undefined, name: via }];
+            console.log('via:', locationsVia[0].id, locationsVia[0].name, via);
+
             const locationsTo =
                 client.isLocation(query2) ? [query2]
                     : await client.locations(query2, 1);
             console.log('to:', locationsTo[0].id, locationsTo[0].name);
 
-            console.log('journeyParams: ', journeyParams);
-            if (locationsFrom[0].id !== undefined && locationsTo[0].id !== undefined) {
-                dbPrices(locationsFrom[0].id, locationsTo[0].id, date, days, journeyParams)
+            console.log('dbPrices: ', locationsFrom[0].id, locationsTo[0].id, date.toString(), days);
+            if (isFutureDate(date) && locationsFrom[0].id !== undefined && locationsTo[0].id !== undefined) {
+                dbPrices(locationsFrom[0].id, locationsTo[0].id, date, days, journeyParams, locationsVia[0].id)
                     .then(journeys => {
                         const infos = [] as JourneyInfo[];
                         journeys.slice(0, 7).forEach(journey => {
@@ -69,20 +85,23 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
                             infos.push(info);
                         });
                         console.log('journeyInfos', infos.length);
-                        setLoading(false);
                         setData(infos);
+                        setLoading(false);
                     })
                     .catch((error) => {
                         console.log('There has been a problem with your dbPrices operation: ' + error);
                         console.log(error.stack);
-                        setLoading(false);
                         setData([]);
+                        setLoading(false);
                     });
+            } else {
+                console.log('no future date');
+                setLoading(false);
             }
         } catch (error) {
             console.log('makeRemoteRequest: error ', error);
-            setLoading(false);
             setData([]);
+            setLoading(false);
         }
     };
 
@@ -119,9 +138,9 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
     };
 
     const goToBestPriceView = (item: JourneyInfo) => {
-        if (days > 0) {
+        if (days > 1) {
             setDate(new Date(item.originDeparture));
-            setDays(0);
+            setDays(1);
             setData([]);
             setCount(count + 1);
         } else {
@@ -129,22 +148,29 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
         }
     };
 
-    const showIncr = (hours: number) => {
+    const getIncrDate = (inFuture: boolean): Date => {
+        const hours = (inFuture ? 1 : -1) * 24 * days;
         const msecsPerHour = 60 * 60 * 1000;
-        const newDate = date;
+        const newDate = new Date(date);
         newDate.setTime(newDate.getTime() + ((hours) * msecsPerHour));
-        console.log('date: ', newDate)
-        setDate(newDate);
-        setData([]);
-        setCount(count + 1);
+        return newDate;
+    }
+
+    const showIncr = (newDate: Date) => {
+        if (isFutureDate(newDate)) {
+            console.log('date: ', newDate)
+            setDate(newDate);
+            setData([]);
+            setCount(count + 1);
+        }
     }
 
     const showPrev = () => {
-        showIncr(-24 * (days > 0 ? days : 1));
+        showIncr(getIncrDate(false));
     }
 
     const showNext = () => {
-        showIncr(24 * (days > 0 ? days : 1));
+        showIncr(getIncrDate(true));
     }
 
     const showDiffDays = (from: Date, to: Date) => {
@@ -183,11 +209,11 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
                         <View>
                             <View style={styles.containerPriceText}>
                                 <Text>{`${t('ConnectionsScreen.Changes', { changes: item.changes })}, ${item.lineNames}`}</Text>
-                                {item.price && days > 0 &&
+                                {item.price && days > 1 &&
                                     <TouchableOpacity onPress={() => goToBestPriceView(item)}>
                                         <Text style={styles.priceText}>{`${item.price}`}</Text>
                                     </TouchableOpacity>}
-                                {item.price && days === 0 &&
+                                {item.price && days === 1 &&
                                     <Text>{`${item.price}`}</Text>
                                 }
                             </View>
@@ -204,25 +230,41 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
 
     return (
         <View style={styles.container}>
-            <View style={stylesLandscape.containerButtons} >
-                <TouchableOpacity style={styles.buttonConnection} onPress={() => showPrev()}>
-                    <Text style={styles.itemButtonText}>
-                        {days > 0 ? t('BestPriceConnectionsScreen.Earlier', { days }) : t('BestPriceConnectionsScreen.PrevDay')}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonConnection} onPress={() => showNext()}>
-                    <Text style={styles.itemButtonText}>
-                        {days > 0 ? t('BestPriceConnectionsScreen.Later', { days }) : t('BestPriceConnectionsScreen.NextDay')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            {!loading &&
+                <View style={stylesLandscape.containerButtons} >
+                    {isFutureDate(getIncrDate(false)) &&
+                        <TouchableOpacity style={styles.buttonConnection} onPress={() => showPrev()}>
+                            <Text style={styles.itemButtonText}>
+                                {days > 1 ? t('BestPriceConnectionsScreen.Earlier', { days }) : t('BestPriceConnectionsScreen.PrevDay')}
+                            </Text>
+                        </TouchableOpacity>
+                    }
+                    <TouchableOpacity style={styles.buttonConnection} onPress={() => showNext()}>
+                        <Text style={styles.itemButtonText}>
+                            {days > 1 ? t('BestPriceConnectionsScreen.Later', { days }) : t('BestPriceConnectionsScreen.NextDay')}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            }
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
-                <Text style={styles.itemHeaderText}>
+                {via && via.length > 0 && <Text style={styles.itemHeaderText}>
+                    {toName(query1)} {t('JourneyplanScreen.DirectionTo')} {toName(query2)} über {toName(via)}
+                </Text>
+                }
+                {via.length === 0 && <Text style={styles.itemHeaderText}>
                     {toName(query1)} {t('JourneyplanScreen.DirectionTo')} {toName(query2)}
                 </Text>
-                <Text style={styles.itemHeaderText}>
-                    {t('BestPriceConnectionsScreen.Date', { date })}
-                </Text>
+                }
+                {days == 1 &&
+                    <Text style={styles.itemHeaderText}>
+                        {t('BestPriceConnectionsScreen.Date', { date })}
+                    </Text>
+                }
+                {days > 1 &&
+                    <Text style={styles.itemHeaderText}>
+                        {t('BestPriceConnectionsScreen.DateRange', { date1: date, date2: addDays(date, days - 1) })}
+                    </Text>
+                }
                 {
                     !loading && data.length === 0 && <Text style={styles.itemHeaderText}>
                         keine Verbindungn gefunden

@@ -5,7 +5,7 @@ import { RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { RadioButton, Switch, Text } from 'react-native-paper';
 
-import { RootStackParamList, MainStackParamList } from './ScreenTypes';
+import { RootStackParamList, MainStackParamList, rinfProfile } from './ScreenTypes';
 
 type Props = {
     route: RouteProp<RootStackParamList, 'JourneyOptions'>;
@@ -22,6 +22,7 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
     const { t } = useTranslation();
 
     const { params } = route;
+    const isRInfProfile = params.profile === rinfProfile;
 
     const [bahncard, setBahncard] = useState(params.navigationParams.journeyParams.bahncardClass * 100 + params.navigationParams.journeyParams.bahncardDiscount);
     const [firstClass, setFirstClass] = useState(params.navigationParams.journeyParams.firstClass);
@@ -29,6 +30,8 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
     const [transferTime, setTransferTime] = useState(params.navigationParams.journeyParams.transferTime);
     const [regional, setRegional] = useState(params.navigationParams.journeyParams.regional);
     const [age, setAge] = useState(params.navigationParams.journeyParams.age);
+    const [textSearch, setTextSearch] = useState(params.navigationParams.rinfSearchParams?.textSearch);
+    const [railwaRoutesAllItems, setRailwaRoutesAllItems] = useState(params.navigationParams.rinfSearchParams?.railwaRoutesAllItems);
     const results = params.navigationParams.journeyParams.results;
 
     const onToggleTransfers = () => setTransfers(transfers == 0 ? -1 : 0);
@@ -36,7 +39,10 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
 
     const goback = () => {
         console.log('goback JourneyOptionsScreen', transferTime);
-        navigation.navigate('Home', { journeyParams: { bahncardDiscount: bahncard % 100, bahncardClass: Math.floor(bahncard / 100), age, results, firstClass, transfers, transferTime, regional } });
+        navigation.navigate('Home', {
+            journeyParams: { bahncardDiscount: bahncard % 100, bahncardClass: Math.floor(bahncard / 100), age, results, firstClass, transfers, transferTime, regional },
+            rinfSearchParams: { textSearch, railwaRoutesAllItems }
+        });
     }
 
     interface ListItem {
@@ -71,6 +77,40 @@ export default function JourneyOptionsScreen({ route, navigation }: Props): JSX.
         { label: '8 Min.', value: '8' },
         { label: '30 Min.', value: '30' },
     ];
+
+    const radioTextSearchItems: ListItem[] = [
+        { label: 'exact match', value: 'exact' },
+        { label: 'case insensitive', value: 'caseinsensitive' },
+        { label: 'regular expression', value: 'regex' },
+    ];
+
+    const radioRailwaRoutesAllItems: ListItem[] = [
+        { label: 'alle', value: 'true' },
+        { label: 'nur länger als 10 km', value: 'false' },
+    ];
+
+    if (isRInfProfile)
+        return (
+            <View style={styles.container}>
+                <Text style={styles.radioButtonTitle}>Textsuche</Text>
+                <RadioButton.Group onValueChange={newValue => setTextSearch(newValue as 'exact' | 'caseinsensitive' | 'regex')} value={textSearch}>
+                    {radioItems(radioTextSearchItems)}
+                </RadioButton.Group>
+
+                <Text style={styles.radioButtonTitle}>Anzeige Schnellfahrstrecken</Text>
+                <RadioButton.Group onValueChange={newValue => setRailwaRoutesAllItems(newValue === 'true')} value={railwaRoutesAllItems.toString()}>
+                    {radioItems(radioRailwaRoutesAllItems)}
+                </RadioButton.Group>
+
+                <View style={styles.container3}>
+                    <TouchableOpacity style={styles.button} onPress={() => goback()}>
+                        <Text style={styles.itemText}>
+                            {t('OptionsScreen.Update')}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        );
 
     return (
         <View style={styles.container}>

@@ -1,0 +1,726 @@
+[
+    {
+        "Line": 2,
+        "Train": "ICE 1122",
+        "StartStation": "M\u00FCnchen",
+        "EndStation": "D\u00FCsseldorf",
+        "ViaStations": [
+            "N\u00FCrnberg",
+            "Frankfurt(M)Flughafen Fernbf",
+            "K\u00F6ln Messe/Deutz(tief)"
+        ]
+    },
+    {
+        "Line": 4,
+        "Train": "ICE 1094",
+        "StartStation": "Stuttgart",
+        "EndStation": "Kiel",
+        "ViaStations": [
+            "Mannheim",
+            "Frankfurt(M)Flughafen Fernbf",
+            "Frankfurt(Main)",
+            "Hannover",
+            "Hamburg"
+        ]
+    },
+    {
+        "Line": 9,
+        "Train": "ICE 1156",
+        "StartStation": "Berlin S\u00FCdkreuz",
+        "EndStation": "Bonn-Bad Godesberg",
+        "ViaStations": [
+            "Berlin Hbf",
+            "K\u00F6ln",
+            "Bonn"
+        ]
+    },
+    {
+        "Line": 10,
+        "Train": "ICE 951",
+        "StartStation": "K\u00F6ln",
+        "EndStation": "Berlin Ostbahnhof",
+        "ViaStations": [
+            "Wuppertal",
+            "Hamm(Westf)",
+            "Hannover",
+            "Wolfsburg",
+            "Berlin Hbf"
+        ]
+    },
+    {
+        "Line": 11,
+        "Train": "ICE 1219",
+        "StartStation": "Berlin-Gesundbrunnen",
+        "EndStation": "Innsbruck",
+        "ViaStations": [
+            "Berlin Hbf",
+            "Berlin S\u00FCdkreuz",
+            "Leipzig",
+            "Erfurt",
+            "Frankfurt(Main)",
+            "Mannheim",
+            "Stuttgart",
+            "M\u00FCnchen",
+            "Kufstein"
+        ]
+    },
+    {
+        "Line": 12,
+        "Train": "ICE 270",
+        "StartStation": "Basel Bad Bf",
+        "EndStation": "Berlin Ostbahnhof",
+        "ViaStations": [
+            "Mannheim",
+            "Frankfurt(Main)",
+            "Kassel-Wilhelmsh\u00F6he",
+            "Braunschweig",
+            "Wolfsburg",
+            "Berlin Hbf"
+        ]
+    },
+    {
+        "Line": 13,
+        "Train": "ICE 1095",
+        "StartStation": "Berlin-Gesundbrunnen",
+        "EndStation": "Stuttgart",
+        "ViaStations": [
+            "Berlin-Spandau",
+            "Stendal",
+            "Wolfsburg",
+            "Hannover",
+            "Kassel-Wilhelmsh\u00F6he",
+            "Frankfurt(Main)",
+            "Mannheim"
+        ]
+    },
+    {
+        "Line": 14,
+        "Train": "ICE 1050",
+        "StartStation": "Ostseebad Binz",
+        "EndStation": "K\u00F6ln",
+        "ViaStations": [
+            "Stralsund",
+            "Pasewalk",
+            "Berlin-Gesundbrunnen",
+            "Berlin Hbf",
+            "Berlin S\u00FCdkreuz",
+            "Berlin Hbf",
+            "Hannover",
+            "Dortmund",
+            "Essen",
+            "D\u00FCsseldorf"
+        ]
+    },
+    {
+        "Line": 15,
+        "Train": "ICE 1737",
+        "StartStation": "Stuttgart",
+        "EndStation": "Berlin-Gesundbrunnen",
+        "ViaStations": [
+            "Heidelberg",
+            "Darmstadt",
+            "Frankfurt(M)S\u00FCd",
+            "Erfurt",
+            "Halle(Saale)",
+            "Berlin S\u00FCdkreuz",
+            "Berlin Hbf"
+        ]
+    },
+    {
+        "Line": 17,
+        "Train": "IC 94",
+        "StartStation": "Wien",
+        "EndStation": "Rostock Hbf",
+        "ViaStations": [
+            "Linz",
+            "Passau",
+            "N\u00FCrnberg",
+            "Leipzig",
+            "Berlin S\u00FCdkreuz"
+        ]
+    },
+    {
+        "Line": 18,
+        "Train": "ICE 801",
+        "StartStation": "Kiel",
+        "EndStation": "M\u00FCnchen",
+        "ViaStations": [
+            "Hamburg-Altona",
+            "Berlin Hbf",
+            "Berlin S\u00FCdkreuz",
+            "Halle(Saale)",
+            "Erfurt",
+            "N\u00FCrnberg",
+            "Augsburg"
+        ]
+    },
+    {
+        "Line": 20,
+        "Train": "ICE 70",
+        "StartStation": "Chur",
+        "EndStation": "Hamburg-Altona",
+        "ViaStations": [
+            "Z\u00FCrich HB",
+            "Basel SBB",
+            "Mannheim",
+            "Frankfurt(Main)",
+            "Kassel-Wilhelmsh\u00F6he",
+            "Hannover"
+        ]
+    },
+    {
+        "Line": 22,
+        "Train": "ICE 774",
+        "StartStation": "Stuttgart",
+        "EndStation": "Hamburg-Altona",
+        "ViaStations": [
+            "Heidelberg",
+            "Mannheim",
+            "Frankfurt(M)Flughafen Fernbf",
+            "Frankfurt(Main)",
+            "Erfurt",
+            "Halle(Saale)",
+            "Berlin S\u00FCdkreuz",
+            "Berlin Hbf"
+        ]
+    },
+    {
+        "Line": 24,
+        "Train": "ICE 1284",
+        "StartStation": "Schwarzach-St. Veit",
+        "EndStation": "Hamburg",
+        "ViaStations": [
+            "Zell am See",
+            "W\u00F6rgl",
+            "Kufstein",
+            "M\u00FCnchen",
+            "Augsburg",
+            "W\u00FCrzburg",
+            "Kassel-Wilhelmsh\u00F6he",
+            "Hannover"
+        ]
+    },
+    {
+        "Line": 25,
+        "Train": "ICE 785",
+        "StartStation": "Hamburg-Altona",
+        "EndStation": "M\u00FCnchen",
+        "ViaStations": [
+            "Hannover",
+            "Erfurt",
+            "N\u00FCrnberg"
+        ]
+    },
+    {
+        "Line": 26,
+        "Train": "ICE 1578",
+        "StartStation": "Karlsruhe",
+        "EndStation": "Stralsund",
+        "ViaStations": [
+            "Heidelberg",
+            "Darmstadt",
+            "Frankfurt(Main)",
+            "Gie\u00DFen",
+            "Kassel-Wilhelmsh\u00F6he",
+            "Hannover",
+            "Hamburg",
+            "Schwerin",
+            "Rostock"
+        ]
+    },
+    {
+        "Line": 27,
+        "Train": "EC 252",
+        "StartStation": "Budapest-Nyugati pu.",
+        "EndStation": "Hamburg-Altona",
+        "ViaStations": [
+            "Sturovo",
+            "Bratislava hl.st",
+            "Kuty",
+            "Brno hl.n.",
+            "Praha-Holesovice",
+            "Decin hl.n.",
+            "Bad Schandau",
+            "Dresden",
+            "Berlin S\u00FCdkreuz",
+            "Berlin Hbf"
+        ]
+    },
+    {
+        "Line": 28,
+        "Train": "ICE 1715",
+        "StartStation": "Ostseebad Binz",
+        "EndStation": "M\u00FCnchen",
+        "ViaStations": [
+            "Stralsund",
+            "Pasewalk",
+            "Berlin-Gesundbrunnen",
+            "Berlin Hbf",
+            "Berlin S\u00FCdkreuz",
+            "Leipzig",
+            "Erfurt",
+            "N\u00FCrnberg"
+        ]
+    },
+    {
+        "Line": 29,
+        "Train": "ICE 1706",
+        "StartStation": "M\u00FCnchen",
+        "EndStation": "Hamburg-Altona",
+        "ViaStations": [
+            "Augsburg",
+            "N\u00FCrnberg",
+            "Coburg",
+            "Erfurt",
+            "Halle(Saale)",
+            "Berlin S\u00FCdkreuz",
+            "Berlin Hbf"
+        ]
+    },
+    {
+        "Line": 32,
+        "Train": "EC 115",
+        "StartStation": "M\u00FCnster",
+        "EndStation": "Klagenfurt",
+        "ViaStations": [
+            "Recklinghausen",
+            "Oberhausen",
+            "D\u00FCsseldorf",
+            "K\u00F6ln",
+            "Bonn",
+            "Mainz",
+            "Mannheim",
+            "Stuttgart",
+            "M\u00FCnchen",
+            "Salzburg",
+            "Bad Gastein",
+            "Villach"
+        ]
+    },
+    {
+        "Line": 34,
+        "Train": "IC 2326",
+        "StartStation": "Stuttgart",
+        "EndStation": "Dortmund",
+        "ViaStations": [
+            "Pforzheim",
+            "Karlsruhe",
+            "Heidelberg",
+            "Mannheim",
+            "Frankfurt(M)Flughafen Fernbf",
+            "Frankfurt(Main)",
+            "Siegen",
+            "Finnentrop"
+        ]
+    },
+    {
+        "Line": 35,
+        "Train": "ICE 1103",
+        "StartStation": "Norddeich Mole",
+        "EndStation": "Stuttgart",
+        "ViaStations": [
+            "Emden",
+            "M\u00FCnster",
+            "Gelsenkirchen",
+            "Oberhausen",
+            "D\u00FCsseldorf",
+            "K\u00F6ln",
+            "Bonn",
+            "Mainz",
+            "Mannheim"
+        ]
+    },
+    {
+        "Line": 39,
+        "Train": "IC 2311",
+        "StartStation": "Westerland(Sylt)",
+        "EndStation": "M\u00FCnchen",
+        "ViaStations": [
+            "Hamburg",
+            "Bremen",
+            "M\u00FCnster",
+            "Recklinghausen",
+            "Essen",
+            "D\u00FCsseldorf",
+            "K\u00F6ln",
+            "Bonn",
+            "Mainz",
+            "Frankfurt(Main)",
+            "W\u00FCrzburg",
+            "Augsburg"
+        ]
+    },
+    {
+        "Line": 41,
+        "Train": "ICE 528",
+        "StartStation": "Garmisch-Partenkirchen",
+        "EndStation": "Dortmund",
+        "ViaStations": [
+            "M\u00FCnchen",
+            "N\u00FCrnberg",
+            "W\u00FCrzburg",
+            "Frankfurt(Main)",
+            "Frankfurt(M)Flughafen Fernbf",
+            "K\u00F6ln Messe/Deutz(tief)",
+            "D\u00FCsseldorf",
+            "Essen"
+        ]
+    },
+    {
+        "Line": 42,
+        "Train": "ICE 619",
+        "StartStation": "Kiel",
+        "EndStation": "M\u00FCnchen",
+        "ViaStations": [
+            "Hamburg",
+            "Bremen",
+            "M\u00FCnster",
+            "Dortmund",
+            "Essen",
+            "D\u00FCsseldorf",
+            "K\u00F6ln",
+            "Frankfurt(M)Flughafen Fernbf",
+            "Frankfurt(Main)",
+            "Mannheim",
+            "Heidelberg",
+            "Stuttgart"
+        ]
+    },
+    {
+        "Line": 43,
+        "Train": "EC 6",
+        "StartStation": "Interlaken Ost",
+        "EndStation": "Hamburg-Altona",
+        "ViaStations": [
+            "Bern",
+            "Basel SBB",
+            "Mannheim",
+            "Mainz",
+            "Bonn",
+            "K\u00F6ln",
+            "D\u00FCsseldorf",
+            "Essen",
+            "Dortmund",
+            "M\u00FCnster",
+            "Bremen"
+        ]
+    },
+    {
+        "Line": 45,
+        "Train": "ICE 710",
+        "StartStation": "Stuttgart",
+        "EndStation": "K\u00F6ln",
+        "ViaStations": [
+            "Heidelberg",
+            "Mannheim",
+            "Mainz",
+            "Wiesbaden",
+            "K\u00F6ln/Bonn Flughafen"
+        ]
+    },
+    {
+        "Line": 47,
+        "Train": "ICE 918",
+        "StartStation": "M\u00FCnchen",
+        "EndStation": "Dortmund",
+        "ViaStations": [
+            "Stuttgart",
+            "Mannheim",
+            "Frankfurt(M)Flughafen Fernbf",
+            "K\u00F6ln Messe/Deutz(tief)",
+            "D\u00FCsseldorf",
+            "Essen"
+        ]
+    },
+    {
+        "Line": 49,
+        "Train": "ICE 815",
+        "StartStation": "Dortmund",
+        "EndStation": "Frankfurt(Main)",
+        "ViaStations": [
+            "Essen",
+            "D\u00FCsseldorf",
+            "K\u00F6ln Messe/Deutz(tief)",
+            "K\u00F6ln/Bonn Flughafen",
+            "Frankfurt(M)Flughafen Fernbf"
+        ]
+    },
+    {
+        "Line": 50,
+        "Train": "ICE 1657",
+        "StartStation": "Wiesbaden",
+        "EndStation": "Dresden",
+        "ViaStations": [
+            "Mainz",
+            "Frankfurt(M)Flughafen Fernbf",
+            "Frankfurt(Main)",
+            "Erfurt",
+            "Leipzig"
+        ]
+    },
+    {
+        "Line": 51,
+        "Train": "IC 2152",
+        "StartStation": "Gera",
+        "EndStation": "D\u00FCsseldorf",
+        "ViaStations": [
+            "Weimar",
+            "Erfurt",
+            "Kassel-Wilhelmsh\u00F6he",
+            "Paderborn",
+            "Hamm(Westf)",
+            "Dortmund",
+            "Essen",
+            "D\u00FCsseldorf Flughafen"
+        ]
+    },
+    {
+        "Line": 55,
+        "Train": "IC 2048",
+        "StartStation": "Dresden",
+        "EndStation": "Stuttgart",
+        "ViaStations": [
+            "Leipzig",
+            "Leipzig/Halle Flughafen",
+            "Halle(Saale)",
+            "Magdeburg",
+            "Hannover",
+            "Dortmund",
+            "Wuppertal",
+            "K\u00F6ln",
+            "Bonn",
+            "Mainz",
+            "Mannheim",
+            "Heidelberg"
+        ]
+    },
+    {
+        "Line": 56,
+        "Train": "IC 2431",
+        "StartStation": "Emden Au\u00DFenhafen",
+        "EndStation": "Cottbus",
+        "ViaStations": [
+            "Emden",
+            "Leer(Ostfriesl)",
+            "Bremen",
+            "Hannover",
+            "Magdeburg",
+            "Potsdam",
+            "Berlin Hbf",
+            "Berlin Ostbahnhof"
+        ]
+    },
+    {
+        "Line": 60,
+        "Train": "ICE 266",
+        "StartStation": "M\u00FCnchen",
+        "EndStation": "Basel SBB",
+        "ViaStations": [
+            "Stuttgart",
+            "Bruchsal",
+            "Karlsruhe"
+        ]
+    },
+    {
+        "Line": 61,
+        "Train": "IC 2068",
+        "StartStation": "Leipzig",
+        "EndStation": "Karlsruhe",
+        "ViaStations": [
+            "Jena Paradies",
+            "Bamberg",
+            "N\u00FCrnberg",
+            "Aalen",
+            "Stuttgart",
+            "Pforzheim"
+        ]
+    },
+    {
+        "Line": 62,
+        "Train": "EC 112",
+        "StartStation": "Klagenfurt",
+        "EndStation": "Frankfurt(Main)",
+        "ViaStations": [
+            "Villach",
+            "Bad Gastein",
+            "Salzburg",
+            "M\u00FCnchen",
+            "Stuttgart",
+            "Heidelberg"
+        ]
+    },
+    {
+        "Line": 75,
+        "Train": "IC 396",
+        "StartStation": "Hamburg",
+        "EndStation": "K\u00F8benhavn H",
+        "ViaStations": [
+            "Kiel",
+            "Flensburg",
+            "Padborg",
+            "Fredericia",
+            "Odense"
+        ]
+    },
+    {
+        "Line": 76,
+        "Train": "IC 383",
+        "StartStation": "Aarhus H",
+        "EndStation": "Hamburg",
+        "ViaStations": [
+            "Fredericia",
+            "Padborg",
+            "Flensburg"
+        ]
+    },
+    {
+        "Line": 77,
+        "Train": "IC 140",
+        "StartStation": "Berlin Ostbahnhof",
+        "EndStation": "Amsterdam C",
+        "ViaStations": [
+            "Berlin Hbf",
+            "Stendal",
+            "Hannover",
+            "Osnabr\u00FCck",
+            "Bad Bentheim",
+            "Hengelo"
+        ]
+    },
+    {
+        "Line": 78,
+        "Train": "ICE 120",
+        "StartStation": "Frankfurt(Main)",
+        "EndStation": "Amsterdam C",
+        "ViaStations": [
+            "Frankfurt(M)Flughafen Fernbf",
+            "K\u00F6ln Messe/Deutz(tief)",
+            "D\u00FCsseldorf",
+            "Arnhem"
+        ]
+    },
+    {
+        "Line": 79,
+        "Train": "ICE 18",
+        "StartStation": "Frankfurt(Main)",
+        "EndStation": "Bruxelles-Midi",
+        "ViaStations": [
+            "Frankfurt(M)Flughafen Fernbf",
+            "K\u00F6ln",
+            "Aachen",
+            "Liege-Guillemins"
+        ]
+    },
+    {
+        "Line": 82,
+        "Train": "TGV 9560",
+        "StartStation": "Frankfurt(Main)",
+        "EndStation": "Paris Est",
+        "ViaStations": [
+            "Mannheim",
+            "Karlsruhe",
+            "Strasbourg"
+        ]
+    },
+    {
+        "Line": 83,
+        "Train": "TGV 9576",
+        "StartStation": "M\u00FCnchen",
+        "EndStation": "Paris Est",
+        "ViaStations": [
+            "Stuttgart",
+            "Karlsruhe",
+            "Strasbourg"
+        ]
+    },
+    {
+        "Line": 84,
+        "Train": "TGV 9580",
+        "StartStation": "Frankfurt(Main)",
+        "EndStation": "Marseille-St-Charles",
+        "ViaStations": [
+            "Mannheim",
+            "Karlsruhe",
+            "Strasbourg",
+            "Mulhouse-Ville"
+        ]
+    },
+    {
+        "Line": 87,
+        "Train": "IC 183",
+        "StartStation": "Stuttgart",
+        "EndStation": "Z\u00FCrich HB",
+        "ViaStations": [
+            "Singen(Hohentwiel)",
+            "Schaffhausen"
+        ]
+    },
+    {
+        "Line": 88,
+        "Train": "ECE 96",
+        "StartStation": "M\u00FCnchen",
+        "EndStation": "Z\u00FCrich HB",
+        "ViaStations": [
+            "Memmingen",
+            "Lindau-Reutin",
+            "Bregenz",
+            "St. Margrethen",
+            "St. Gallen"
+        ]
+    },
+    {
+        "Line": 89,
+        "Train": "ICE 1201",
+        "StartStation": "Hamburg-Altona",
+        "EndStation": "St. Anton am Arlberg",
+        "ViaStations": [
+            "Hannover",
+            "Kassel-Wilhelmsh\u00F6he",
+            "W\u00FCrzburg",
+            "Augsburg",
+            "M\u00FCnchen Ost",
+            "Kufstein",
+            "Innsbruck"
+        ]
+    },
+    {
+        "Line": 90,
+        "Train": "RJX 60",
+        "StartStation": "Budapest-Keleti pu.",
+        "EndStation": "M\u00FCnchen",
+        "ViaStations": [
+            "Wien",
+            "Linz",
+            "Salzburg"
+        ]
+    },
+    {
+        "Line": 91,
+        "Train": "ICE 93",
+        "StartStation": "Hamburg-Altona",
+        "EndStation": "Wien",
+        "ViaStations": [
+           "Berlin Hbf",
+           "Berlin S\u00FCdkreuz",
+           "Halle(Saale)",
+           "Erfurt",
+           "Coburg",
+           "N\u00FCrnberg",
+           "Passau",
+           "Linz"
+        ]
+      },
+    {
+        "Line": 95,
+        "Train": "EC 56",
+        "StartStation": "Przemysl Glowny",
+        "EndStation": "Berlin Hbf",
+        "ViaStations": [
+            "Krakow Glowny Osobow",
+            "Wroclaw Glowny",
+            "Rzepin",
+            "Frankfurt(Oder)",
+            "Berlin Ostbahnhof"
+        ]
+    }
+]

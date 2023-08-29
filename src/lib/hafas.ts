@@ -1,31 +1,15 @@
 import { createClient, Feature, Profile } from 'hafas-client';
 
 import { profile as bvgProfile } from 'hafas-client/p/bvg/index.js';
-import { profile as cflProfile } from 'hafas-client/p/cfl/index.js';
-import { profile as cmtaProfile } from 'hafas-client/p/cmta/index.js';
 import { profile as dbProfile } from 'hafas-client/p/db/index.js';
-import { profile as dbbusradarnrwProfile } from 'hafas-client/p/db-busradar-nrw/index.js';
-import { profile as insaProfile } from 'hafas-client/p/insa/index.js';
-import { profile as invgProfile } from 'hafas-client/p/invg/index.js';
-import { profile as nahshProfile } from 'hafas-client/p/nahsh/index.js';
-import { profile as nvvProfile } from 'hafas-client/p/nvv/index.js';
 import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js';
-import { profile as pkpProfile } from 'hafas-client/p/pkp/index.js';
 import { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen/index.js';
-import { profile as rmvProfile } from 'hafas-client/p/rmv/index.js';
-import { profile as rsagProfile } from 'hafas-client/p/rsag/index.js';
-import { profile as saarfahrplanProfile } from 'hafas-client/p/saarfahrplan/index.js';
-import { profile as sbahnmuenchenProfile } from 'hafas-client/p/sbahn-muenchen/index.js';
-// import { profile as sncbProfile  } from 'hafas-client/p/sncb/index.js';
-import { profile as svvProfile } from 'hafas-client/p/svv/index.js';
 import { profile as vbbProfile } from 'hafas-client/p/vbb/index.js';
-import { profile as vbnProfile } from 'hafas-client/p/vbn/index.js';
-import { profile as vmtProfile } from 'hafas-client/p/vmt/index.js';
-import { profile as vsnProfile } from 'hafas-client/p/vsn/index.js';
 
 import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
 import { fshafas } from "fs-hafas-client";
 import { profiles } from "fs-hafas-profiles";
+import { distance } from './distance';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import geolib from 'geolib';
@@ -38,32 +22,14 @@ const chooseClient = (p: string, profile: Profile) => {
 const chooseProfile = (p: string): Profile => {
     switch (p) {
         case 'bvg': return bvgProfile;
-        case 'cfl': return cflProfile;
-        case 'cmta': return cmtaProfile;
         case 'db': return dbProfile;
-        case 'dbbusradarnrw': return dbbusradarnrwProfile;
-        case 'insa': return insaProfile;
-        case 'invg': return invgProfile;
-        case 'nahsh': return nahshProfile;
-        case 'nvv': return nvvProfile;
         case 'oebb': return oebbProfile;
-        case 'pkp': return pkpProfile;
         case 'rejseplanen': return rejseplanenProfile;
-        case 'rmv': return rmvProfile;
-        case 'rsag': return rsagProfile;
-        case 'saarfahrplan': return saarfahrplanProfile;
-        case 'sbahnmuenchen': return sbahnmuenchenProfile;
-        // case 'sncb': return sncbProfile;
-        case 'svv': return svvProfile;
         case 'vbb': return vbbProfile;
-        case 'vbn': return vbnProfile;
-        case 'vmt': return vmtProfile;
-        case 'vsn': return vsnProfile;
         case 'bvg-fsharp': return profiles.getProfile('bvg');
         case 'db-fsharp': return profiles.getProfile('db');
         case 'mobilnrw-fsharp': return profiles.getProfile('mobilnrw');
         case 'oebb-fsharp': return profiles.getProfile('oebb');
-        case 'saarfahrplan-fsharp': return profiles.getProfile('saarfahrplan');
         case 'rejseplanen-fsharp': return profiles.getProfile('rejseplanen');
         default: {
             console.log('choose default');
@@ -128,11 +94,11 @@ export interface Hafas {
     distanceOfLeg: (l: Leg) => number
 }
 
-function isStop(s: Station | Stop | Location | undefined): s is Stop {
+export function isStop(s: Station | Stop | Location | undefined): s is Stop {
     return 'object' === typeof s && s.type === 'stop';
 }
 
-function isLocation(s: string | Station | Stop | Location | undefined): s is Location {
+export function isLocation(s: string | Station | Stop | Location | undefined): s is Location {
     return 'object' === typeof s && s.type === 'location';
 }
 
@@ -207,7 +173,7 @@ export function hafas(profileName: string): Hafas {
 
         const price = journey.price ? journey.price.amount?.toFixed(2) + ' ' + journey.price.currency : undefined;
         return {
-            type: 'journeyinfo', legs, id: originName + '+' + destinationName + '+' + originDeparture + + '+' + destinationArrival + '+' + legs[0].tripId,
+            type: 'journeyinfo', legs, id: journey.refreshToken ?? originName + '+' + destinationName + '+' + originDeparture + '+' + destinationArrival + '+' + legs[0].tripId,
             origin, originName, originDeparture, originLocation,
             destination, destinationName, destinationArrival, destinationLocation,
             countLegs: journey.legs.length,
@@ -471,26 +437,8 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-        const R = 6371; // Radius of the earth in km
-        const dLat = deg2rad(lat2 - lat1);  // deg2rad below
-        const dLon = deg2rad(lon2 - lon1);
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2)
-            ;
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const d = R * c; // Distance in km
-        return d;
-    }
-
-    function deg2rad(deg: number) {
-        return deg * (Math.PI / 180)
-    }
-
     function getDistanceFromFeaturesInKm(f0: Feature, f1: Feature): number {
-        return getDistanceFromLatLonInKm(f0.geometry.coordinates[1], f0.geometry.coordinates[0], f1.geometry.coordinates[1], f1.geometry.coordinates[0]);
+        return distance(f0.geometry.coordinates[1], f0.geometry.coordinates[0], f1.geometry.coordinates[1], f1.geometry.coordinates[0]);
     }
 
     function distanceOfFeatureCollection(fc: FeatureCollection): number {
@@ -512,7 +460,7 @@ export function hafas(profileName: string): Hafas {
             if (i > 0) {
                 const prev = latLonPoints[i - 1]
                 const curr = latLonPoints[i]
-                return getDistanceFromLatLonInKm(prev.lat, prev.lon, curr.lat, curr.lon);
+                return distance(prev.lat, prev.lon, curr.lat, curr.lon);
             }
             else {
                 return 0.0;
@@ -530,32 +478,10 @@ export function hafas(profileName: string): Hafas {
         return parseFloat(dist.toFixed(0));
     }
 
-    const distance = (lat1: number, lon1: number, lat2: number, lon2: number, unit: string) => {
-        if ((lat1 === lat2) && (lon1 === lon2)) {
-            return 0;
-        }
-        else {
-            const radlat1 = Math.PI * lat1 / 180;
-            const radlat2 = Math.PI * lat2 / 180;
-            const theta = lon1 - lon2;
-            const radtheta = Math.PI * theta / 180;
-            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-            if (dist > 1) {
-                dist = 1;
-            }
-            dist = Math.acos(dist);
-            dist = dist * 180 / Math.PI;
-            dist = dist * 60 * 1.1515;
-            if (unit === "K") { dist = dist * 1.609344 }
-            if (unit === "N") { dist = dist * 0.8684 }
-            return dist;
-        }
-    }
-
     const coordinatesDistance = (lat: number, lon: number, coordinates: number[], maxDist: number): boolean => {
 
         if (coordinates.length === 2) {
-            const dist = distance(lat, lon, coordinates[1], coordinates[0], 'K')
+            const dist = distance(lat, lon, coordinates[1], coordinates[0])
             return dist <= maxDist;
         } else {
             return false;

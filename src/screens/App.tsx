@@ -21,6 +21,7 @@ import JourneyOptionsScreen from './JourneyOptions';
 import BRouterScreen from './BRouter';
 import TripScreen from './Trip';
 import LineNetworkScreen from './LineNetwork';
+import RailwayRouteNetworkScreen from './RailwayRouteNetwork';
 import MyJourneysScreen from './MyJourneys';
 import WebViewScreen from './WebView';
 import ThirdPartyLicensesScreen from './third-party-licenses';
@@ -64,6 +65,11 @@ function MainStackScreen() {
         options={{ title: 'Liniennetz 2023' }}
       />
       <MainStack.Screen
+        name="RailwayRouteNetwork"
+        component={RailwayRouteNetworkScreen}
+        options={{ title: 'Schnellfahrstrecken' }}
+      />
+      <MainStack.Screen
         name="MyJourneys"
         component={MyJourneysScreen}
         options={{ title: 'Meine Reisen' }}
@@ -91,7 +97,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="RailwayRoutesOfTrip"
         component={RailwayRoutesOfTripScreen}
-        options={{ title: t('RailwayRoutesOfTripScreen.Title') }}
+        options={({ route }) => ({ title: t('RailwayRoutesOfTripScreen.Title') + ' ' + route.params.originName.substring(0, 20) + ' nach ' + route.params.destinationName.substring(0, 20) })}
       />
       <MainStack.Screen
         name="RailwayRoute"

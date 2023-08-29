@@ -1,10 +1,10 @@
 import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
-import { rinfFindRailwayRoutesOfTripIBNRs } from "../../src/lib/rinf-data-railway-routes.js";
-import { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
-import type { GraphNode } from 'rinf-graph/rinfgraph.bundle.js';
+import { rinfFindRailwayRoutesOfTripStops } from "../../src/lib/rinf-data-railway-routes.js";
+import type { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
+import type { GraphNode, RInfGraph } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
-import { railwayLines, railwayLineTripIds, RailwayLine, RailwayLineTripId } from '../../src/lib/line-numbers.js';
+import { railwayLineInfos, railwayLineTokens, RailwayLine, RailwayLineToken } from '../../src/lib/line-numbers.js';
 
 const myArgs = process.argv.slice(2);
 
@@ -43,11 +43,11 @@ const journeyForRailwayLine = async (line: string, train: string, from: string, 
         bahncardDiscount: 25, bahncardClass: 1, age: 65, results: 10, firstClass: false, transfers: 0, transferTime: 8, regional: false
     }
 
-    for (let step = 0; step < 7; step++) {
+    for (let step = 0; step < 14; step++) {
         const maybeJourneys = await client.journeys(from, to, journeyParams, addDays(departure, step), via, ["train"]);
         if (maybeJourneys && maybeJourneys.length > 0) {
             const filtered = maybeJourneys.find(j => {
-                console.log('found journey: ', j.legs[0].tripId, j.legs[0].line?.name, j.legs[0].line?.matchId);
+                console.log('found caniddate journey:', j.legs[0].line?.name, j.legs[0].line?.matchId);
                 return j.legs.filter(l => l.line?.matchId === line || l.line?.name === train).length > 0;
             });
             if (filtered) return filtered;
@@ -56,35 +56,54 @@ const journeyForRailwayLine = async (line: string, train: string, from: string, 
     return undefined;
 }
 
-const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineTripId | undefined> => {
+const journeyOfRailwayLine = async (r: RailwayLine): Promise<RailwayLineToken | undefined> => {
     const vias: string[] = [r.ViaStations[Math.floor((r.ViaStations.length / 2))], r.ViaStations[0]];
     for (let step = 0; step < vias.length; step++) {
-        const journey = await journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 6, 0), vias[step]);
+        const journey = await journeyForRailwayLine(r.Line.toString(), r.Train, r.StartStation, r.EndStation, new Date(2022, 11, 12, 4, 0), vias[step]);
         const leg = journey?.legs[0];
-        if (leg && leg.tripId) {
-            console.log('journey: ', leg?.origin?.name, leg?.destination?.name, leg?.line?.name, leg.tripId);
-            return { Line: r.Line, TripId: leg.tripId };
+        if (leg && journey?.refreshToken) {
+            const result = { Line: r.Line, RefreshToken: journey?.refreshToken };
+            console.log(JSON.stringify(result));
+            return result;
         }
     }
 }
 
 const railwayLine = (line: number) => {
-    railwayLines
+    railwayLineInfos
         .filter(r => r.Line === line)
         .forEach(r => journeyOfRailwayLine(r));
 }
 
 const infosOfrailwayLines = async () => {
-    const infos: RailwayLineTripId[] = [];
-    for (let step = 0; step < railwayLines.length; step++) {
-        const railwayLine = railwayLines[step];
-        if (!railwayLineTripIds.find(r => r.Line === railwayLine.Line)) {
+    const infos: RailwayLineToken[] = [];
+    for (let step = 0; step < railwayLineInfos.length; step++) {
+        const railwayLine = railwayLineInfos[step];
+        if (!railwayLineTokens.find(r => r.Line === railwayLine.Line)) {
             console.log('railwayLine.Line: ', railwayLine.Line);
             const info = await journeyOfRailwayLine(railwayLine);
             if (info) infos.push(info);
         }
     }
     console.log(JSON.stringify(infos));
+}
+
+const importGraph = () => {
+    import('rinf-graph/data/Graph.json', { assert: { type: 'json' } })
+        .then(g => {
+            console.log('g:', g.default.length);
+        })
+        .catch(console.error);
+}
+
+const imports = () => {
+    import('rinf-graph/rinfgraph.bundle.js')
+        .then(module => {
+            const rinfgraph: RInfGraph = module.default.rinfgraph;
+            const path = rinfgraph.Graph_getCompactPath([{ Node: "x", Edges: [] }]);
+            console.log('path:', path.length);
+        })
+        .catch(console.error);
 }
 
 const locations = (name?: string) => {
@@ -170,8 +189,7 @@ const journeys = (from?: string, to?: string, via?: string) => {
 
 const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
     try {
-        const uics = stopsOfRoute.map(s => parseInt(s.id || "0", 10))
-        return rinfFindRailwayRoutesOfTripIBNRs(uics, true);
+        return rinfFindRailwayRoutesOfTripStops(stopsOfRoute, true);
     } catch (ex) {
         console.error("findRailwayRoutesOfTrip", (ex as Error).message);
         return [];
@@ -223,6 +241,9 @@ const nearby = (lat?: string, lon?: string) => {
 }
 
 switch (myArgs[0]) {
+    case 'imports':
+        imports();
+        break;
     case 'locations':
         locations(myArgs[1]);
         break;

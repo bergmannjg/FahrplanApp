@@ -48,6 +48,12 @@ export const styles = StyleSheet.create({
     padding: 0,
     borderWidth: 0,
   },
+  containerText: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    padding: 0,
+    borderWidth: 0,
+  },
   containerDateTime: {
     alignSelf: 'stretch',
     minWidth: 200,
@@ -128,7 +134,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 18,
     paddingTop: 5,
-    borderWidth: 0
+    borderWidth: 0,
   },
   routeTunnelColumn: {
     flexDirection: 'column',
@@ -192,9 +198,19 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+  itemButtonTextPressed: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: 'grey',
+  },
   itemHeaderText: {
     fontSize: 14,
     paddingBottom: 10,
+  },
+  itemHeaderTextLeft: {
+    fontSize: 14,
+    paddingBottom: 10,
+    paddingLeft: 10
   },
   infoText: {
     fontWeight: "normal",
