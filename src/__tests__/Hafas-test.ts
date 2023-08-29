@@ -1,6 +1,9 @@
 import { hafas } from '../lib/hafas';
 import { Journey, Stop, Trip, Leg, Line, StopOver } from 'hafas-client';
 
+// Note: import explicitly to use the types shiped with jest.
+import {it} from '@jest/globals';
+
 const asyncGetLocationsOfBielefeldCorrectly = () => {
     expect.assertions(3);
     const client = hafas('db');

@@ -8,6 +8,9 @@ import renderer, { act, ReactTestRenderer } from 'react-test-renderer';
 import { hafas } from '../lib/hafas';
 import moment from 'moment';
 
+// Note: import explicitly to use the types shiped with jest.
+import {it} from '@jest/globals';
+
 debugger
 
 function zeroFill(number: number, length: number) {

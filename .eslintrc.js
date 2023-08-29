@@ -11,6 +11,7 @@ module.exports = {
   },
   "plugins": ["@typescript-eslint"],
   "extends": [
+    "@react-native",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/eslint-recommended",

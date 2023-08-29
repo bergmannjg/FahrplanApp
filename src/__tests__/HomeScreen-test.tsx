@@ -7,6 +7,9 @@ import translationDE from '../locales/de/translation.json';
 import renderer, { act } from 'react-test-renderer';
 import moment from 'moment';
 
+// Note: import explicitly to use the types shiped with jest.
+import {it} from '@jest/globals';
+
 i18next
     .use(initReactI18next)
     .init({

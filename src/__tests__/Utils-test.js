@@ -1,6 +1,9 @@
 
 import { parseDatestring, extractTimeOfDatestring, getTimezoneOfLocation } from '../lib/iso-8601-datetime-utils';
 
+// Note: import explicitly to use the types shiped with jest.
+import {it} from '@jest/globals';
+
 debugger 
 
 it('parses date string correctly', () => {

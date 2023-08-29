@@ -8,6 +8,9 @@ import { hafas } from '../lib/hafas';
 import moment from 'moment';
 import { Journey, Station } from 'hafas-client';
 
+// Note: import explicitly to use the types shiped with jest.
+import {it} from '@jest/globals';
+
 debugger
 
 jest.mock('hafas-client', () => (profile: any, name: string) => {
