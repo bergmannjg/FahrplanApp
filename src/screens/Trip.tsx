@@ -9,7 +9,7 @@ import { Location, Trip, StopOver, Line, Stop, Station } from 'fs-hafas-client/h
 import { Hafas } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
-import { hafas, isStopover4Routes } from '../lib/hafas';
+import { hafas, isStopover4Routes, hasTrainformation } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 
@@ -95,10 +95,6 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
     const railwayCar = '\uD83D\uDE83'; // surrogate pair of U+1F683
 
-    const hasTrainformation = (line: Line) => {
-        return line?.product === 'nationalExpress' || line?.name?.startsWith('IC');
-    }
-
     const showLocation = async (item: Stop | Station | Location | undefined) => {
         const loc = client.getLocation(item);
         if (loc && item) {
@@ -137,9 +133,16 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
         return (
             item.p == PositionKind.Departure && item.s.plannedDeparture ?
-                <Text style={styles.itemStationText}>
-                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedDeparture) })} ${departure.hasTimezone ? t('TripScreen.Timezone', { date: departure.moment }) : ''} ${item.s.stop?.name}`}
-                </Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={styles.itemStationText}>
+                        {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedDeparture) })} ${departure.hasTimezone ? t('TripScreen.Timezone', { date: departure.moment }) : ''} ${item.s.stop?.name}`}
+                    </Text>
+                    {line && line.fahrtNr && hasTrainformation(line, item.s.departure || item.s.plannedDeparture) && item.s.plannedDeparture && !item.s.cancelled &&
+                        <TouchableOpacity onPress={() => goToWagenreihung(line, item.s.plannedDeparture, item.s.stop)}>
+                            <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
+                        </TouchableOpacity>
+                    }
+                </View>
                 :
                 null
         )
@@ -206,7 +209,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                                 </Text>
                             </Text>
                         </TouchableOpacity>
-                        {line && line.fahrtNr && hasTrainformation(line) && item.s.plannedDeparture && !item.s.cancelled &&
+                        {line && line.fahrtNr && hasTrainformation(line, item.s.departure || item.s.plannedDeparture) && item.s.plannedDeparture && !item.s.cancelled &&
                             <TouchableOpacity onPress={() => goToWagenreihung(line, item.s.plannedDeparture, item.s.stop)}>
                                 <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
                             </TouchableOpacity>
@@ -261,9 +264,16 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
         return (
             item.p == PositionKind.Arrival && item.s.plannedArrival ?
-                <Text style={styles.itemStationText}>
-                    {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedArrival) })} ${arrival.hasTimezone ? t('TripScreen.Timezone', { date: arrival.moment }) : ''} ${item.s.stop?.name}`}
-                </Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={styles.itemStationText}>
+                        {`${t('TripScreen.Time', { date: extractTimeOfDatestring(item.s.plannedArrival) })} ${arrival.hasTimezone ? t('TripScreen.Timezone', { date: arrival.moment }) : ''} ${item.s.stop?.name}`}
+                    </Text>
+                    {line && item.s.plannedDeparture && hasTrainformation(line, item.s.plannedArrival) &&
+                        <TouchableOpacity onPress={() => goToWagenreihung(line, item.s.plannedArrival, item.s.stop)}>
+                            <Text style={{ paddingRight: 10 }}>{asLinkText(railwayCar)}</Text>
+                        </TouchableOpacity>
+                    }
+                </View>
                 :
                 null
         )

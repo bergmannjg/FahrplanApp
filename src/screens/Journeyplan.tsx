@@ -6,10 +6,10 @@ import { ListItem } from "react-native-elements";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { Hafas, JourneyInfo, isStopover4Routes } from '../lib/hafas';
-import { Location, Leg, Line, Stop, Status } from 'fs-hafas-client/hafas-client';
+import { Location, Leg, Line, Stop, Station, Status } from 'fs-hafas-client/hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
-import { hafas } from '../lib/hafas';
+import { hafas, hasTrainformation } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { LogBox } from 'react-native'
@@ -161,27 +161,12 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         }
     }
 
-    const hasTrainformation = (line?: Line, departure?: string) => {
-        if (departure) {
-            const dt = new Date(departure);
-            const today = new Date(Date.now());
-            if (dt.getFullYear() != today.getFullYear()
-                || dt.getMonth() != today.getMonth()
-                || dt.getDate() != today.getDate())
-                return false;
-            else
-                return line?.product === 'nationalExpress' && line?.operator?.name === 'DB Fernverkehr AG' || line?.name?.startsWith('IC');
-        } else {
-            return false;
-        }
-    }
-
-    const goToWagenreihung = (leg: Leg) => {
+    const goToWagenreihung = (line?: Line, plannedDeparture?: string, origin?: Station | Stop | Location) => {
         console.log('Navigation router run to Wagenreihung');
-        console.log('fahrtNr: ', leg.line?.fahrtNr, ', plannedDeparture:', leg.plannedDeparture);
-        if (leg?.line?.fahrtNr && leg?.plannedDeparture) {
-            const loc = client.getLocation(leg.origin);
-            navigation.navigate('Trainformation', { fahrtNr: leg?.line?.fahrtNr, date: leg?.plannedDeparture, location: loc })
+        console.log('fahrtNr: ', line?.fahrtNr, ', plannedDeparture:', plannedDeparture);
+        if (line?.fahrtNr && plannedDeparture) {
+            const loc = client.getLocation(origin);
+            navigation.navigate('Trainformation', { fahrtNr: line?.fahrtNr, date: plannedDeparture, location: loc })
         }
     }
 
@@ -288,7 +273,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                             <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedDeparture ?? "") })} ${item.origin?.name} ${platform(item.departurePlatform)}`}</Text>
 
                             {hasTrainformation(item.line, item.departure || item.plannedDeparture) &&
-                                <TouchableOpacity onPress={() => goToWagenreihung(item)}>
+                                <TouchableOpacity onPress={() => goToWagenreihung(item.line, item.plannedDeparture, item.origin)}>
                                     <Text style={styles.itemDetailsText}>{asLinkText(railwayCar)}</Text>
                                 </TouchableOpacity>
                             }
@@ -309,11 +294,6 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                                 <TouchableOpacity onPress={() => goToTripOfLeg(item, false)}>
                                     <Text style={styles.itemDetailsText}>{asLinkText('Fahrtverlauf')}</Text>
                                 </TouchableOpacity>
-                                {hasNationalProduct(item.line) &&
-                                    <TouchableOpacity onPress={() => goToTripOfLeg(item, true)}>
-                                        <Text style={{ paddingLeft: 5 }}>{asLinkText('mit Durchfahrten')}</Text>
-                                    </TouchableOpacity>
-                                }
                             </View>
                         }
 
@@ -338,12 +318,14 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         }
 
                         <Text> </Text>
-                        <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name} ${platform(item.arrivalPlatform)}`}</Text>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name} ${platform(item.arrivalPlatform)}`}</Text>
+                        </View>
+
                         {
                             (item.arrival && (item.departureDelay && item.departureDelay > 0 || item.arrivalDelay && item.arrivalDelay > 0)) ?
-                                <View>
-                                    <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.arrival) })}`}</Text>
-                                </View>
+                                <Text style={styles.itemDelayText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.arrival) })}`}</Text>
                                 :
                                 <View />
                         }

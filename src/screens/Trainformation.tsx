@@ -209,7 +209,7 @@ export default function TrainformationScreen({ route, navigation }: Props): JSX.
                             </ListItem.Content>
                         </ListItem>
                     )}
-                    keyExtractor={item => item.fahrzeugnummer ?? ''}
+                    keyExtractor={item => item.wagenordnungsnummer ?? ''}
                     ItemSeparatorComponent={renderSeparator}
                     ListFooterComponent={renderFooter}
                     onEndReachedThreshold={50}

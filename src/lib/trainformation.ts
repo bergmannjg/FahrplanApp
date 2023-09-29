@@ -100,13 +100,12 @@ function extractDateString(s: string) {
     } else return undefined;
 }
 
-const wrUrl1 = 'https://www.apps-bahn.de/wr/wagenreihung/1.0/';
-const wrUrl2 = 'https://ist-wr.noncd.db.de/wagenreihung/1.0/';
+const wrUrl = 'https://ist-wr.noncd.db.de/wagenreihung/1.0/';
 
 export function trainformation(id: string, date: string, retry = 2): Promise<Trainformation | undefined> {
     const dt = extractDateString(date);
     if (dt) {
-        const url = (retry === 2 ? wrUrl1 : wrUrl2) + id + '/' + dt
+        const url = wrUrl + id + '/' + dt
         console.log('request: ', url);
         return fetch(url)
             .then(function (response) {

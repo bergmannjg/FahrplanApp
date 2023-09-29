@@ -113,6 +113,25 @@ export function isStopover4Routes(stopover: StopOver): boolean {
             || isStop4Routes(stopover.stop))
 }
 
+export function hasTrainformation(line?: Line, departure?: string): boolean {
+    console.log('hasTrainformation', departure, 'line', line);
+    if (departure) {
+        const dt = new Date(departure);
+        const today = new Date(Date.now());
+        if (dt.getFullYear() != today.getFullYear()
+            || dt.getMonth() != today.getMonth()
+            || dt.getDate() != today.getDate())
+            return false;
+        else {
+            return !!line && !!line.product && line.product?.startsWith('national')
+                && !!line.productName && (line.productName?.startsWith('IC') || line.productName?.startsWith('EC'));
+        }
+    } else {
+        return false;
+    }
+}
+
+
 export function getLocation(s: Station | Stop | Location | undefined): Location | undefined {
     if (isStop(s)) return s.location
     else if (isLocation(s)) return s
