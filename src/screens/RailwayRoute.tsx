@@ -38,23 +38,27 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const railwayRouteNr = params.railwayRouteNr;
     const country = params.country;
 
+    console.log(railwayRouteNr, country);
+
     const [data, setData] = useState([] as LineNode[]);
     const [locationsOfPath, setLocationsOfPath] = useState([] as Location[]);
     const [lineName, setLineName] = useState('');
     const [lineExtra, setLineExtra] = useState('');
     const [loading, setLoading] = useState(true);
     const [showEletrifiedInfo, setShowEletrifiedInfo] = useState(false);
+    const [wikipediaUrl, setWikipediaUrl] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         if (loading) {
             import('../lib/rinf-data-railway-routes')
                 .then(rinf => {
-                    const graphNodes: GraphNode[][] = rinf.rinfFindRailwayRoutesOfLine(railwayRouteNr);
+                    const graphNodes: GraphNode[][] = rinf.rinfFindRailwayRoutesOfLine(country, railwayRouteNr);
                     console.log('RailwayRouteScreen, railwayRouteNr:', railwayRouteNr, ', GraphNodes: ', graphNodes.length);
                     const lineNodes: LineNode[] = rinf.rinfToLineNodes(graphNodes);
                     console.log('RailwayRouteScreen, railwayRouteNr:', railwayRouteNr, ', LineNodes: ', lineNodes.length);
                     setData(lineNodes);
-                    setLineName(rinf.rinfGetLineName(railwayRouteNr));
+                    setLineName(rinf.rinfGetLineName(country, railwayRouteNr));
+                    setWikipediaUrl(rinf.rinfGetWikipediaUrl(country, railwayRouteNr));
 
                     const foundElectrified = lineNodes.find(line => line.electrified);
                     const foundNotElectrified = lineNodes.find(line => line.electrified !== undefined && !line.electrified);
@@ -71,18 +75,30 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
         }
     });
 
-    const queryText = () => {
+    const fullWikipediaUrl = () => {
+        if (wikipediaUrl) {
+            return 'https://de.wikipedia.org/wiki/' + wikipediaUrl.replace(' ', '%20');
+        } else {
+            return 'https://de.wikipedia.org/wiki/';
+        }
+    }
+
+    const queryUrl = () => {
         let q;
         const iRailwayRouteNr = parseInt(railwayRouteNr);
         if (country === 'AUT') {
             q = 'Streckennummer ÖBB ' + (iRailwayRouteNr / 100).toFixed(0) + ' ' + String(iRailwayRouteNr % 100).padStart(2, '0') + ' Wikipedia';
+        } else if (country === 'BEL') {
+            const bRailwayRouteNr = iRailwayRouteNr > 9000 ? (iRailwayRouteNr / 10) % 10 : (iRailwayRouteNr / 10);
+            const s = bRailwayRouteNr.toFixed(0)
+            q = 'ligne ' + s + (bRailwayRouteNr < 10 ? ' lgv ' : '') + ' belgique wikipedia';
         } else if (country === 'FRA') {
             q = 'streckennummer sncf (%22' + (iRailwayRouteNr / 1000).toFixed(0).padStart(3, '0') + ' 000%22 OR %22' + iRailwayRouteNr.toFixed(0).padStart(6, '0') + '%22) Wikipedia';
         } else {
             q = 'Bahnstrecke ' + railwayRouteNr + ' Wikipedia';  // db
         }
         console.log('country:', country, ', query:', q);
-        return q;
+        return 'https://www.google.de/search?q=+' + q;
     }
 
     const showRoute = async () => {
@@ -103,12 +119,19 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
     const tunnels = (tunnelNodes: TunnelNode[]) => {
         const nodes =
             tunnelNodes.map(t => {
-                const km = t.km ? 'km: ' + t.km + ' ' : ''
-                return (<Text key={t.name}
-                    onPress={() => Linking.openURL('https://www.google.de/search?q=+' + t.name)}
-                >
-                    {`${km}${t.name} (${t.length} km)`} {asLinkText('')}
-                </Text>)
+                const km = t.km ? 'km: ' + t.km + ' ' : '';
+                if (t.name.includes('..')) {
+                    return (<Text key={t.name}>
+                        {`${km}Tunnel ${t.name} (${t.length} km)`}
+                    </Text>)
+                }
+                else {
+                    return (<Text key={t.name}
+                        onPress={() => Linking.openURL('https://www.google.de/search?q=+' + t.name)}
+                    >
+                        {`${km}${t.name} (${t.length} km)`} {asLinkText('')}
+                    </Text>)
+                }
             })
         return (
             <View style={styles.routeTunnelColumn}>
@@ -152,13 +175,19 @@ export default function RailwayRouteScreen({ route, navigation }: Props): JSX.El
                 </Text>
                 <View style={styles.containerText}>
                     <Text style={styles.itemHeaderText}
-                        onPress={() => Linking.openURL('https://www.google.de/search?q=+' + queryText())}>
-                        Suche nach Bahnstecke {railwayRouteNr} {asLinkText('')}
+                        onPress={() => Linking.openURL(queryUrl())}>
+                        Suche{asLinkText('')}
                     </Text>
+                    {wikipediaUrl &&
+                        <Text style={styles.itemHeaderText}
+                            onPress={() => Linking.openURL(fullWikipediaUrl())}>
+                            &nbsp;&nbsp;Wikipedia Artikel{asLinkText('')}
+                        </Text>
+                    }
                     {country === 'DEU' &&
                         <Text style={styles.itemHeaderTextLeft}
                             onPress={() => Linking.openURL('https://stellwerke.info/stw/index.php?status%5B%5D=0&status%5B%5D=1&status%5B%5D=100&str=' + railwayRouteNr + '&filter-submit=1')}>
-                            Stellwerke für {railwayRouteNr} {asLinkText('')}
+                            Stellwerke{asLinkText('')}
                         </Text>
                     }
                 </View>

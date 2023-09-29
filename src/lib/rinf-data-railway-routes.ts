@@ -40,7 +40,18 @@ interface LineInfoExtra {
 }
 
 const mapOps = opInfos.reduce((map: Map<string, OpInfo>, op: OpInfo) => map.set(op.UOPID, op), new Map());
-const mapLines = lineInfos.reduce((map: Map<string, LineInfo>, line: LineInfo) => map.set(line.Line, line), new Map());
+const countries = (lineInfos as LineInfo[]).reduce(
+    (arr: string[], line: LineInfo) => arr.find(x => x === line.Country) ? arr : [line.Country, ...arr],
+    []);
+console.log('countries', countries);
+const mapLines =
+    countries.reduce((m: Map<string, Map<string, LineInfo>>, country: string) => {
+        const countryLines: Map<string, LineInfo> = 
+                (lineInfos as LineInfo[])
+                .filter(line => line.Country === country)
+                .reduce((map: Map<string, LineInfo>, line: LineInfo) => map.set(line.Line, line), new Map());
+        return m.set(country, countryLines)
+    }, new Map());
 const graph = rinfgraph.Graph_toGraph(g);
 
 function addLengthWithHighSpeed(li: LineInfoExtra, node: GraphNode, edge: GraphEdge) {
@@ -63,7 +74,7 @@ export function getLineInfoExtra(): LineInfoExtra[] {
                     addLengthWithHighSpeed(found, node, edge);
                 }
             } else if (edge.MaxSpeed >= 200) {
-                const lineInfo = lineInfos.find(li => li.Line === edge.Line && li.Country === edge.Country);
+                const lineInfo = (lineInfos as LineInfo[]).find(li => li.Line === edge.Line && li.Country === edge.Country);
                 if (lineInfo) {
                     const li = { lineInfo, maxSpeed: edge.MaxSpeed, lengthWithHighSpeed: 0 };
                     addLengthWithHighSpeed(li, node, edge);
@@ -145,13 +156,20 @@ function findOPIDForStop(s: Stop): string {
     return '';
 }
 
-function rinfGetLineName(line: string): string {
-    const lineInfo = mapLines.get(line);
+function rinfGetLineName(country: string, line: string): string {
+    const lineInfo = mapLines.get(country)?.get(line);
     return lineInfo?.Name ?? line.toString();
 }
 
+function rinfGetWikipediaUrl(country: string, line: string): string | undefined {
+    const lineInfo = mapLines.get(country)?.get(line);
+    return lineInfo ? lineInfo.Wikipedia : undefined;
+}
+
 function rinfToPathElement(n: GraphNode): PathElement {
-    return rinfgraph.Graph_toPathElement(mapOps, mapLines, n);
+    const country = n.Edges[0].Country;
+    const map = mapLines.get(country) ?? (new Map());
+    return rinfgraph.Graph_toPathElement(mapOps, map, n);
 }
 
 function rinfIsWalkingPath(n: GraphNode): boolean {
@@ -276,9 +294,9 @@ function rinfFindRailwayRoutesOfTrip(ids: string[], compactifyPath: boolean): Gr
     }
 }
 
-function rinfFindRailwayRoutesOfLine(line: string): GraphNode[][] {
-    return lineInfos
-        .filter(li => li.Line === line)
+function rinfFindRailwayRoutesOfLine(country: string, line: string): GraphNode[][] {
+    return (lineInfos as LineInfo[])
+        .filter(li => li.Line === line && li.Country === country)
         .map(li => rinfgraph.Graph_getPathOfLineFromGraph(g, graph, li))
         .sort((a, b) => a[0].Edges[0].StartKm - b[0].Edges[0].StartKm);
 }
@@ -340,6 +358,6 @@ function rinfNearby(latitude: number, longitude: number, maxdistance: number): O
     return opInfos.filter(op => distance(latitude, longitude, op.Latitude, op.Longitude) < maxdistance);
 }
 
-export { rinfNearby, rinfOpInfos, rinfTypeToString, rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripStops, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
+export { rinfGetWikipediaUrl, rinfNearby, rinfOpInfos, rinfTypeToString, rinfToPathElement, rinfIsWalkingPath, rinfToLineNodes, rinfFindRailwayRoutesOfTrip, rinfFindRailwayRoutesOfTripStops, rinfGetLineName, rinfFindRailwayRoutesOfLine, rinfGetCompactPath, rinfComputeDistanceOfPath, rinfGetLocationsOfPath }
 
 export type { PathElement, LineNode, TunnelNode, LineInfoExtra }
