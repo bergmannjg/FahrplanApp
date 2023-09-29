@@ -48,7 +48,29 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
     console.log('legs.length: ', legs.length);
 
+    const refresh = () => {
+        const token = journeyInfo?.refreshToken ?? refreshToken;
+        if (token) {
+            console.log('refreshJourney: ', token);
+            client.refreshJourney(token)
+                .then(journey => {
+                    if (journey) {
+                        console.log('journey: ', journey);
+                        const info = client.journeyInfo(journey);
+                        setJourneyInfo(info);
+                        setLegs(info.legs);
+                        setData([...info.legs, ...info.statusRemarks])
+                    }
+                })
+                .catch((error) => {
+                    console.log('There has been a problem with your refreshJourney operation: ' + error);
+                    console.log(error.stack);
+                });
+        }
+    };
+
     const makeRemoteRequest = () => {
+        console.log('makeRemoteRequest, count:', count, journeyInfo?.refreshToken);
         if (count === 0 && refreshToken || (count > 0 && journeyInfo?.refreshToken)) {
             console.log('makeRemoteRequest, loading:', loading);
             if (loading) return;
@@ -313,7 +335,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         {
                             (item?.currentLocation) &&
                             <TouchableOpacity onPress={() => showCurrentLocation(item?.currentLocation, item?.line?.name)}>
-                                <Text style={styles.itemDetailsText}>{asLinkText("aktuelle Position")}</Text>
+                                <Text style={styles.itemDetailsText}>{asLinkText("aktuelle Position um " + (new Date).toLocaleTimeString())}</Text>
                             </TouchableOpacity>
                         }
 
@@ -409,10 +431,15 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
                         <Text style={styles.infoText}>Merken</Text>
                     </TouchableOpacity>}
                 </View>}
-                {departure && <Text style={styles.itemHeaderText}>
-                    {t('JourneyplanScreen.Departure', { date: departure.moment })}
-                    {departure.hasTimezone ? t('JourneyplanScreen.Timezone', { date: departure.moment }) : ''}
-                </Text>}
+                {departure && <View style={styles.myJourneyItem}>
+                    <Text style={styles.itemHeaderText}>
+                        {t('JourneyplanScreen.Departure', { date: departure.moment })}
+                        {departure.hasTimezone ? t('JourneyplanScreen.Timezone', { date: departure.moment }) : ''}
+                    </Text>
+                    {params.journey && <TouchableOpacity onPress={() => refresh()}>
+                        <Text style={styles.infoText}>Aktualisieren</Text>
+                    </TouchableOpacity>}
+                </View>}
                 {arrival && <Text style={styles.itemHeaderText}>
                     {t('JourneyplanScreen.Arrival', { date: arrival.moment })}
                     {arrival.hasTimezone ? t('JourneyplanScreen.Timezone', { date: arrival.moment }) : ''}
