@@ -103,6 +103,13 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         }
     }
 
+    const showCurrentLocation = async (loc: Location | undefined, line: string | undefined) => {
+        if (loc) {
+            console.log('showLocation: ', loc);
+            navigation.navigate('BRouter', { isLongPress: false, locations: [loc], pois: [], titleSuffix: line, zoom: 10 });
+        }
+    }
+
     const goToWagenreihung = (line: Line, plannedDeparture?: string, stop?: Stop | Station) => {
         console.log('Navigation router run to Wagenreihung');
         console.log('fahrtNr: ', line?.fahrtNr, ', plannedDeparture:', plannedDeparture);
@@ -322,6 +329,15 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                         </Text>
                     </View>
             }
+            {
+                (trip.currentLocation) &&
+                <View style={{ flexDirection: 'row', paddingLeft: 10 }}>
+                    <TouchableOpacity onPress={() => showCurrentLocation(trip.currentLocation, trip.line?.name)}>
+                        <Text style={styles.itemHeaderText}>{asLinkText("aktuelle Position um " + (new Date).toLocaleTimeString())}</Text>
+                    </TouchableOpacity>
+                </View>
+            }
+
             {
                 data && data.length > 1 &&
                 < FlatList

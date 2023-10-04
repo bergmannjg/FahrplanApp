@@ -214,7 +214,7 @@ export function hafas(profileName: string): Hafas {
 
     const tripOfLeg = async (tripId: string, origin: Station | Stop | Location | undefined, destination: Station | Stop | Location | undefined, fc?: FeatureCollection): Promise<Trip> => {
         if (client.trip && tripId) {
-            const { trip } = await client.trip(tripId, {});
+            const { trip }: { trip: Trip } = await client.trip(tripId, {});
 
             const stopovers = stopoversOnLeg(trip, origin, destination).filter(stopover => stopover.stop && isStop(stopover.stop));
             const stopsInLeg = stopovers.map<Stop>(stopover => stopover.stop as Stop);
@@ -236,17 +236,17 @@ export function hafas(profileName: string): Hafas {
                     const plannedDeparture = stopoversInFeatureCollection[0].plannedDeparture;
                     const plannedArrival = stopoversInFeatureCollection[stopoversInFeatureCollection.length - 1].plannedArrival;
                     console.log('stopoversInFeatureCollection.length:', stopoversInFeatureCollection.length);
-                    return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
+                    return { id: trip.id, origin: trip.origin, destination: trip.destination, currentLocation: trip.currentLocation, line: trip.line, plannedDeparture, plannedArrival, stopovers: stopoversInFeatureCollection };
                 } else {
                     const plannedDeparture = stopovers[0].plannedDeparture;
                     const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
-                    return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers };
+                    return { id: trip.id, origin: trip.origin, destination: trip.destination, currentLocation: trip.currentLocation, line: trip.line, plannedDeparture, plannedArrival, stopovers };
                 }
             } else {
                 const plannedDeparture = stopovers[0].plannedDeparture;
                 const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
                 console.log('stopovers.length:', stopovers.length);
-                return { id: trip.id, origin: trip.origin, destination: trip.destination, line: trip.line, plannedDeparture, plannedArrival, stopovers };
+                return { id: trip.id, origin: trip.origin, destination: trip.destination, currentLocation: trip.currentLocation, line: trip.line, plannedDeparture, plannedArrival, stopovers };
             }
         } else {
             return Promise.reject();
