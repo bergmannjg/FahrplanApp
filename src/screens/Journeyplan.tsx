@@ -225,7 +225,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             if (leg.direction) {
                 name = name + ' -> ' + leg.direction;
             }
-            if (leg?.line?.matchId) {
+            if (leg?.line?.matchId && leg?.line?.product?.includes('national')) {
                 name = name + ', Linie ' + leg?.line?.matchId;
             }
         } else if (leg?.walking) {

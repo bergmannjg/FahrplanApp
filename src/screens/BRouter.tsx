@@ -56,21 +56,27 @@ const centerOflocations = (locations: Location[]): Location => {
     }
 }
 
-const locations2params = (locations: Location[], preferredZoom?: number) => {
+const locations2zoom = (locations: Location[], preferredZoom?: number) : string => {
+    try {
+        const center = centerOflocations(locations);
+        const latitude = center.latitude ?? 0;
+        const longitude = center.longitude ?? 0;
+        const d = center.altitude ?? 0;
+
+        const zoom = preferredZoom ?? distance2zoom(d);
+        return zoom + '/' + latitude + '/' + longitude;
+    }
+    catch (e) {
+        return '12/52.1651/8.6147';
+    }
+}
+
+const locations2params = (locations: Location[], preferredZoom?: number) : string => {
     try {
         const from = locations[0];
         const to = locations[locations.length - 1];
         console.log('from: ', from);
         console.log('to: ', to);
-
-        const center = centerOflocations(locations);
-        const latitude = center.latitude ?? 0;
-        const longitude = center.longitude ?? 0;
-        console.log('center: ', center);
-        const d = center.altitude ?? 0;
-
-        const zoom = preferredZoom ?? distance2zoom(d);
-        console.log('distance: ', d, ', zoom: ', zoom);
 
         let s = '';
         if (locations.length > 2) {
@@ -86,17 +92,14 @@ const locations2params = (locations: Location[], preferredZoom?: number) => {
             + s
             + to.longitude + ',' + to.latitude;
 
-        return {
-            map: zoom + '/' + latitude + '/' + longitude,
-            lonlats: lonlat
-        };
+        return lonlat;
     }
     catch (e) {
-        return { map: '12/52.1651/8.6147', lonlats: '8.573928,52.202136;8.663836,52.119524' };
+        return '';
     }
 }
 
-const pois2params = (locations: Location[]) => {
+const pois2params = (locations: Location[]) : string  => {
     try {
         const from = locations[0];
         const to = locations[locations.length - 1];
@@ -156,12 +159,13 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
     const { params }: { params: BRouterScreenParams } = route;
     const locations = noramlizelocations(params.locations);
     const pois = params.pois;
-    const p = locations2params(locations, params.zoom);
+    const map = locations2zoom(locations.length > 0 ? locations : pois ?? [], params.zoom);
+    const p = locations2params(locations);
     const o = pois ? pois2params(pois) : '';
     const isCar = !!params.isCar;
     const profile = isCar ? 'car-fast' : 'rail';
     // the query string may change, it reflects the brouter api
-    const uri = `https://brouter.de/brouter-web/#map=${p.map}/osm-mapnik-german_style&lonlats=${p.lonlats}&pois=${o}&profile=${profile}`;
+    const uri = `https://brouter.de/brouter-web/#map=${map}/osm-mapnik-german_style&lonlats=${p}&pois=${o}&profile=${profile}`;
     console.log('uri: ', uri);
 
     Clipboard.setString(uri);

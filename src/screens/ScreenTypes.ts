@@ -146,10 +146,23 @@ export interface WebViewScreenParams {
     title: string;
 }
 
+export interface ArrivalScreenParams {
+    station: string,
+    date: number;
+    profile: string
+}
+
 export interface DepartureScreenParams {
     station: string,
     date: number;
     profile: string
+}
+
+export interface TripsOfLineScreenParams {
+    lineName: string;
+    train: string;
+    refreshToken?: string
+    profile: string;
 }
 
 export interface TripScreenParams {
@@ -179,7 +192,9 @@ export type MainStackParamList = {
     RailwayRoutesOfTrip: RailwayRoutesOfTripScreenParams;
     RailwayRoute: RailwayRouteScreenParams;
     BRouter: BRouterScreenParams;
+    Arrivals: ArrivalScreenParams;
     Departures: DepartureScreenParams;
+    TripsOfLine: TripsOfLineScreenParams;
     Trip: TripScreenParams;
     WebView: WebViewScreenParams;
     OpenStreetMap: OpenStreetMapParams

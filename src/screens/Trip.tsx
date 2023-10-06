@@ -296,6 +296,8 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
         );
     }
 
+    const hasLine = () => !!trip.line?.matchId && !!trip.line?.product?.includes('national')
+
     return (
         <View style={styles.container}>
             <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerButtons : stylesLandscape.containerButtons}>
@@ -319,8 +321,13 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
                             {trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''}{asLinkText('')},
                         </Text>
                         <Text style={styles.itemHeaderTextLeft}>
-                            {departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}
+                            {departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}{hasLine() ? ',' : ''}
                         </Text>
+                        {hasLine() &&
+                            <Text style={styles.itemHeaderTextLeft}>
+                                Linie {trip.line?.matchId}
+                            </Text>
+                        }
                     </View>
                     :
                     <View style={{ paddingLeft: 10 }}>

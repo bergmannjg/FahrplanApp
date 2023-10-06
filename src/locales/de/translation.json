@@ -89,6 +89,10 @@
     "MyJourneysScreen": {
         "Departure": "{{date, DD.MM.YY HH:mm}}"
     },
+    "ArrivalScreen": {
+        "Title": "Ankunftsplan",
+        "When": "Ankunft {{date, HH:mm}}"
+    },
     "DepartureScreen": {
         "Title": "Abfahrtsplan",
         "When": "Abfahrt {{date, HH:mm}}"
@@ -100,6 +104,11 @@
         "Timezone": "({{date, Z z}})",
         "Departure": "{{date, DD.MM.YY}}",
         "Duration": "Dauer: {{duration, HH:mm}}"
+    },
+    "TripsOfLineScreen": {
+        "Title": "Fahrten für Linie",
+        "Date": "{{date, dd}}. {{date, DD.MM.YY}}",
+        "ShowRoute": "aktuelle Positionen anzeigen"
     },
     "RailwayRoutesOfTripScreen": {
         "Title": "Strecke",

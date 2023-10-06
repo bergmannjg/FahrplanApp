@@ -670,15 +670,10 @@
     },
     {
         "Line": 89,
-        "Train": "ICE 1201",
-        "StartStation": "Hamburg-Altona",
-        "EndStation": "St. Anton am Arlberg",
+        "Train": "EC 81",
+        "StartStation": "München Hbf",
+        "EndStation": "Bologna Centrale",
         "ViaStations": [
-            "Hannover",
-            "Kassel-Wilhelmsh\u00F6he",
-            "W\u00FCrzburg",
-            "Augsburg",
-            "M\u00FCnchen Ost",
             "Kufstein",
             "Innsbruck"
         ]

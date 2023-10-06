@@ -248,6 +248,10 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         navigation.navigate('Departures', { station: query, date: date.valueOf(), profile: clientProfile() })
     }
 
+    const showArrivalsQuery = (query: string) => {
+        navigation.navigate('Arrivals', { station: query, date: date.valueOf(), profile: clientProfile() })
+    }
+
     const navigateToOptionsScreen = () => {
         console.log('navigateToOptionsScreen. profile:', profile, compactifyPath);
         navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails, compactifyPath } });
@@ -367,7 +371,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
                     <View style={styles.autocompleteContainerTo}>
                         <A2 s={isLocation(station2) ? (station2.name ? station2.name : '') : station2} />
                         <View style={styles.switchbutton}>
-                            <TouchableOpacity onPress={() => showDeparturesQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
+                            <TouchableOpacity onPress={() => showArrivalsQuery('string' === typeof station2 ? station2 : '')} disabled={!('string' === typeof station2 && station2.length > 0)} >
                                 <Text style={styles.switchText}>
                                     &#8614;
                                 </Text>

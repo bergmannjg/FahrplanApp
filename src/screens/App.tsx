@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
 
 import HomeScreen from './Home';
+import ArrivalScreen from './Arrivals';
 import DepartureScreen from './Departures';
 import ConnectionsScreen from './Connections';
 import BestPriceConnectionsScreen from './BestPriceConnections';
@@ -20,6 +21,7 @@ import OptionsScreen from './Options';
 import JourneyOptionsScreen from './JourneyOptions';
 import BRouterScreen from './BRouter';
 import TripScreen from './Trip';
+import TripsOfLineScreen from './TripsOfLine';
 import LineNetworkScreen from './LineNetwork';
 import RailwayRouteNetworkScreen from './RailwayRouteNetwork';
 import MyJourneysScreen from './MyJourneys';
@@ -75,6 +77,11 @@ function MainStackScreen() {
         options={{ title: 'Meine Reisen' }}
       />
       <MainStack.Screen
+        name="Arrivals"
+        component={ArrivalScreen}
+        options={({ route }) => ({ title: t('ArrivalScreen.Title') + ' ' + route.params.station })}
+      />
+      <MainStack.Screen
         name="Departures"
         component={DepartureScreen}
         options={({ route }) => ({ title: t('DepartureScreen.Title') + ' ' + route.params.station })}
@@ -103,6 +110,11 @@ function MainStackScreen() {
         name="RailwayRoute"
         component={RailwayRoute}
         options={({ route }) => ({ title: t('RailwayRouteScreen.Title') + ' ' + route.params.railwayRouteNr })}
+      />
+      <MainStack.Screen
+        name="TripsOfLine"
+        component={TripsOfLineScreen}
+        options={({ route }) => ({ title: t('TripsOfLineScreen.Title') + ' ' + route.params.lineName })}
       />
       <MainStack.Screen
         name="Trip"

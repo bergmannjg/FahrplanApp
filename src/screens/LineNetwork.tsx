@@ -42,45 +42,8 @@ export default function LineNetworkScreen({ route, navigation }: Props): JSX.Ele
     });
 
     const goToTrip = async (item: RailwayLine) => {
-        const lineData = data.filter(r => r.Line === item.Line);
         const railwayLineToken = tokens.find(r => r.Line === item.Line);
-        if (railwayLineToken?.RefreshToken) {
-            client.refreshJourney(railwayLineToken?.RefreshToken)
-                .then(journey => {
-                    if (journey && journey.legs[0]?.tripId) {
-                        const leg = journey.legs[0];
-                        client.trip(leg.tripId)
-                            .then(trip => {
-                                navigation.navigate('Trip', { trip, line: leg.line, profile })
-                            })
-                            .catch((error) => {
-                                console.log('There has been a problem with your tripsOfJourney operation: ' + error);
-                            });
-                    }
-                })
-                .catch((error) => {
-                    console.log('There has been a problem with your refreshJourney operation: ' + error);
-                });
-        } else if (lineData.length === 1) {
-            const r: RailwayLine = lineData[0];
-            const stopovers: StopOver[] = []
-
-            const stopIds: string[] = [];
-
-            stopIds.push(r.StartStation);
-            stopIds.push(...r.ViaStations);
-            stopIds.push(r.EndStation);
-            const dt = new Date(Date.now());
-
-            const stops = await client.stopsOfIds(stopIds, []);
-            if (stops.length > 2) {
-                stopovers.push({ stop: stops[0], plannedDeparture: dt.toISOString() });
-                stopovers.push(...stops.slice(1, stops.length - 2).map(s => ({ stop: s, plannedArrival: dt.toISOString() })));
-                stopovers.push({ stop: stops[stops.length - 1], plannedArrival: dt.toISOString() });
-            }
-            const trip: Trip = { id: '', stopovers, line: { type: 'line', name: r.Train }, plannedArrival: dt.toISOString(), plannedDeparture: dt.toISOString() }
-            navigation.navigate('Trip', { trip, profile })
-        }
+        navigation.navigate('TripsOfLine', { lineName: item.Line.toString(), train: item.Train, refreshToken: railwayLineToken?.RefreshToken, profile })
     }
 
     const renderSeparator = () => {

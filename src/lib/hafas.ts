@@ -6,7 +6,7 @@ import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js';
 import { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen/index.js';
 import { profile as vbbProfile } from 'hafas-client/p/vbb/index.js';
 
-import { FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
+import { TripsByNameOptions, TripsWithRealtimeData, FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
 import { fshafas } from "fs-hafas-client";
 import { profiles } from "fs-hafas-profiles";
 import { distance } from './distance';
@@ -15,8 +15,9 @@ import { distance } from './distance';
 import geolib from 'geolib';
 
 const chooseClient = (p: string, profile: Profile) => {
-    if (p.endsWith('-fsharp')) return fshafas.createClient(profile);
-    else return createClient(profile, 'agent');
+    if (p.endsWith('-fsharp')) {
+        return fshafas.createClient(profile);
+    } else return createClient(profile, 'agent');
 }
 
 const chooseProfile = (p: string): Profile => {
@@ -81,8 +82,10 @@ export interface Hafas {
     locations: (from: string, results: number) => Promise<ReadonlyArray<Station | Stop | Location>>,
     stopsOfIds: (ids: string[], preferredUicrefs: number[]) => Promise<ReadonlyArray<Stop>>,
     nearby: (latitude: number, longitude: number, distance: number, modes?: string[], products?: Products) => Promise<ReadonlyArray<Station | Stop | Location>>,
+    arrivals: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
     departures: (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean) => Promise<ReadonlyArray<Alternative>>,
     trip: (tripId?: string) => Promise<Trip>,
+    tripsByName: (productName: string, lineName: string, operatorNames?: string[], today?: boolean) => Promise<TripsWithRealtimeData>;
     tripOfLeg: (tripId: string, origin: Station | Stop | Location | undefined, destination: Station | Stop | Location | undefined, fc?: FeatureCollection) => Promise<Trip>,
     stopssOfJourney: (journey: Journey | JourneyInfo, modes: ReadonlyArray<string>, useTransits?: boolean, nationalProductsOfStops?: boolean) => Promise<Stop[]>,
     radar: (loc: Location, duration?: number) => Promise<ReadonlyArray<Movement>>,
@@ -114,7 +117,6 @@ export function isStopover4Routes(stopover: StopOver): boolean {
 }
 
 export function hasTrainformation(line?: Line, departure?: string): boolean {
-    console.log('hasTrainformation', departure, 'line', line);
     if (departure) {
         const dt = new Date(departure);
         const today = new Date(Date.now());
@@ -207,6 +209,32 @@ export function hafas(profileName: string): Hafas {
         if (client.trip && tripId) {
             const { trip } = await client.trip(tripId, {});
             return trip;
+        } else {
+            return Promise.reject();
+        }
+    }
+
+    const tripsByName = async (productName: string, lineName: string, operatorNames?: string[], today?: boolean): Promise<TripsWithRealtimeData> => {
+        if (client.tripsByName) {
+            const options: TripsByNameOptions = { lineName, operatorNames }
+            if (!!today) {
+                const fromWhen = new Date();
+                fromWhen.setHours(4);
+                fromWhen.setMinutes(0);
+                fromWhen.setSeconds(0);
+                options.fromWhen = fromWhen;
+                const untilWhen = new Date();
+                untilWhen.setHours(22);
+                untilWhen.setMinutes(0);
+                untilWhen.setSeconds(0);
+                options.untilWhen = untilWhen;
+
+            } else {
+                options.when = new Date();
+            }
+            console.log('options', options);
+            const trips = await client.tripsByName(productName, options);
+            return trips;
         } else {
             return Promise.reject();
         }
@@ -443,10 +471,28 @@ export function hafas(profileName: string): Hafas {
         const locationsOfStation = await client.locations(station, { results: 1 });
         const duration = 120;
         const results = 20;
-        console.log('station:', locationsOfStation[0].id, locationsOfStation[0].name);
+        console.log('departures station:', locationsOfStation[0].id, locationsOfStation[0].name);
         if (locationsOfStation[0].id) {
             const departures = await client.departures(locationsOfStation[0], { duration, when });
             let alternatives = departures.departures.filter(a => a.line && filterLine(a.line, modes, onlyLocalProducts));
+            if (alternatives.length > results) {
+                alternatives = alternatives.slice(0, results);
+            }
+            return alternatives;
+        } else {
+            return [];
+        }
+    }
+
+    const arrivals = async (station: string, modes: ReadonlyArray<string>, when: Date, onlyLocalProducts: boolean): Promise<ReadonlyArray<Alternative>> => {
+        const locationsOfStation = await client.locations(station, { results: 1 });
+        const duration = 120;
+        const results = 50;
+        console.log('arrivals station:', locationsOfStation[0].id, locationsOfStation[0].name);
+        if (locationsOfStation[0].id) {
+            const arrivals = await client.arrivals(locationsOfStation[0], { duration, when });
+            console.log('arrivals', arrivals.arrivals.length);
+            let alternatives = arrivals.arrivals.filter(a => a.line && filterLine(a.line, modes, onlyLocalProducts));
             if (alternatives.length > results) {
                 alternatives = alternatives.slice(0, results);
             }
@@ -615,5 +661,5 @@ export function hafas(profileName: string): Hafas {
         }
     }
 
-    return { journeys, refreshJourney, locations, stopsOfIds, nearby, departures, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
+    return { journeys, refreshJourney, locations, stopsOfIds, nearby, arrivals, departures, tripsByName, trip, tripOfLeg, stopssOfJourney, radar, journeyInfo, isStop, isLocation, getLocation, distanceOfJourney, distanceOfLeg };
 }
