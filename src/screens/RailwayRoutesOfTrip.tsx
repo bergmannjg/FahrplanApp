@@ -10,6 +10,7 @@ import { MainStackParamList, RailwayRoutesOfTripScreenParams, asLinkText } from 
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import type { GraphNode, PathElement, Location as RInfLocation } from 'rinf-graph/rinfgraph.bundle';
+import { rinfLineAsStr } from '../lib/toString';
 
 type Props = {
     route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
@@ -188,7 +189,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
                             <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
                             :
                             <TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
-                                <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+                                <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${rinfLineAsStr(element.Country, elementLine)} ${asLinkText(normalizeString(element.LineText))} `}</Text>
                             </TouchableOpacity>
                         }
                         <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>

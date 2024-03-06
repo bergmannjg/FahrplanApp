@@ -135,10 +135,13 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
         console.log('showRoute.showTransfers: ', showTransfers);
         if (journeyInfo) {
             const stops = await client.stopssOfJourney(journeyInfo, modes, false, false);
+            const products = journeyInfo.legs.map(l => l.line?.product).filter(p => !!p) as Array<string>;
+            const isCar = products.every(p => p === 'bus');
+            console.log('products', products, 'isCar', isCar);
             const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
             console.log('locations: ', locations.length);
             if (locations && locations.length > 0) {
-                navigation.navigate('BRouter', { isLongPress, locations });
+                navigation.navigate('BRouter', { isLongPress, locations, isCar });
             }
         }
     }

@@ -91,11 +91,13 @@
     },
     "ArrivalScreen": {
         "Title": "Ankunftsplan",
-        "When": "Ankunft {{date, HH:mm}}"
+        "When": "Ankunft {{date, HH:mm}}",
+        "WhenDelayed": "Ankunft {{plannedDate, HH:mm}} ({{date, HH:mm}})"
     },
     "DepartureScreen": {
         "Title": "Abfahrtsplan",
-        "When": "Abfahrt {{date, HH:mm}}"
+        "When": "Abfahrt {{date, HH:mm}}",
+        "WhenDelayed": "Abfahrt {{plannedDate, HH:mm}} ({{date, HH:mm}})"
     },
     "TripScreen": {
         "Title": "Fahrtverlauf",

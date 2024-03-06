@@ -26,7 +26,7 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
 
     const profile = params.profile;
     const station = params.station;
-    const date = new Date(params.date);
+    const date = new Date();
     const client = hafas(profile);
 
     const [data, setData] = useState([] as readonly Alternative[]);
@@ -116,6 +116,15 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
         else if (line && line.operator && line.operator.name) return line.operator.name;
         else return ''
     }
+
+    const departureTime = (item: Alternative): string => {
+        if (item.plannedWhen && item.when && item.plannedWhen !== item.when)
+            return t('DepartureScreen.WhenDelayed', { plannedDate: extractTimeOfDatestring(item.plannedWhen), date: extractTimeOfDatestring(item.when) })
+        else if (item.plannedWhen)
+            return t('DepartureScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })
+        else return '';
+    }
+
     return (
         <View style={styles.container}>
 
@@ -133,7 +142,8 @@ export default function DepartureScreen({ route, navigation }: Props): JSX.Eleme
                                 <ListItem.Subtitle>
                                     <View style={styles.contentText}>
                                         {item.line && <Text>{lineName(item.line)}</Text>}
-                                        {item.plannedWhen && <Text>{`${t('DepartureScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })}`}</Text>}
+                                        {item.plannedWhen && <Text>{departureTime(item)}</Text>}
+                                        {item.cancelled && <Text>Fahrt fällt aus</Text>}
                                     </View>
                                 </ListItem.Subtitle>
                             </ListItem.Content>

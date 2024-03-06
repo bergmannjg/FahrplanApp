@@ -3,6 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
+import { rinfLineAsStr } from '../lib/toString';
 
 import HomeScreen from './Home';
 import ArrivalScreen from './Arrivals';
@@ -109,7 +110,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="RailwayRoute"
         component={RailwayRoute}
-        options={({ route }) => ({ title: t('RailwayRouteScreen.Title') + ' ' + route.params.railwayRouteNr })}
+        options={({ route }) => ({ title: t('RailwayRouteScreen.Title') + ' ' + rinfLineAsStr(route.params.country, route.params.railwayRouteNr) })}
       />
       <MainStack.Screen
         name="TripsOfLine"

@@ -26,7 +26,7 @@ export default function ArrivalScreen({ route, navigation }: Props): JSX.Element
 
     const profile = params.profile;
     const station = params.station;
-    const date = new Date(params.date);
+    const date = new Date();
     const client = hafas(profile);
 
     const [data, setData] = useState([] as readonly Alternative[]);
@@ -108,7 +108,7 @@ export default function ArrivalScreen({ route, navigation }: Props): JSX.Element
     }
 
     const title = (item: Alternative) => {
-        return item.direction + ' -> ' + item.stop?.name + platform(item.plannedPlatform) ;
+        return item.direction + ' -> ' + item.stop?.name + platform(item.plannedPlatform);
     }
 
     const lineName = (line: Line) => {
@@ -116,6 +116,15 @@ export default function ArrivalScreen({ route, navigation }: Props): JSX.Element
         else if (line && line.operator && line.operator.name) return line.operator.name;
         else return ''
     }
+
+    const arrivalTime = (item: Alternative): string => {
+        if (item.plannedWhen && item.when && item.plannedWhen !== item.when)
+            return t('ArrivalScreen.WhenDelayed', { plannedDate: extractTimeOfDatestring(item.plannedWhen), date: extractTimeOfDatestring(item.when) })
+        else if (item.plannedWhen)
+            return t('ArrivalScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })
+        else return '';
+    }
+
     return (
         <View style={styles.container}>
 
@@ -133,7 +142,8 @@ export default function ArrivalScreen({ route, navigation }: Props): JSX.Element
                                 <ListItem.Subtitle>
                                     <View style={styles.contentText}>
                                         {item.line && <Text>{lineName(item.line)}</Text>}
-                                        {item.plannedWhen && <Text>{`${t('ArrivalScreen.When', { date: extractTimeOfDatestring(item.plannedWhen) })}`}</Text>}
+                                        {item.plannedWhen && <Text>{arrivalTime(item)}</Text>}
+                                        {item.cancelled && <Text>Fahrt fällt aus</Text>}
                                     </View>
                                 </ListItem.Subtitle>
                             </ListItem.Content>

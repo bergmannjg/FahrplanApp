@@ -40,7 +40,7 @@ interface LineInfoExtra {
 }
 
 const mapOps = opInfos.reduce((map: Map<string, OpInfo>, op: OpInfo) => map.set(op.UOPID, op), new Map());
-const countries = (lineInfos as LineInfo[]).reduce(
+const countries : string[] = (lineInfos as LineInfo[]).reduce(
     (arr: string[], line: LineInfo) => arr.find(x => x === line.Country) ? arr : [line.Country, ...arr],
     []);
 console.log('countries', countries);
