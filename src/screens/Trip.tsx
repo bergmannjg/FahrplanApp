@@ -174,7 +174,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
     }
 
     const additionalStopInfo = (item: StopOver): string => {
-        const additionalStop = item.additionalStop;
+        const additionalStop = item.additional;
         return additionalStop ? "zusätzlicher Halt" : "";
     }
 

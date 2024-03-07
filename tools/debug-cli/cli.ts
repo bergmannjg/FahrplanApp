@@ -173,7 +173,7 @@ const journeys = (from?: string, to?: string, via?: string) => {
                             .then(trip => {
                                 console.log('leg: ', l.tripId, l.origin?.name, l.destination?.name, l.line?.name, l.line?.product, l.line?.fahrtNr, l.plannedDeparture)
                                 trip.stopovers?.forEach((so: StopOver) => {
-                                    console.log('stop: ', so.stop?.name, so.stop?.location?.latitude, so.stop?.location?.longitude, so.stop?.distance?.toFixed(3), ' lines:', filterLines(so.stop?.lines).length, so.cancelled ? 'cancelled' : '', so.additionalStop ? 'additionalStop' : '');
+                                    console.log('stop: ', so.stop?.name, so.stop?.location?.latitude, so.stop?.location?.longitude, so.stop?.distance?.toFixed(3), ' lines:', filterLines(so.stop?.lines).length, so.cancelled ? 'cancelled' : '', so.additional ? 'additionalStop' : '');
                                 })
                             })
                             .catch((error) => {
