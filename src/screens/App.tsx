@@ -65,7 +65,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="LineNetwork"
         component={LineNetworkScreen}
-        options={{ title: 'Liniennetz 2023' }}
+        options={{ title: 'Liniennetz 2024' }}
       />
       <MainStack.Screen
         name="RailwayRouteNetwork"

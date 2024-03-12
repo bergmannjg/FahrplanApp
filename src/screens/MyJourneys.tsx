@@ -74,7 +74,7 @@ export default function MyJourneysScreen({ route, navigation }: Props): JSX.Elem
 
     const goToView = (item: MyJourney) => {
         console.log('Navigation router run to Journeyplan');
-        navigation.navigate('Journeyplan', { refreshToken: item.refreshToken, profile: item.profile, tripDetails: params.tripDetails, compactifyPath: params.compactifyPath })
+        navigation.navigate('Journeyplan', { refreshToken: item.refreshToken, profile: item.profile, tripDetails: params.tripDetails })
     };
 
     const removeItem = async (item: MyJourney) => {

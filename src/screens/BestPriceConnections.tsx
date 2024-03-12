@@ -43,7 +43,6 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
     const client: Hafas = hafas(profile);
     const tripDetails = params.tripDetails;
     const journeyParams = params.journeyParams;
-    const compactifyPath = params.compactifyPath;
 
     const isFutureDate = (date: Date): boolean => {
         return (new Date()) < date;
@@ -134,7 +133,7 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
 
     const goToView = (item: JourneyInfo) => {
         console.log('Navigation router run to Journeyplan');
-        navigation.navigate('Journeyplan', { journey: item, profile, tripDetails, compactifyPath })
+        navigation.navigate('Journeyplan', { journey: item, profile, tripDetails })
     };
 
     const goToBestPriceView = (item: JourneyInfo) => {

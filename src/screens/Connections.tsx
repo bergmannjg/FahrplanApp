@@ -41,7 +41,6 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const tripDetails = params.tripDetails;
-    const compactifyPath = params.compactifyPath;
     const journeyParams = params.journeyParams;
     const modes = ["train", "watercraft", "bus"];
 
@@ -99,7 +98,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
     const goToView = async (item: JourneyInfo) => {
         console.log('Navigation router run to Journeyplan');
-        navigation.navigate('Journeyplan', { journey: item, profile, tripDetails, compactifyPath })
+        navigation.navigate('Journeyplan', { journey: item, profile, tripDetails })
     };
 
     const showIncr = (hours: number) => {
@@ -130,7 +129,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
 
     const showBestPrice = () => {
         console.log('BestPriceConnections. profile:', profile);
-        navigation.navigate('BestPriceConnections', { profile: profile, station1: params.station1, station2: params.station2, via: params.via, date: date.valueOf(), tripDetails, compactifyPath: compactifyPath, journeyParams, days: 7 });
+        navigation.navigate('BestPriceConnections', { profile: profile, station1: params.station1, station2: params.station2, via: params.via, date: date.valueOf(), tripDetails, journeyParams, days: 7 });
     }
 
 

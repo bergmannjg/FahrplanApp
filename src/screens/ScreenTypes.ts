@@ -18,7 +18,6 @@ export interface HomeScreenParams {
     clientLib?: string;
     profile?: string,
     tripDetails?: boolean,
-    compactifyPath?: boolean,
     station?: string | Location,
     station2?: string,
     stationVia?: string,
@@ -31,7 +30,6 @@ export interface OptionScreenParams {
         clientLib: string,
         profile: string,
         tripDetails: boolean,
-        compactifyPath: boolean,
     }
 }
 
@@ -54,7 +52,6 @@ export interface JourneyplanScreenParams {
     journey?: JourneyInfo,
     refreshToken?: string;
     tripDetails: boolean,
-    compactifyPath: boolean;
     profile: string
 }
 
@@ -65,7 +62,6 @@ export interface RailwayRoutesOfTripScreenParams {
     stops?: Stop[];
     ids?: string[];
     tripDetails: boolean;
-    compactifyPath: boolean;
     useMaxSpeed: boolean;
 }
 
@@ -95,7 +91,6 @@ export interface RailwayRouteNetworkParams {
 
 export interface MyJourneysParams {
     tripDetails: boolean,
-    compactifyPath: boolean,
 }
 
 export interface ConnectionsScreenParams {
@@ -104,7 +99,6 @@ export interface ConnectionsScreenParams {
     station2: string | Location,
     via: string,
     tripDetails: boolean,
-    compactifyPath: boolean;
     profile: string,
     journeyParams: JourneyParams
 }
@@ -115,7 +109,6 @@ export interface BestPriceConnectionsScreenParams {
     station2: string | Location,
     via: string,
     tripDetails: boolean,
-    compactifyPath: boolean;
     profile: string,
     journeyParams: JourneyParams,
     days: number,

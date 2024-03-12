@@ -134,11 +134,6 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
         setTripDetails(route.params.tripDetails);
     }
 
-    // route.params from OptionsScreen
-    if (route.params?.compactifyPath !== undefined && route.params?.compactifyPath !== compactifyPath) {
-        setCompactifyPath(route.params.compactifyPath);
-    }
-
     // route.params from JourneyOptionsScreen
     if (route.params?.journeyParams !== undefined && route.params?.journeyParams !== journeyParams) {
         setJourneyParams(route.params.journeyParams);
@@ -209,12 +204,12 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
                                 const ids: string[] = opInfosVia && opInfosVia.length > 0
                                     ? [opInfos1[0].UOPID, opInfosVia[0].UOPID, opInfos2[0].UOPID]
                                     : [opInfos1[0].UOPID, opInfos2[0].UOPID];
-                                navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: false, compactifyPath, useMaxSpeed: false, originName: _station1, destinationName: _station2, ids });
+                                navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: false, useMaxSpeed: false, originName: _station1, destinationName: _station2, ids });
                             }
                         }
                     })
             } else {
-                navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, compactifyPath: compactifyPath, journeyParams });
+                navigation.navigate('Connections', { profile: clientProfile(), station1: station1, station2: station2, via: stationVia, date: date.valueOf(), tripDetails, journeyParams });
             }
         }
     }
@@ -241,7 +236,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
 
     const searchMyJourneys = () => {
         console.log('MyJourneys');
-        navigation.navigate('MyJourneys', { tripDetails, compactifyPath });
+        navigation.navigate('MyJourneys', { tripDetails });
     }
 
     const showDeparturesQuery = (query: string) => {
@@ -253,8 +248,8 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     }
 
     const navigateToOptionsScreen = () => {
-        console.log('navigateToOptionsScreen. profile:', profile, compactifyPath);
-        navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails, compactifyPath } });
+        console.log('navigateToOptionsScreen. profile:', profile);
+        navigation.navigate('Options', { navigationParams: { clientLib: clientLib, profile: profile, tripDetails } });
     }
 
     const navigateToJourneyOptionsScreen = () => {

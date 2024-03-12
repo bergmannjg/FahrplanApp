@@ -69,7 +69,7 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
             }
         });
         if (stops.length > 1) {
-            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, compactifyPath: false, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
         }
     }
 

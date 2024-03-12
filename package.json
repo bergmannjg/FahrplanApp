@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "update-fs-hafas-client": "rm -rf node_modules/fs-hafas-client/ && npm install fs-hafas-client",
-        "update-rinf-data": "rm -rf node_modules/rinf-data/ && npm install rinf-data",
+        "update-rinf-data": "rm -rf node_modules/rinf-graph/ && npm install rinf-graph",
         "android-debug": "tsc && react-native run-android --variant=debug --deviceId process.env.deviceId",
         "android-release": "tsc && react-native run-android --variant=release --deviceId process.env.deviceId",
         "android-apk-release": "cd android && ./gradlew clean && ./gradlew :app:packageRelease",
@@ -59,7 +59,7 @@
         "react-native-tcp-socket": "^6.0.6",
         "react-native-vector-icons": "^10.0.0",
         "react-native-webview": "^13.4.0",
-        "rinf-graph": "https://github.com/bergmannjg/RInfData/releases/download/1.14.0/rinf-graph-1.14.0.tgz",
+        "rinf-graph": "file:../RInfData/src/RInfGraph/target.javascript/rinf-graph-1.15.0.tgz",
         "slugg": "^1.2.1",
         "stream-browserify": "^3.0.0",
         "tz-lookup": "^6.1.25",

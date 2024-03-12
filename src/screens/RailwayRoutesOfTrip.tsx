@@ -13,253 +13,272 @@ import type { GraphNode, PathElement, Location as RInfLocation } from 'rinf-grap
 import { rinfLineAsStr } from '../lib/toString';
 
 type Props = {
-    route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
-    navigation: StackNavigationProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
+	route: RouteProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
+	navigation: StackNavigationProp<MainStackParamList, 'RailwayRoutesOfTrip'>;
 };
 
 export default function RailwayRoutesOfTripScreen({ route, navigation }: Props): JSX.Element {
-    console.log('constructor RailwayRouteOfTrip');
+	console.log('constructor RailwayRouteOfTrip');
 
-    const { t } = useTranslation();
+	const { t } = useTranslation();
 
-    const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
-    const stops = params.stops;
-    const ids = params.ids;
-    const useMaxSpeed = params.useMaxSpeed;
-    const compactifyPath = params.compactifyPath;
+	const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
+	const stops = params.stops;
+	const ids = params.ids;
+	const useMaxSpeed = params.useMaxSpeed;
 
-    const originName = params.originName;
-    const destinationName = params.destinationName;
+	const originName = params.originName;
+	const destinationName = params.destinationName;
 
-    console.log('stops.length: ', stops?.length);
-    console.log('compactifyPath: ', compactifyPath);
+	console.log('stops.length: ', stops?.length);
 
-    interface GraphNodeEx {
-        TotalStartKm: number;
-        TotalEndKm: number;
-        node: GraphNode;
-        element: PathElement;
-        isWalking: boolean;
-        prevNode?: GraphNode
-        nextNode?: GraphNode
-    }
+	interface GraphNodeEx {
+		TotalStartKm: number;
+		TotalEndKm: number;
+		node: GraphNode;
+		element: PathElement;
+		isWalking: boolean;
+		prevNode?: GraphNode
+		nextNode?: GraphNode
+	}
 
-    const [totalKm, setTotalKm] = useState(0.0);
-    const [path, setPath] = useState([] as GraphNode[]);
-    const [compactPath, setCompactData] = useState([] as GraphNodeEx[]);
-    const [loading, setLoading] = useState(true);
-    const [locationsOfPath, setLocationsOfPath] = useState([] as RInfLocation[][]);
-    const [locationsOfPathIndexes, setLocationsOfPathIndexes] = useState([] as number[]);
+	const [totalKm, setTotalKm] = useState(0.0);
+	const [path, setPath] = useState([] as GraphNode[]);
+	const [compactifyPath, setCompactifyPath] = useState(true);
+	const [compactPath, setCompactPath] = useState([] as GraphNodeEx[]);
+	const [loading, setLoading] = useState(true);
+	const [locationsOfPath, setLocationsOfPath] = useState([] as RInfLocation[][]);
+	const [locationsOfPathIndexes, setLocationsOfPathIndexes] = useState([] as number[]);
 
-    const orientation = useOrientation();
+	const orientation = useOrientation();
 
-    const distanceOfNode = (node: GraphNode): number => Math.abs(node.Edges[0].StartKm - node.Edges[0].EndKm)
+	const distanceOfNode = (node: GraphNode): number => Math.abs(node.Edges[0].StartKm - node.Edges[0].EndKm)
 
-    useEffect(() => {
-        if (loading && path.length === 0) {
-            if (stops || ids) {
-                import('../lib/rinf-data-railway-routes')
-                    .then(rinf => {
-                        const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
-                            try {
-                                return rinf.rinfFindRailwayRoutesOfTripStops(stopsOfRoute, compactifyPath);
-                            } catch (ex) {
-                                console.error("findRailwayRoutesOfTrip", (ex as Error).message);
-                                return [];
-                            }
-                        }
+	const loadData = (rinf: typeof import("/home/bergmann/projects/FahrplanApp/src/lib/rinf-data-railway-routes"), isCompactifyPath: boolean) => {
+		const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
+			try {
+				return rinf.rinfFindRailwayRoutesOfTripStops(stopsOfRoute, isCompactifyPath);
+			} catch (ex) {
+				console.error("findRailwayRoutesOfTrip", (ex as Error).message);
+				return [];
+			}
+		}
 
-                        const result = stops ? findRailwayRoutes(stops)
-                            : ids ? rinf.rinfFindRailwayRoutesOfTrip(ids, compactifyPath)
-                                : [];
+		const result = stops ? findRailwayRoutes(stops)
+			: ids ? rinf.rinfFindRailwayRoutesOfTrip(ids, isCompactifyPath)
+				: [];
 
-                        const locations = rinf.rinfGetLocationsOfPath(result);
-                        console.log('locations:', locations.length);
-                        const indexes = [...locations.map((_, i) => i)];
-                        console.log('indexes:', indexes);
+		const locations = rinf.rinfGetLocationsOfPath(result);
+		console.log('locations:', locations.length);
+		const indexes = [...locations.map((_, i) => i)];
+		console.log('indexes:', indexes);
 
-                        setPath(result);
+		setPath(result);
 
-                        const reducer = (previous: GraphNodeEx[], current: GraphNode): GraphNodeEx[] => {
-                            const currTotal = previous.length > 0 ? previous[previous.length - 1].TotalEndKm : 0;
-                            if (previous.length > 0) {
-                                previous[previous.length - 1].nextNode = current;
-                            }
-                            return previous.concat([{
-                                TotalStartKm: currTotal,
-                                TotalEndKm: currTotal + distanceOfNode(current),
-                                node: current,
-                                element: rinf.rinfToPathElement(current),
-                                isWalking: rinf.rinfIsWalkingPath(current),
-                                prevNode: previous.length > 0 ? previous[previous.length - 1].node : undefined
-                            }]);
-                        }
-                        const compactResult = rinf.rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, [])
-                        setCompactData(compactResult);
-                        setLocationsOfPath(locations);
-                        setLocationsOfPathIndexes(indexes);
+		const reducer = (previous: GraphNodeEx[], current: GraphNode): GraphNodeEx[] => {
+			const currTotal = previous.length > 0 ? previous[previous.length - 1].TotalEndKm : 0;
+			if (previous.length > 0) {
+				previous[previous.length - 1].nextNode = current;
+			}
+			return previous.concat([{
+				TotalStartKm: currTotal,
+				TotalEndKm: currTotal + distanceOfNode(current),
+				node: current,
+				element: rinf.rinfToPathElement(current),
+				isWalking: rinf.rinfIsWalkingPath(current),
+				prevNode: previous.length > 0 ? previous[previous.length - 1].node : undefined
+			}]);
+		}
+		const compactResult = rinf.rinfGetCompactPath(result, useMaxSpeed).reduce(reducer, [])
+		setCompactPath(compactResult);
+		setLocationsOfPath(locations);
+		setLocationsOfPathIndexes(indexes);
 
-                        if (compactResult.length > 0) {
-                            setTotalKm(compactResult[compactResult.length - 1].TotalEndKm);
-                        }
-                        setLoading(false);
-                    })
-                    .catch(reason => { console.error(reason); setLoading(false); });
-            } else {
-                setLoading(false);
-            }
-        }
-    });
+		if (compactResult.length > 0) {
+			setTotalKm(compactResult[compactResult.length - 1].TotalEndKm);
+		}
+	}
 
-    const showRoute = async (index: number) => {
-        if (locationsOfPath[index].length > 0) {
-            const locations: Location[] = locationsOfPath[index].map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
-            navigation.navigate('BRouter', { isLongPress: false, locations });
-        }
-    }
+	useEffect(() => {
+		if (loading && path.length === 0) {
+			if (stops || ids) {
+				import('../lib/rinf-data-railway-routes')
+					.then(rinf => {
+						loadData(rinf, true);
+						setLoading(false);
+					})
+					.catch(reason => { console.error(reason); setLoading(false); });
+			} else {
+				setLoading(false);
+			}
+		}
+	});
 
-    const showRailwayRoute = async (country: string, railwayRouteNr: string) => {
-        console.log('showRailwayRoute', country, railwayRouteNr);
+	const showRoute = async (index: number) => {
+		if (locationsOfPath[index].length > 0) {
+			const locations: Location[] = locationsOfPath[index].map(s => { return { type: 'location', longitude: s.Longitude, latitude: s.Latitude } })
+			navigation.navigate('BRouter', { isLongPress: false, locations });
+		}
+	}
 
-        navigation.navigate('RailwayRoute', { railwayRouteNr, country });
-    }
+	const showRailwayRoute = async (country: string, railwayRouteNr: string) => {
+		console.log('showRailwayRoute', country, railwayRouteNr);
 
-    const renderFooter = () => {
-        if (!loading) return null;
+		navigation.navigate('RailwayRoute', { railwayRouteNr, country });
+	}
 
-        return (
-            <View
-                style={{
-                    paddingVertical: 20,
-                    borderTopWidth: 1,
-                    borderColor: "#CED0CE"
-                }}
-            >
-                <ActivityIndicator size="small" color="#0000ff" />
-            </View>
-        );
-    };
+	const renderFooter = () => {
+		if (!loading) return null;
 
-    // adhoc
-    const normalizeString = (s: string) => {
-        return s.replace('Berlin Hauptbahnhof - Lehrter Bahnhof', 'Berlin Hauptbahnhof').replace(/[ ]+/, ' ');
-    }
+		return (
+			<View
+				style={{
+					paddingVertical: 20,
+					borderTopWidth: 1,
+					borderColor: "#CED0CE"
+				}}
+			>
+				<ActivityIndicator size="small" color="#0000ff" />
+			</View>
+		);
+	};
 
-    interface ItemProps {
-        item: GraphNodeEx
-    }
+	// adhoc
+	const normalizeString = (s: string) => {
+		return s.replace('Berlin Hauptbahnhof - Lehrter Bahnhof', 'Berlin Hauptbahnhof').replace(/[ ]+/, ' ');
+	}
 
-    const Item = ({ item }: ItemProps) => {
-        const element = item.element;
-        const isWalking = item.isWalking;
-        const maxSpeedInfo = useMaxSpeed ? element.MaxSpeed.toString() + ' km ' : ''
-        const firstNodeOfLine = item.TotalStartKm === 0 || (item.prevNode ? item.prevNode.Edges[0].Line !== item.node.Edges[0].Line : true);
-        const lastNodeOfLine = item.nextNode ? item.nextNode.Edges[0].Line !== item.node.Edges[0].Line : true;
-        const lastNode = !item.nextNode;
-        const elementLine = element.Line;
-        return (
-            useMaxSpeed ?
-                <View style={{ flex: 1 }}>
-                    {firstNodeOfLine && <View style={styles.distanceColumn}>
-                        <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
-                        <TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
-                            <Text style={styles.maxSpeedLinkText}>{`${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
-                        </TouchableOpacity>
-                    </View>}
-                    <View style={styles.routeViewMaxSpeedColumn}>
-                        <Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
-                        {isWalking ?
-                            <Text style={styles.itemButtonTextMaxSpeed}>Fußweg</Text>
-                            :
-                            <Text style={styles.itemButtonTextMaxSpeed}>{`${maxSpeedInfo}`}</Text>
-                        }
-                        {lastNodeOfLine && <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>}
-                    </View >
-                    {lastNode && <View style={styles.distanceColumn}>
-                        <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`}</Text>
-                    </View>}
-                </View> :
-                <View>
-                    {item.TotalStartKm === 0 && <View style={styles.distanceColumn}>
-                        <Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
-                    </View>}
-                    <View style={styles.routeViewColumn}>
-                        <Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
-                        {isWalking ?
-                            <Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
-                            :
-                            <TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
-                                <Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${rinfLineAsStr(element.Country, elementLine)} ${asLinkText(normalizeString(element.LineText))} `}</Text>
-                            </TouchableOpacity>
-                        }
-                        <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>
-                    </View >
-                    <View style={styles.distanceColumn}>
-                        <Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`} ({(item.TotalEndKm * 100 / totalKm).toFixed(1)} %)</Text>
-                    </View>
-                </View>
-        );
-    }
+	interface ItemProps {
+		item: GraphNodeEx
+	}
 
-    interface RouteItemProps {
-        item: number,
-    }
+	const Item = ({ item }: ItemProps) => {
+		const element = item.element;
+		const isWalking = item.isWalking;
+		const maxSpeedInfo = useMaxSpeed ? element.MaxSpeed.toString() + ' km ' : ''
+		const firstNodeOfLine = item.TotalStartKm === 0 || (item.prevNode ? item.prevNode.Edges[0].Line !== item.node.Edges[0].Line : true);
+		const lastNodeOfLine = item.nextNode ? item.nextNode.Edges[0].Line !== item.node.Edges[0].Line : true;
+		const lastNode = !item.nextNode;
+		const elementLine = element.Line;
+		return (
+			useMaxSpeed ?
+				<View style={{ flex: 1 }}>
+					{firstNodeOfLine && <View style={styles.distanceColumn}>
+						<Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
+						<TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
+							<Text style={styles.maxSpeedLinkText}>{`${elementLine} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+						</TouchableOpacity>
+					</View>}
+					<View style={styles.routeViewMaxSpeedColumn}>
+						<Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
+						{isWalking ?
+							<Text style={styles.itemButtonTextMaxSpeed}>Fußweg</Text>
+							:
+							<Text style={styles.itemButtonTextMaxSpeed}>{`${maxSpeedInfo}`}</Text>
+						}
+						{lastNodeOfLine && <Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>}
+					</View >
+					{lastNode && <View style={styles.distanceColumn}>
+						<Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`}</Text>
+					</View>}
+				</View> :
+				<View>
+					{item.TotalStartKm === 0 && <View style={styles.distanceColumn}>
+						<Text style={styles.distanceText}>km: {`${item.TotalStartKm.toFixed(3)}`}</Text>
+					</View>}
+					<View style={styles.routeViewColumn}>
+						<Text >{`${normalizeString(element.From)}, km: ${element.StartKm}`}</Text>
+						{isWalking ?
+							<Text style={styles.itemButtonTextRouteOfTrip}>Fußweg</Text>
+							:
+							<TouchableOpacity onPress={() => showRailwayRoute(element.Country, elementLine)}>
+								<Text style={styles.itemButtonTextRouteOfTrip}>{`${maxSpeedInfo}${rinfLineAsStr(element.Country, elementLine)} ${asLinkText(normalizeString(element.LineText))} `}</Text>
+							</TouchableOpacity>
+						}
+						<Text >{`${normalizeString(element.To)}, km: ${element.EndKm}`}</Text>
+					</View >
+					<View style={styles.distanceColumn}>
+						<Text style={styles.distanceText}>km: {`${item.TotalEndKm.toFixed(3)}`} ({(item.TotalEndKm * 100 / totalKm).toFixed(1)} %)</Text>
+					</View>
+				</View>
+		);
+	}
 
-    const RouteItem = ({ item }: RouteItemProps) => {
-        const len = locationsOfPathIndexes.length;
-        const txt = len > 1 ? (item + 1).toString() : ''
-        console.log('RouteItem: ', item, len)
-        return (
-            <View style={styles.subtitleButtonColumn}>
-                <TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(item)}>
-                    <Text style={styles.itemButtonText}>
-                        {t('JourneyplanScreen.ShowRoute')} {txt}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
+	interface RouteItemProps {
+		item: number,
+	}
 
-    if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" />
-            </View>
-        );
-    }
+	const refresh = () => {
+		import('../lib/rinf-data-railway-routes')
+			.then(rinf => {
+				let isCompactifyPath = !compactifyPath;
+				setCompactifyPath(isCompactifyPath);
+				loadData(rinf, isCompactifyPath);
+			})
+			.catch(reason => { console.error(reason); });
+	}
 
-    return (
-        <View style={styles.container}>
-            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
-                <VirtualizedList
-                    data={locationsOfPathIndexes}
-                    renderItem={({ item }) => (
-                        <RouteItem item={item as number} />
-                    )}
-                    getItem={(date, index) => locationsOfPathIndexes[index]}
-                    getItemCount={() => locationsOfPathIndexes.length}
-                    keyExtractor={(item: number) => item.toString()}
-                    ListFooterComponent={null}
-                />
-            </View>
-            <View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
-                <Text style={styles.itemHeaderText}>
-                    {originName} {t('JourneyplanScreen.DirectionTo')} {destinationName}, {totalKm.toFixed(3)} km
-                </Text>
-            </View>
-            <FlatList
-                data={compactPath}
-                renderItem={({ item }) => (
-                    <ListItem containerStyle={{ borderBottomWidth: 0, borderWidth: 0, padding: 0 }}>
-                        <ListItem.Content>
-                            <ListItem.Title style={{ width: "100%" }}><Item item={item} /></ListItem.Title>
-                        </ListItem.Content>
-                    </ListItem>
-                )}
-                keyExtractor={item => item.node.Node}
-                ListFooterComponent={renderFooter}
-                onEndReachedThreshold={50}
-            />
-        </View>
-    );
+	const RouteItem = ({ item }: RouteItemProps) => {
+		const len = locationsOfPathIndexes.length;
+		const txt = len > 1 ? (item + 1).toString() : ''
+		console.log('RouteItem: ', item, len)
+		return (
+			<View style={styles.subtitleButtonColumn}>
+				<TouchableOpacity style={styles.buttonJourneyPlan} onPress={() => showRoute(item)}>
+					<Text style={styles.itemButtonText}>
+						{t('JourneyplanScreen.ShowRoute')} {txt}
+					</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	}
+
+	if (loading) {
+		return (
+			<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+				<ActivityIndicator size="large" />
+			</View>
+		);
+	}
+
+	return (
+		<View style={styles.container}>
+			<View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+				<VirtualizedList
+					data={locationsOfPathIndexes}
+					renderItem={({ item }) => (
+						<RouteItem item={item as number} />
+					)}
+					getItem={(date, index) => locationsOfPathIndexes[index]}
+					getItemCount={() => locationsOfPathIndexes.length}
+					keyExtractor={(item: number) => item.toString()}
+					ListFooterComponent={null}
+				/>
+			</View>
+			<View style={orientation === 'PORTRAIT' ? stylesPortrait.containerHeaderText : stylesLandscape.containerHeaderText}>
+				<View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+					<Text style={styles.itemHeaderText}>
+						{originName} {t('JourneyplanScreen.DirectionTo')} {destinationName}, {totalKm.toFixed(3)} km
+					</Text>
+
+					<TouchableOpacity onPress={() => refresh()}>
+						<Text style={styles.infoText}>{compactifyPath ? 'Exakt' : 'Kompakt'} anzeigen</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+			<FlatList
+				data={compactPath}
+				renderItem={({ item }) => (
+					<ListItem containerStyle={{ borderBottomWidth: 0, borderWidth: 0, padding: 0 }}>
+						<ListItem.Content>
+							<ListItem.Title style={{ width: "100%" }}><Item item={item} /></ListItem.Title>
+						</ListItem.Content>
+					</ListItem>
+				)}
+				keyExtractor={item => item.node.Node}
+				ListFooterComponent={renderFooter}
+				onEndReachedThreshold={50}
+			/>
+		</View>
+	);
 }

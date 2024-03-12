@@ -62,11 +62,6 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
         { label: t('OptionsScreen.onlyStops'), value: 'false' },
     ];
 
-    const radioRouteProps = [
-        { label: 'exakt' + '  ', value: 'exact' },
-        { label: 'kompakt', value: 'compact' },
-    ];
-
     const radioLanguageProps = [
         { label: t('OptionsScreen.German') + '  ', value: 'de' },
         { label: t('OptionsScreen.English'), value: 'en' },
@@ -77,12 +72,7 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
     const [clientLib, setClientLib] = useState(params.navigationParams.clientLib);
     const [profile, setProfile] = useState(params.navigationParams.profile);
     const [tripDetails, setTripDetails] = useState(params.navigationParams.tripDetails);
-    const [compactifyPath, setCompactifyPath] = useState(params.navigationParams.compactifyPath);
     const [showDropDown, setShowDropDown] = useState(false);
-
-    const getCompactifyPath = () => {
-        return compactifyPath ? 'compact' : 'exact';
-    }
 
     console.log('profile: ', profile, ', navigationParams: ', params.navigationParams);
 
@@ -101,8 +91,8 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
             console.log('change clientLib to ', hafas_client)
             realClientLib = hafas_client;
         }
-        console.log('goback OptionsScreen', profile, realClientLib, tripDetails, compactifyPath);
-        navigation.navigate('Home', { clientLib: realClientLib, profile, tripDetails, compactifyPath });
+        console.log('goback OptionsScreen', profile, realClientLib, tripDetails);
+        navigation.navigate('Home', { clientLib: realClientLib, profile, tripDetails });
     }
 
     return (
@@ -130,11 +120,6 @@ export default function OptionsScreen({ route, navigation }: Props): JSX.Element
             <Text style={styles.radioButtonTitle}>Tripdetails Router</Text>
             <RadioButton.Group onValueChange={newValue => setTripDetails(newValue === 'true')} value={tripDetails.toString()}>
                 {radioItems(radioTripDetailsProps)}
-            </RadioButton.Group>
-
-            <Text style={styles.radioButtonTitle}>Railway Route</Text>
-            <RadioButton.Group onValueChange={newValue => setCompactifyPath(newValue === 'compact')} value={getCompactifyPath()}>
-                {radioItems(radioRouteProps)}
             </RadioButton.Group>
 
             <Text style={styles.radioButtonTitle}>{t('OptionsScreen.Language')}</Text>

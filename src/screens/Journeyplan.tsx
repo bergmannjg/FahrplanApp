@@ -34,7 +34,6 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     const profile = params.profile;
     const client: Hafas = hafas(profile);
     const showTransfers = params.tripDetails;
-    const compactifyPath = params.compactifyPath;
     const modes = ["train", "watercraft", "bus"];
 
     const [journeyInfo, setJourneyInfo] = useState<JourneyInfo | undefined>(params.journey);
@@ -116,7 +115,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
             })
         })
         if (stops.length > 1) {
-            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, compactifyPath, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
         }
     }
 
