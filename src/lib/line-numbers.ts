@@ -13,10 +13,10 @@ interface RailwayLineToken {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import railwayLines from './compact-line-infos.json' assert { type: 'json' };
+import railwayLines from './compact-line-infos.json' with { type: 'json' };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import _railwayLineTokens from './line-tokens.json' assert { type: 'json' };
+import _railwayLineTokens from './line-tokens.json' with { type: 'json' };
 
 const railwayLineInfos: RailwayLine[] = railwayLines
 

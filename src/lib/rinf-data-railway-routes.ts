@@ -4,15 +4,15 @@ import { Stop } from 'hafas-client';
 import { distance } from './distance';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import g from 'rinf-graph/data/Graph.json' assert { type: 'json' };
+import g from 'rinf-graph/data/Graph.json' with { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import opInfos from 'rinf-graph/data/OpInfos.json' assert { type: 'json' };
+import opInfos from 'rinf-graph/data/OpInfos.json' with { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import lineInfos from 'rinf-graph/data/LineInfos.json' assert { type: 'json' };
+import lineInfos from 'rinf-graph/data/LineInfos.json' with { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import tunnelInfos from 'rinf-graph/data/TunnelInfos.json' assert { type: 'json' };
+import tunnelInfos from 'rinf-graph/data/TunnelInfos.json' with { type: 'json' };
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import dbStationsOrig from '../../db-data/D_Bahnhof_2020_alle.json' assert { type: 'json' };
+import dbStationsOrig from '../../db-data/D_Bahnhof_2020_alle.json' with { type: 'json' };
 
 type DbStation = {
 	id: string,

@@ -22,10 +22,14 @@ for dir in $list; do
             echo "change $indexFile"
 
             sed -i '/createRequire/d' $indexFile
-            sed -i "s/^const baseProfile = require.*$/import baseProfile from '.\/base.json' assert { type: 'json' };/" $indexFile
+            sed -i "s/^const baseProfile = require.*$/import baseProfile from '.\/base.json' with { type: 'json' };/" $indexFile
 
         fi
     fi
+    loyaltyCards=$dir/loyalty-cards.js
+    if [ -f "$loyaltyCards" ]; then
+        sed -i '/node:assert/d' $loyaltyCards
+	fi
 done
 
-npx patch-package hafas-client
+#npx patch-package hafas-client
