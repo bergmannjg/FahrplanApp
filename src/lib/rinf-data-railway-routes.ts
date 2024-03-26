@@ -22,7 +22,8 @@ type DbStation = {
 }
 
 const dbStations: DbStation[] = dbStationsOrig.map(s => {
-	const opid = s.DS100.length < 5 ? 'DE' + '0'.repeat(5 - s.DS100.length) + s.DS100 : 'DE' + s.DS100 + s.DS100;
+	const ds100 = s.DS100.split(',')[0];
+	const opid = ds100.length < 5 ? 'DE' + '0'.repeat(5 - ds100.length) + ds100 : 'DE' + ds100;
 	let r: DbStation =
 	{
 		id: s.EVA_NR.toString(),
@@ -181,11 +182,13 @@ function getOpIdWithMinDistanceFromLatLon(s: Stop): string | undefined {
 	return opid.uopid;
 }
 
-function findOPIDForStop(s: Stop): string {
-	const opid = getOpIdFromDbStations(s) || getOpIdWithMinDistanceFromLatLon(s);
-	if (opid) return opid;
-	console.log('opid not found: ', s.name);
-	return '';
+function findOPIDForStop(s: Stop): string | undefined {
+	const opid = getOpIdFromDbStations(s);
+	if (opid && mapOps.get(opid)) return opid;
+	const op = getOpIdWithMinDistanceFromLatLon(s)
+	if (op) return op;
+	console.log('stop.id not found: ', s.name);
+	return undefined;
 }
 
 function rinfGetLineName(country: string, line: string): string {
@@ -284,16 +287,11 @@ function rinfToLineNodes(nodesList: GraphNode[][]): LineNode[] {
 		.filter(ln => filterOpId(ln.opid));
 }
 
-function findOpIdsForStops(stops: Stop[]) {
-	return stops
+function findOpIdsForStops(stops: Stop[]) : string[] {
+	const ids = stops
 		.map(stop => findOPIDForStop(stop))
-		.filter(opId => {
-			const op = mapOps.get(opId)
-			if (!op) {
-				console.log('opId not found: ', opId);
-			}
-			return op;
-		});
+		.filter(opId => !!opId);
+	return ids as string[];
 }
 
 function splitter(previous: GraphNode[][], current: GraphNode): GraphNode[][] {
