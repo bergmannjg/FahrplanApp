@@ -253,6 +253,9 @@ export const styles = StyleSheet.create({
   itemDetailsText: {
     paddingLeft: 50,
   },
+  itemHintText: {
+    paddingLeft: 30,
+  },
   itemDetailsTextTransit: {
     paddingLeft: 50,
   },
