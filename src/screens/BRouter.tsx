@@ -1,5 +1,4 @@
 import React from 'react';
-import Clipboard from '@react-native-community/clipboard';
 import { WebView } from 'react-native-webview';
 import { useTranslation } from 'react-i18next';
 import { Location } from 'hafas-client';
@@ -167,8 +166,6 @@ export default function BRouterScreen({ route, navigation }: Props): JSX.Element
     // the query string may change, it reflects the brouter api
     const uri = `https://brouter.de/brouter-web/#map=${map}/osm-mapnik-german_style&lonlats=${p}&pois=${o}&profile=${profile}`;
     console.log('uri: ', uri);
-
-    Clipboard.setString(uri);
 
     const onMessage = (d: unknown) => {
         if (locations.length > 1 && typeof d === 'object' && d !== null && hasProperty(d, "distance")) {

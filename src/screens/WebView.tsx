@@ -1,5 +1,4 @@
 import React from 'react';
-import Clipboard from '@react-native-community/clipboard';
 import { WebView } from 'react-native-webview';
 import { MainStackParamList, WebViewScreenParams } from './ScreenTypes'
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -16,8 +15,6 @@ export default function WebViewScreen({ route }: Props): JSX.Element {
     const { params }: { params: WebViewScreenParams } = route;
     const uri = params.url;
     console.log('uri: ', uri);
-
-    Clipboard.setString(uri);
 
     return (
         <WebView

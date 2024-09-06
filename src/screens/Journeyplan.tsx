@@ -102,10 +102,11 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
     }, [count]);
 
     const showRailwayRoutes = (longPress: boolean) => {
-        console.log('Journeyplan showRailwayRoutes');
+        console.log('Journeyplan showRailwayRoutes, legs', legs.length);
         const stops = [] as Stop[];
         legs.forEach(leg => {
             leg.stopovers?.forEach(stopover => {
+				console.log('stopover.stop', stopover.stop, client.isStop(stopover.stop));
                 if (client.isStop(stopover.stop)) {
                     console.log('stop of leg:', stopover.stop?.name);
                 }
