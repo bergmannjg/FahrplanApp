@@ -16,7 +16,6 @@ import JourneyplanScreen from './Journeyplan';
 import RailwayRoutesOfTripScreen from './RailwayRoutesOfTrip';
 import RailwayRoute from './RailwayRoute';
 import OpenStreetMapScreen from './OpenStreetMap';
-import TrainformationScreen from './Trainformation';
 import WagonimageScreen from './Wagonimage'
 import OptionsScreen from './Options';
 import JourneyOptionsScreen from './JourneyOptions';
@@ -91,11 +90,6 @@ function MainStackScreen() {
         name="Journeyplan"
         component={JourneyplanScreen}
         options={{ title: t('JourneyplanScreen.Title') }}
-      />
-      <MainStack.Screen
-        name="Trainformation"
-        component={TrainformationScreen}
-        options={{ title: t('TrainformationScreen.Title') }}
       />
       <MainStack.Screen
         name="Wagonimage"
