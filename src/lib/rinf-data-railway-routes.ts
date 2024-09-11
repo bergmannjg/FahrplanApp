@@ -1,6 +1,6 @@
 import { rinfgraph } from 'rinf-graph/rinfgraph.bundle.js';
-import type { GraphNode, OpInfo, LineInfo, Location, PathElement, GraphEdge } from 'rinf-graph/rinfgraph.bundle';
-import { Stop } from 'hafas-client';
+import type { GraphNode, OpInfo, LineInfo, Location as RInfLocation, PathElement, GraphEdge } from 'rinf-graph/rinfgraph.bundle';
+import { Stop, Location } from 'hafas-client';
 import { distance } from './distance';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -149,22 +149,22 @@ function prefix(words: string[]): string {
 	return words[0].substring(0, i);
 }
 
-function getOpIdFromDbStations(s: Stop): string | undefined {
-	if (s.location?.latitude && s.location?.longitude) {
-		let station = dbStations.find(station => station.id === s.location?.id);
+function getOpIdFromDbStations(s: Location): string | undefined {
+	if (s.latitude && s.longitude) {
+		let station = dbStations.find(station => station.id === s.id);
 		if (station) {
-			const dist = distance(s.location.latitude, s.location.longitude, station.latitude, station.longitude);
-			console.log('getOpIdFromDbStations', s.location?.id, station.opid, dist.toFixed(3));
+			const dist = distance(s.latitude, s.longitude, station.latitude, station.longitude);
+			console.log('getOpIdFromDbStations', s.id, station.opid, dist.toFixed(3));
 			if (dist < 1.0) return station.opid;
 		}
 	}
 }
 
-function getOpIdWithMinDistanceFromLatLon(s: Stop): string | undefined {
+function getOpIdWithMinDistanceFromLatLon(s: Location): string | undefined {
 	const maxKm = 2;
 	const opid = opInfos.reduce((state: OpIdDist, op: OpInfo) => {
-		if (s.location?.latitude && s.location?.longitude && nearby(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude)) {
-			const dist = distance(s.location.latitude, s.location.longitude, op.Latitude, op.Longitude);
+		if (s.latitude && s.longitude && nearby(s.latitude, s.longitude, op.Latitude, op.Longitude)) {
+			const dist = distance(s.latitude, s.longitude, op.Latitude, op.Longitude);
 			if (dist < maxKm) {
 				const prefixWithCandidate = prefix([s.name ?? '', op.Name])
 				const prefixWithState = prefix([s.name ?? '', state.name ?? ''])
@@ -178,11 +178,11 @@ function getOpIdWithMinDistanceFromLatLon(s: Stop): string | undefined {
 		}
 		return state;
 	}, { uopid: undefined, km: maxKm });
-	console.log('OpId found', opid.uopid, '/', opid.name, ', km ', opid.km.toFixed(3), ' for stop ', s.name, s.location?.longitude, ',', s.location?.latitude);
+	console.log('OpId found', opid.uopid, '/', opid.name, ', km ', opid.km.toFixed(3), ' for stop ', s.name, s.longitude, ',', s.latitude);
 	return opid.uopid;
 }
 
-function findOPIDForStop(s: Stop): string | undefined {
+function findOPIDForStop(s: Location): string | undefined {
 	const opid = getOpIdFromDbStations(s);
 	if (opid && mapOps.get(opid)) return opid;
 	const op = getOpIdWithMinDistanceFromLatLon(s)
@@ -287,7 +287,7 @@ function rinfToLineNodes(nodesList: GraphNode[][]): LineNode[] {
 		.filter(ln => filterOpId(ln.opid));
 }
 
-function findOpIdsForStops(stops: Stop[]) : string[] {
+function findOpIdsForStops(stops: Location[]) : string[] {
 	const ids = stops
 		.map(stop => findOPIDForStop(stop))
 		.filter(opId => !!opId);
@@ -354,7 +354,7 @@ function rinfFindRailwayRoutesOfLine(country: string, line: string): GraphNode[]
 		.sort((a, b) => a[0].Edges[0].StartKm - b[0].Edges[0].StartKm);
 }
 
-function rinfFindRailwayRoutesOfTripStops(stops: Stop[], compactifyPath: boolean): GraphNode[] {
+function rinfFindRailwayRoutesOfTripStops(stops: Location[], compactifyPath: boolean): GraphNode[] {
 	const ids = removeDuplicates(findOpIdsForStops(stops));
 	return rinfFindRailwayRoutesOfTrip(ids, compactifyPath);
 }
@@ -364,7 +364,7 @@ function rinfGetCompactPath(path: GraphNode[], useMaxSpeed?: boolean): GraphNode
 	else return rinfgraph.Graph_getCompactPath(path);
 }
 
-function rinfGetLocationsOfPath(path: GraphNode[]): Location[][] {
+function rinfGetLocationsOfPath(path: GraphNode[]): RInfLocation[][] {
 	return rinfgraph.Graph_getFilteredLocationsOfPath(g, mapOps, path, optypeExcludes);
 }
 

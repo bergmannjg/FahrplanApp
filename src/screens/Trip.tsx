@@ -6,7 +6,7 @@ import { RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { Location, Trip, StopOver, Line, Stop, Station, Hint } from 'fs-hafas-client/hafas-client';
-import { Hafas } from '../lib/hafas';
+import { Hafas, stopovers2Locations4Routes } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
 import { hafas, isStopover4Routes, hasTrainformation } from '../lib/hafas';
@@ -71,17 +71,9 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 
 	const showRailwayRoutes = (longPress: boolean) => {
 		console.log('Trip showRailwayRoutes');
-		const stops = [] as Stop[];
-		trip.stopovers?.forEach(stopover => {
-			if (client.isStop(stopover.stop)) {
-				console.log('stop of trip:', stopover.stop?.name);
-			}
-			if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
-				stops.push(stopover.stop);
-			}
-		});
+		const stops = trip.stopovers ? stopovers2Locations4Routes(trip.stopovers) : [];
 		if (stops.length > 1) {
-			navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+			navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', locations: stops });
 		}
 	}
 

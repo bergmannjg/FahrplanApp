@@ -23,7 +23,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 	const { t } = useTranslation();
 
 	const { params }: { params: RailwayRoutesOfTripScreenParams } = route;
-	const stops = params.stops;
+	const stops = params.locations;
 	const ids = params.ids;
 	const useMaxSpeed = params.useMaxSpeed;
 
@@ -55,7 +55,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 	const distanceOfNode = (node: GraphNode): number => Math.abs(node.Edges[0].StartKm - node.Edges[0].EndKm)
 
 	const loadData = (rinf: typeof import("/home/bergmann/projects/FahrplanApp/src/lib/rinf-data-railway-routes"), isCompactifyPath: boolean) => {
-		const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
+		const findRailwayRoutes = (stopsOfRoute: Location[]): GraphNode[] => {
 			try {
 				return rinf.rinfFindRailwayRoutesOfTripStops(stopsOfRoute, isCompactifyPath);
 			} catch (ex) {

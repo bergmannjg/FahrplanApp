@@ -59,7 +59,7 @@ export interface RailwayRoutesOfTripScreenParams {
     profile: string;
     originName: string;
     destinationName: string;
-    stops?: Stop[];
+    locations?: Location[];
     ids?: string[];
     tripDetails: boolean;
     useMaxSpeed: boolean;

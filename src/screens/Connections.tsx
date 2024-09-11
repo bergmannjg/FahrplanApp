@@ -8,7 +8,7 @@ import moment from 'moment';
 import { extractTimeOfDatestring } from '../lib/iso-8601-datetime-utils';
 import { Hafas, JourneyInfo } from '../lib/hafas';
 import { MainStackParamList, ConnectionsScreenParams } from './ScreenTypes';
-import { hafas } from '../lib/hafas';
+import { hafas, isLocation } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { Location } from 'fs-hafas-client/hafas-client';
@@ -89,7 +89,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
     };
 
     const toName = (loc: string | Location) => {
-        if (client.isLocation(loc)) {
+        if (isLocation(loc)) {
             return loc.name;
         } else {
             return loc;

@@ -6,7 +6,7 @@ import { RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { extractTimeOfDatestring, parseDatestring } from '../lib/iso-8601-datetime-utils';
-import { Hafas, JourneyInfo } from '../lib/hafas';
+import { Hafas, JourneyInfo, isLocation } from '../lib/hafas';
 import { MainStackParamList, BestPriceConnectionsScreenParams } from './ScreenTypes';
 import { hafas } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
@@ -61,7 +61,7 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
 
         try {
             const locationsFrom =
-                client.isLocation(query1) ? [query1] :
+                isLocation(query1) ? [query1] :
                     await client.locations(query1, 1);
             console.log('from:', locationsFrom[0].id, locationsFrom[0].name);
 
@@ -70,7 +70,7 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
             console.log('via:', locationsVia[0].id, locationsVia[0].name, via);
 
             const locationsTo =
-                client.isLocation(query2) ? [query2]
+                isLocation(query2) ? [query2]
                     : await client.locations(query2, 1);
             console.log('to:', locationsTo[0].id, locationsTo[0].name);
 
@@ -124,7 +124,7 @@ export default function BestPriceConnectionsScreen({ route, navigation }: Props)
     };
 
     const toName = (loc: string | Location) => {
-        if (client.isLocation(loc)) {
+        if (isLocation(loc)) {
             return loc.name;
         } else {
             return loc;

@@ -9,7 +9,7 @@ import { Hafas, JourneyInfo, isStopover4Routes } from '../lib/hafas';
 import { Location, Leg, Line, Stop, Station, Status } from 'fs-hafas-client/hafas-client';
 import { extractTimeOfDatestring, momentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { MainStackParamList, JourneyplanScreenParams, asLinkText } from './ScreenTypes';
-import { hafas, hasTrainformation } from '../lib/hafas';
+import { hafas, hasTrainformation, legs2Locations4Routes } from '../lib/hafas';
 import { useOrientation } from './useOrientation';
 import { stylesPortrait, stylesLandscape, styles } from './styles';
 import { LogBox } from 'react-native'
@@ -103,20 +103,9 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
     const showRailwayRoutes = (longPress: boolean) => {
         console.log('Journeyplan showRailwayRoutes, legs', legs.length);
-        const stops = [] as Stop[];
-        legs.forEach(leg => {
-            leg.stopovers?.forEach(stopover => {
-				console.log('stopover.stop', stopover.stop, client.isStop(stopover.stop));
-                if (client.isStop(stopover.stop)) {
-                    console.log('stop of leg:', stopover.stop?.name);
-                }
-                if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
-                    stops.push(stopover.stop);
-                }
-            })
-        })
+        const stops = legs2Locations4Routes(legs);
         if (stops.length > 1) {
-            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', stops });
+            navigation.navigate('RailwayRoutesOfTrip', { profile, tripDetails: true, useMaxSpeed: longPress, originName: stops[0].name ?? '', destinationName: stops[stops.length - 1].name ?? '', locations: stops });
         }
     }
 

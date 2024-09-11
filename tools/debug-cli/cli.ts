@@ -1,10 +1,11 @@
-import { hafas, isStopover4Routes } from "../../src/lib/hafas.js";
+import { hafas, isStop, isLocation, legs2Locations4Routes } from "../../src/lib/hafas.js";
 import { rinfFindRailwayRoutesOfTripStops } from "../../src/lib/rinf-data-railway-routes.js";
 import type { Line, Journey, Stop, StopOver } from 'fs-hafas-client/hafas-client.js';
 import type { GraphNode, RInfGraph } from 'rinf-graph/rinfgraph.bundle.js';
 import { dbPrices } from '../../src/lib/db-prices.js';
 import moment from 'moment';
 import { railwayLineInfos, railwayLineTokens, RailwayLine, RailwayLineToken } from '../../src/lib/line-numbers.js';
+import { Location } from "hafas-client";
 
 const myArgs = process.argv.slice(2);
 
@@ -110,7 +111,7 @@ const locations = (name?: string) => {
     name && client.locations(name, 5)
         .then(result => {
             result.forEach(s => {
-                if (client.isStop(s)) {
+                if (isStop(s)) {
                     console.log(s.id, s.name);
                 }
                 // console.log(s);
@@ -136,11 +137,11 @@ const prices = async (from?: string, to?: string, date?: string, days?: string) 
     const ndays = days ? parseInt(days) : 0;
 
     const locationsFrom =
-        client.isLocation(from) ? [from] :
+        isLocation(from) ? [from] :
             await client.locations(from, 1);
 
     const locationsTo =
-        client.isLocation(to) ? [to]
+        isLocation(to) ? [to]
             : await client.locations(to, 1);
     if (locationsFrom[0].id !== undefined && locationsTo[0].id !== undefined) {
 
@@ -187,7 +188,7 @@ const journeys = (from?: string, to?: string, via?: string) => {
         .catch(console.error);
 }
 
-const findRailwayRoutes = (stopsOfRoute: Stop[]): GraphNode[] => {
+const findRailwayRoutes = (stopsOfRoute: Location[]): GraphNode[] => {
     try {
         return rinfFindRailwayRoutesOfTripStops(stopsOfRoute, true);
     } catch (ex) {
@@ -213,15 +214,8 @@ const routes = (from?: string, to?: string) => {
         .then(result => {
             const j = result[0];
             const ji = client.journeyInfo(j);
-            const stops = [] as Stop[];
-            ji.legs.forEach(leg => {
-                leg.stopovers?.forEach(stopover => {
-                    if (client.isStop(stopover.stop) && isStopover4Routes(stopover)) {
-                        stops.push(stopover.stop);
-                    }
-                })
-            })
-            findRailwayRoutes(stops).reduce(reducer, []).forEach(node =>
+            const locations = legs2Locations4Routes(ji.legs);
+            findRailwayRoutes(locations).reduce(reducer, []).forEach(node =>
                 console.log(node.Node, node.Edges[0].Node, node.Edges[0].Line));
         })
 }
@@ -231,7 +225,7 @@ const nearby = (lat?: string, lon?: string) => {
         .then(result => {
             console.log('found:', result.length)
             result.forEach(s => {
-                if (client.isStop(s)) {
+                if (isStop(s)) {
                     console.log('stop: ', s.name, s.location?.latitude, s.location?.longitude);
                     filterLines(s.lines).forEach(name => console.log('  ', name));
                 }
