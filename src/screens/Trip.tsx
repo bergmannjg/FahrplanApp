@@ -330,19 +330,23 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 			{
 				zugfinderUrl
 					?
-					<View style={{ flexDirection: 'row', paddingLeft: 10 }}>
-						<Text style={styles.itemHeaderText}
-							onPress={() => Linking.openURL(zugfinderUrl)}>
-							{trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''}{asLinkText('')},
-						</Text>
-						<Text style={styles.itemHeaderTextLeft}>
-							{departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}{hasLine() ? ',' : ''}
-						</Text>
-						{hasLine() &&
-							<Text style={styles.itemHeaderTextLeft}>
-								Linie {trip.line?.matchId}
+					<View>
+						<View style={{ flexDirection: 'row', paddingLeft: 10 }}>
+							<Text style={styles.itemHeaderText}
+								onPress={() => Linking.openURL(zugfinderUrl)}>
+								{trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''}, {asLinkText('Pünktlichkeit')}
 							</Text>
-						}
+						</View>
+						<View style={{ flexDirection: 'row', paddingLeft: 10 }}>
+							<Text style={styles.itemHeaderText}>
+								{departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}{hasLine() ? ',' : ''}
+							</Text>
+							{hasLine() &&
+								<Text style={styles.itemHeaderTextLeft}>
+									Linie {trip.line?.matchId}
+								</Text>
+							}
+						</View>
 					</View>
 					:
 					<View style={{ paddingLeft: 10 }}>

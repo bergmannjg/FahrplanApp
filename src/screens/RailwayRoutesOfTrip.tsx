@@ -262,7 +262,7 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 					</Text>
 
 					<TouchableOpacity onPress={() => refresh()}>
-						<Text style={styles.infoText}>{compactifyPath ? 'Exakt' : 'Kompakt'} anzeigen</Text>
+						<Text style={styles.infoText}>{compactifyPath ? asLinkText('Exakt') : asLinkText('Kompakt')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
