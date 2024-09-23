@@ -260,9 +260,10 @@ export default function RailwayRoutesOfTripScreen({ route, navigation }: Props):
 					<Text style={styles.itemHeaderText}>
 						{originName} {t('JourneyplanScreen.DirectionTo')} {destinationName}, {totalKm.toFixed(3)} km
 					</Text>
-
+				</View>
+				<View>
 					<TouchableOpacity onPress={() => refresh()}>
-						<Text style={styles.infoText}>{compactifyPath ? asLinkText('Exakt') : asLinkText('Kompakt')}</Text>
+						<Text style={styles.itemHeaderText}>{compactifyPath ? asLinkText('Exakt') : asLinkText('Kompakt')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

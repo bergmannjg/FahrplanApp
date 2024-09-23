@@ -374,12 +374,13 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 		return isStatus(item) ? <StatusItem item={item} /> : isLeg(item) ? <LegItem item={item} /> : <View />
 	}
 
-	const keyExtractor = (item: Leg | Status) =>
-		isStatus(item)
+	const keyExtractor = (item: Leg | Status) => {
+		return isStatus(item)
 			? (item.summary ?? '') + item.text.length
 			: isLeg(item)
-				? item.origin?.name ?? "" + item.destination?.name
+				? item.origin?.name ?? "" + item.destination?.name + item.walking
 				: ''
+	}
 
 	const departure = journeyInfo ? momentWithTimezone(journeyInfo.originDeparture, journeyInfo.originLocation) : undefined;
 	const arrival = journeyInfo ? momentWithTimezone(journeyInfo.destinationArrival, journeyInfo.destinationLocation) : undefined;

@@ -235,7 +235,7 @@ export function hafas(profileName: string): Hafas {
 
 		const statusRemarks = legs[indexTo].remarks?.filter(r => r.type === 'status' && r.summary) as Status[] | undefined;
 
-		const price = journey.price ? journey.price.amount?.toFixed(2) + ' ' + journey.price.currency : undefined;
+		const price = journey.price && journey.price.amount > 0 ? journey.price.amount?.toFixed(2) + ' ' + journey.price.currency : undefined;
 		return {
 			type: 'journeyinfo', legs, id: journey.refreshToken ?? originName + '+' + destinationName + '+' + originDeparture + '+' + destinationArrival + '+' + legs[0].tripId,
 			origin, originName, originDeparture, originLocation,
