@@ -124,13 +124,21 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 		console.log('showRoute.showTransfers: ', showTransfers);
 		if (journeyInfo) {
 			const stops = await client.stopssOfJourney(journeyInfo, modes, false, false);
+			const currentLocations = journeyInfo.legs
+				.filter(leg => !!leg.currentLocation)
+				.map(leg => {
+					if (leg.currentLocation) {
+						leg.currentLocation.name = leg.line?.name;
+					}
+					return leg.currentLocation;
+				}) as Location[];
 			const products = journeyInfo.legs.map(l => l.line?.product).filter(p => !!p) as Array<string>;
 			const isCar = products.every(p => p === 'bus');
 			console.log('products', products, 'isCar', isCar);
 			const locations = stops.filter(stop => stop.location).map(stop => stop.location) as Location[];
 			console.log('locations: ', locations.length);
 			if (locations && locations.length > 0) {
-				navigation.navigate('BRouter', { isLongPress, locations, isCar });
+				navigation.navigate('BRouter', { isLongPress, locations, pois: currentLocations, isCar });
 			}
 		}
 	}
@@ -138,7 +146,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 	const showCurrentLocation = async (loc: Location | undefined, line: string | undefined) => {
 		if (loc) {
 			console.log('showLocation: ', loc);
-			navigation.navigate('BRouter', { isLongPress: false, locations: [loc], pois: [], titleSuffix: line, zoom: 10 });
+			navigation.navigate('BRouter', { isLongPress: false, locations: [], pois: [loc], titleSuffix: line, zoom: 10 });
 		}
 	}
 
@@ -343,6 +351,12 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 
 						<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 							<Text style={styles.itemStationText}>{`${t('JourneyplanScreen.Time', { date: extractTimeOfDatestring(item.plannedArrival ?? "") })} ${item.destination?.name} ${platform(item.arrivalPlatform)}`}</Text>
+
+							{hasTrainformation(item.line, item.plannedArrival) &&
+								<TouchableOpacity onPress={() => goToWagenreihung(item.line, item.plannedArrival, item.origin)}>
+									<Text style={styles.itemDetailsText}>{asLinkText(railwayCar)}</Text>
+								</TouchableOpacity>
+							}
 						</View>
 
 						{

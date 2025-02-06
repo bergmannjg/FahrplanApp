@@ -175,7 +175,6 @@ export function hasTrainformation(line?: Line, departure?: string): boolean {
 	}
 }
 
-
 export function getLocation(s: Station | Stop | Location | undefined): Location | undefined {
 	if (isStop(s)) return s.location
 	else if (isStation(s)) return s.location
