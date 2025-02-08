@@ -1,10 +1,12 @@
 import { createClient, Feature, Profile } from 'hafas-client';
 
 import { profile as bvgProfile } from 'hafas-client/p/bvg/index.js';
-import { profile as dbProfile } from 'hafas-client/p/db/index.js';
 import { profile as oebbProfile } from 'hafas-client/p/oebb/index.js';
 import { profile as rejseplanenProfile } from 'hafas-client/p/rejseplanen/index.js';
 import { profile as vbbProfile } from 'hafas-client/p/vbb/index.js';
+
+import { createClient as createVendoClient } from 'db-vendo-client';
+import { profile as dbProfile } from 'db-vendo-client/p/dbnav/index.js';
 
 import { TripsByNameOptions, TripsWithRealtimeData, FeatureCollection, Journey, Leg, Line, Location, Station, Stop, StopOver, Trip, Alternative, Products, Status, Movement } from 'fs-hafas-client/hafas-client.js';
 import { fshafas } from "fs-hafas-client";
@@ -15,7 +17,9 @@ import { distance } from './distance';
 import geolib from 'geolib';
 
 const chooseClient = (p: string, profile: Profile) => {
-	if (p.endsWith('-fsharp')) {
+	if (p === 'db') {
+		return createVendoClient(profile, 'agent');
+	} else if (p.endsWith('-fsharp')) {
 		return fshafas.createClient(profile);
 	} else return createClient(profile, 'agent');
 }
@@ -121,18 +125,18 @@ export function isStopover4Routes(stopover: StopOver): boolean {
 export function stopovers2Locations4Routes(stopovers: readonly StopOver[]): Location[] {
 	let locations: Location[] = []
 	stopovers.forEach(stopover => {
-			if (isStop(stopover.stop) && isStopover4Routes(stopover)) {
-				locations.push({
-					"type": "location", "id": stopover.stop.id,
-					"name": stopover.stop.name, "latitude": stopover.stop.location?.latitude, "longitude": stopover.stop.location?.longitude
-				});
-			} else if (isStation(stopover.stop)) {
-				locations.push({
-					"type": "location", "id": stopover.stop.id,
-					"name": stopover.stop.name, "latitude": stopover.stop.location?.latitude, "longitude": stopover.stop.location?.longitude
-				});
-			}
-		})
+		if (isStop(stopover.stop) && isStopover4Routes(stopover)) {
+			locations.push({
+				"type": "location", "id": stopover.stop.id,
+				"name": stopover.stop.name, "latitude": stopover.stop.location?.latitude, "longitude": stopover.stop.location?.longitude
+			});
+		} else if (isStation(stopover.stop)) {
+			locations.push({
+				"type": "location", "id": stopover.stop.id,
+				"name": stopover.stop.name, "latitude": stopover.stop.location?.latitude, "longitude": stopover.stop.location?.longitude
+			});
+		}
+	})
 
 	return locations;
 }
@@ -201,8 +205,12 @@ export function hafas(profileName: string): Hafas {
 		const legs = journey.legs.filter(leg => leg?.line || leg.walking);
 		const plannedDeparture = journey.legs[indexFrom].plannedDeparture ?? (journey.legs[indexFrom].walking ? (journey.legs[indexFrom + 1].plannedDeparture ?? "") : "");
 		const plannedArrival = journey.legs[indexTo].plannedArrival ?? (journey.legs[indexTo].walking ? (journey.legs[indexTo - 1].plannedArrival ?? "") : "");
-		const reachable = journey.legs.every(item => item.reachable || item.walking);
-		const cancelled = journey.legs.some(item => item.cancelled);
+		const reachable =
+			journey.legs.every(item => item.reachable === undefined) ? undefined :
+				journey.legs.every(item => item.reachable || item.walking || item.reachable === undefined);
+		const cancelled =
+			journey.legs.every(item => item.cancelled === undefined) ? undefined :
+				journey.legs.some(item => item.cancelled);
 		let changes = journey.legs.filter(leg => leg?.line).length;
 		const lineNames = journey.legs.reduce((acc, leg) => {
 			const name = leg.line?.name ?? '';
@@ -286,7 +294,8 @@ export function hafas(profileName: string): Hafas {
 		if (client.trip && tripId) {
 			const { trip }: { trip: Trip } = await client.trip(tripId, {});
 
-			const stopovers = stopoversOnLeg(trip, origin, destination).filter(stopover => stopover.stop && isStop(stopover.stop));
+			const stopovers = stopoversOnLeg(trip, origin, destination)
+				.filter(stopover => stopover.stop && (isStop(stopover.stop) || isStation(stopover.stop)));
 			const stopsInLeg = stopovers.map<Stop>(stopover => stopover.stop as Stop);
 
 			if (fc) {
@@ -312,11 +321,13 @@ export function hafas(profileName: string): Hafas {
 					const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
 					return { id: trip.id, origin: trip.origin, destination: trip.destination, currentLocation: trip.currentLocation, line: trip.line, plannedDeparture, plannedArrival, stopovers };
 				}
-			} else {
+			} else if (stopovers.length > 0) {
 				const plannedDeparture = stopovers[0].plannedDeparture;
 				const plannedArrival = stopovers[stopovers.length - 1].plannedArrival;
 				console.log('stopovers.length:', stopovers.length);
 				return { id: trip.id, origin: trip.origin, destination: trip.destination, currentLocation: trip.currentLocation, line: trip.line, plannedDeparture, plannedArrival, stopovers };
+			} else {
+				return Promise.reject();
 			}
 		} else {
 			return Promise.reject();
@@ -334,14 +345,13 @@ export function hafas(profileName: string): Hafas {
 	const stopssOfLeg = async (leg: Leg, modes: ReadonlyArray<string>) => {
 		if (leg.walking) return [];
 		const t = await trip(leg.tripId);
-		if (t.line && modes.findIndex(m => m === t.line?.mode?.toString().toLowerCase()) >= 0) {
+		if (t.line && modes.findIndex(m => t.line?.mode === undefined || m === t.line?.mode?.toString().toLowerCase()) >= 0) {
 			return stopoversOnLeg(t, leg.origin, leg.destination)
-				.filter(stopover => !stopover.cancelled && stopover.stop && isStop(stopover.stop))
+				.filter(stopover => !stopover.cancelled && stopover.stop && (isStop(stopover.stop) || isStation(stopover.stop)))
 				.map<Stop>(stopover => stopover.stop as Stop);
 		} else {
 			return [];
 		}
-
 	}
 
 	const unionToString = (x?: string | unknown): string | undefined => {

@@ -124,6 +124,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 		console.log('showRoute.showTransfers: ', showTransfers);
 		if (journeyInfo) {
 			const stops = await client.stopssOfJourney(journeyInfo, modes, false, false);
+			console.log('stops: ', stops.length);
 			const currentLocations = journeyInfo.legs
 				.filter(leg => !!leg.currentLocation)
 				.map(leg => {
@@ -315,7 +316,7 @@ export default function JourneyplanScreen({ route, navigation }: Props): JSX.Ele
 							<Text> </Text>
 						}
 
-						{!item.reachable && !item.walking &&
+						{item.reachable !== undefined && !item.reachable && !item.walking &&
 							<Text style={styles.itemWarningTextJourneyPlan}>{`${t('JourneyplanScreen.ConnectionNotAccessible')}`}</Text>
 						}
 

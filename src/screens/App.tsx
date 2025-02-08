@@ -114,7 +114,7 @@ function MainStackScreen() {
       <MainStack.Screen
         name="Trip"
         component={TripScreen}
-        options={({ route }) => ({ title: t('TripScreen.Title') + ' ' + route.params.trip.line?.name ?? '' })}
+        options={({ route }) => ({ title: t('TripScreen.Title') + ' ' + (route.params.trip.line?.name ?? '') })}
       />
       <MainStack.Screen
         name="OpenStreetMap"

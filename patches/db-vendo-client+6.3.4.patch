@@ -1,0 +1,58 @@
+diff --git a/node_modules/db-vendo-client/index.js b/node_modules/db-vendo-client/index.js
+index 4fd32d4..c7e9c8e 100644
+--- a/node_modules/db-vendo-client/index.js
++++ b/node_modules/db-vendo-client/index.js
+@@ -1,6 +1,5 @@
+ import isObj from 'lodash/isObject.js';
+ import distance from 'gps-distance';
+-import readStations from 'db-hafas-stations';
+ 
+ import {defaultProfile} from './lib/default-profile.js';
+ import {validateProfile} from './lib/validate-profile.js';
+@@ -29,19 +28,7 @@ const validateLocation = (loc, name = 'location') => {
+ 
+ const loadEnrichedStationData = (profile) => new Promise((resolve, reject) => {
+ 	const items = {};
+-	readStations.full()
+-		.on('data', (station) => {
+-			items[station.id] = station;
+-		})
+-		.once('end', () => {
+-			if (profile.DEBUG) {
+-				console.log('Loaded station index.');
+-			}
+-			resolve(items);
+-		})
+-		.once('error', (err) => {
+-			reject(err);
+-		});
++	resolve(items);
+ });
+ 
+ const createClient = (profile, userAgent, opt = {}) => {
+diff --git a/node_modules/db-vendo-client/p/db/index.js b/node_modules/db-vendo-client/p/db/index.js
+index d7941ff..3a70178 100644
+--- a/node_modules/db-vendo-client/p/db/index.js
++++ b/node_modules/db-vendo-client/p/db/index.js
+@@ -1,7 +1,5 @@
+-import {createRequire} from 'module';
+-const require = createRequire(import.meta.url);
++import baseProfile from './base.json' with { type: 'json' };
+ 
+-const baseProfile = require('./base.json');
+ import {products} from '../../lib/products.js';
+ import {formatJourneysReq, formatRefreshJourneyReq} from './journeys-req.js';
+ import {formatTripReq} from './trip-req.js';
+diff --git a/node_modules/db-vendo-client/p/dbnav/index.js b/node_modules/db-vendo-client/p/dbnav/index.js
+index a093c1c..1fcba22 100644
+--- a/node_modules/db-vendo-client/p/dbnav/index.js
++++ b/node_modules/db-vendo-client/p/dbnav/index.js
+@@ -1,7 +1,5 @@
+-import {createRequire} from 'module';
+-const require = createRequire(import.meta.url);
++import baseProfile from './base.json' with { type: 'json' };
+ 
+-const baseProfile = require('./base.json');
+ import {products} from '../../lib/products.js';
+ import {formatJourneysReq, formatRefreshJourneyReq} from './journeys-req.js';
+ import {formatTripReq} from './trip-req.js';
