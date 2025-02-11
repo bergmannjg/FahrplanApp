@@ -50,7 +50,7 @@ export default function HomeScreen({ route, navigation }: Props): JSX.Element {
     const [station2, setStation2] = useState<string | Location>('');
     const [stationVia, setStationVia] = useState('');
     const [loading, setLoading] = useState(true);
-    const [clientLib, setClientLib] = useState('fs-hafas-client');
+    const [clientLib, setClientLib] = useState('hafas-client');
     const [profile, setProfile] = useState('db');
     const [tripDetails, setTripDetails] = useState(true);
     const [compactifyPath, setCompactifyPath] = useState(true);

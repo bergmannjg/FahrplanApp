@@ -170,7 +170,7 @@ export default function ConnectionsScreen({ route, navigation }: Props): JSX.Ele
                             {item.price && <Text>{`${item.price}`}</Text>}
                         </View>
                         <View style={styles.subtitleConnectionsColumn}>
-                            {!item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
+                            {item.reachable !== undefined && !item.reachable && !item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.ConnectionNotAccessible')}</Text>)}
                             {item.cancelled && (<Text style={styles.itemWarningText}>{t('ConnectionsScreen.TripCancled')}</Text>)}
                             {item.informationAvailable && (<Text style={styles.itemWarningText}>Es liegen aktuelle Informationen vor.</Text>)}
                         </View>

@@ -6,7 +6,7 @@ import { RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { extractTimeOfDatestring, momentWithTimezone, MomentWithTimezone } from '../lib/iso-8601-datetime-utils';
 import { Location, Trip, StopOver, Line, Stop, Station, Hint } from 'fs-hafas-client/hafas-client';
-import { Hafas, stopovers2Locations4Routes } from '../lib/hafas';
+import { Hafas, getLocation, stopovers2Locations4Routes } from '../lib/hafas';
 import { MainStackParamList, TripScreenParams, asLinkText } from './ScreenTypes';
 import moment from 'moment-timezone';
 import { hafas, isStopover4Routes, hasTrainformation } from '../lib/hafas';
@@ -80,6 +80,10 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 	const showRoute = (isLongPress: boolean) => {
 		const locations = [] as Location[];
 		const pois = [] as Location[];
+		if (trip.currentLocation) {
+			trip.currentLocation.name = trip.line?.name;
+			pois.push(trip.currentLocation);
+		}
 		trip.stopovers?.forEach(stopover => {
 			if (!stopover.cancelled && stopover.stop?.location) {
 				if (isStopover4Routes(stopover)) {
@@ -110,16 +114,24 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 	const showCurrentLocation = async (loc: Location | undefined, line: string | undefined) => {
 		if (loc) {
 			console.log('showLocation: ', loc);
-			navigation.navigate('BRouter', { isLongPress: false, locations: [loc], pois: [], titleSuffix: line, zoom: 10 });
+			navigation.navigate('BRouter', { isLongPress: false, locations: [], pois: [loc], titleSuffix: line, zoom: 10 });
 		}
 	}
 
 	const goToWagenreihung = (line: Line, plannedDeparture?: string, stop?: Stop | Station) => {
 		console.log('Navigation router run to Wagenreihung');
 		console.log('fahrtNr: ', line?.fahrtNr, ', plannedDeparture:', plannedDeparture);
-		if (line?.fahrtNr && plannedDeparture) {
-			const loc = client.getLocation(stop);
-			navigation.navigate('Trainformation', { fahrtNr: line?.fahrtNr, date: plannedDeparture, location: loc })
+
+		const loc = getLocation(stop);
+		if (line && loc && plannedDeparture) {
+			const url = "https://dbf.finalrewind.org/carriage-formation?administrationId=80"
+				+ "&category=" + line.productName
+				+ "&time=" + (new Date(plannedDeparture)).toISOString()
+				+ "&number=" + line?.fahrtNr
+				+ "&date=" + plannedDeparture.substring(0, 10)
+				+ "&evaNumber=" + loc.id;
+			console.log('url', url);
+			Linking.openURL(url);
 		}
 	}
 
@@ -330,19 +342,23 @@ export default function TripScreen({ route, navigation }: Props): JSX.Element {
 			{
 				zugfinderUrl
 					?
-					<View style={{ flexDirection: 'row', paddingLeft: 10 }}>
-						<Text style={styles.itemHeaderText}
-							onPress={() => Linking.openURL(zugfinderUrl)}>
-							{trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''}{asLinkText('')},
-						</Text>
-						<Text style={styles.itemHeaderTextLeft}>
-							{departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}{hasLine() ? ',' : ''}
-						</Text>
-						{hasLine() &&
-							<Text style={styles.itemHeaderTextLeft}>
-								Linie {trip.line?.matchId}
+					<View>
+						<View style={{ flexDirection: 'row', paddingLeft: 10 }}>
+							<Text style={styles.itemHeaderText}
+								onPress={() => Linking.openURL(zugfinderUrl)}>
+								{trip.line?.name ?? ''}{fahrtName ? (' / ' + fahrtName) : ''}{operatorName ? (' (' + operatorName + ') ') : ''}, {asLinkText('Pünktlichkeit')}
 							</Text>
-						}
+						</View>
+						<View style={{ flexDirection: 'row', paddingLeft: 10 }}>
+							<Text style={styles.itemHeaderText}>
+								{departure ? t('TripScreen.Departure', { date: departure.moment }) + ',' : ''} {t('TripScreen.Duration', { duration: moment.duration((new Date(trip.plannedArrival ?? "")).valueOf() - (new Date(trip.plannedDeparture ?? "")).valueOf()) })}{hasLine() ? ',' : ''}
+							</Text>
+							{hasLine() &&
+								<Text style={styles.itemHeaderTextLeft}>
+									Linie {trip.line?.matchId}
+								</Text>
+							}
+						</View>
 					</View>
 					:
 					<View style={{ paddingLeft: 10 }}>
