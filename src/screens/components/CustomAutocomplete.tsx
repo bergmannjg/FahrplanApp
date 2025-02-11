@@ -55,7 +55,9 @@ export default function CustomAutocomplete(props: CustomAutocompleteProps): JSX.
     useEffect(() => {
         if (count > 0) {
             if (debouncedSearchTerm) {
-                asyncFindBahnhoefe(query, (queryParam, bahnhoefeParam) => setBahnhoefe(bahnhoefeParam));
+                asyncFindBahnhoefe(query, (queryParam, bahnhoefeParam) => {
+					console.log('stations', bahnhoefeParam)
+					setBahnhoefe(bahnhoefeParam);});
             }
         }
     }, [count]);
